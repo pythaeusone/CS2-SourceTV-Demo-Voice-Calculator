@@ -1,3 +1,6 @@
+![grafik](https://github.com/user-attachments/assets/17e2adad-c920-4278-83c3-3911d34c6587)
+
+
 # 🎧 Faceit Demo Voice Audio Bitfield Calculator
 
 Hello dear Counter-Strike friends,  
