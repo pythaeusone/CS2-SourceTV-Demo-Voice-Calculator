@@ -1,10 +1,13 @@
+![grafik](https://github.com/user-attachments/assets/17e2adad-c920-4278-83c3-3911d34c6587)
+
+
 # 🎧 Faceit Demo Voice Audio Bitfield Calculator
 
 Hello dear Counter-Strike friends,  
 my name is Musti, also known as **Pythaeus**.
 
 I created this software to make it easier to listen to players in Faceit demos.  
-I was inspired by the YouTuber **[@KEROVSKI](https://www.youtube.com/watch?v=7vsrbD3xBwM)** and his tool — so I decided to build something even better. 😉
+I was inspired by the YouTuber **[@KEROVSKI](https://www.youtube.com/@KEROVSKI_)** and his tool — so I decided to build something even better. 😉
 
 For reading demo files, I used the **[DemoFile](https://www.nuget.org/packages/DemoFile/)** library, which requires several additional dependencies (linked below).
 
