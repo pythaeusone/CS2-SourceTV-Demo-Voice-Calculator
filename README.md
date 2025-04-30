@@ -16,7 +16,7 @@ For reading demo files, I used the **[DemoFile](https://www.nuget.org/packages/D
 ## ⚙️ Runtime Requirements
 
 This application requires the **.NET 8.0 Runtime** to be installed on your system.  
-➡️ [Download .NET 8.0 Runtime (Microsoft)]([https://dotnet.microsoft.com/en-us/download/dotnet/8.0](https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-desktop-8.0.15-windows-x64-installer?cid=getdotnetcore))
+➡️ [Download .NET 8.0 Runtime (Microsoft)](https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-desktop-8.0.15-windows-x64-installer?cid=getdotnetcore)
 
 If the application does not start, make sure this runtime is installed.
 
