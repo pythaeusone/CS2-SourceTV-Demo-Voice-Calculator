@@ -33,6 +33,8 @@ Huge thanks to the following awesome people for testing and feedback:
 - **ChiefKinzo YouTube**: [https://www.youtube.com/@Chiefkinzo](https://www.youtube.com/@Chiefkinzo)  
 - **@KEROVSKI's Tool Video**: [https://www.youtube.com/watch?v=7vsrbD3xBwM](https://www.youtube.com/watch?v=7vsrbD3xBwM)
 
+- - **My Steam:**: [https://steamcommunity.com/id/pythaeus/](https://steamcommunity.com/id/pythaeus/)
+
 ---
 
 ## 📦 Used Libraries
