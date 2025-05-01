@@ -11,6 +11,8 @@ I was inspired by the YouTuber **[@KEROVSKI](https://www.youtube.com/@KEROVSKI_)
 
 For reading demo files, I used the **[DemoFile](https://www.nuget.org/packages/DemoFile/)** library, which requires several additional dependencies (linked below).
 
+ps: I always scan with Virus-Total and hybrid-analysis, some Windows systems complain because I don't include a certificate.
+
 ---
 
 ## ⚙️ Runtime Requirements
