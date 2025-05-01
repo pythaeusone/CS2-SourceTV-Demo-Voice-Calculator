@@ -14,29 +14,39 @@ namespace FaceitDemoVoiceCalc
         /// </summary>
         private class PlayerSnapshot
         {
-            public int UserId { get; set; }
-            public string? PlayerName { get; set; }
-            public int TeamNumber { get; set; }
-            public string? TeamName { get; set; }
+            public int UserId { get; set; }             // User-ID + 1 = spec_player ID
+            public string? PlayerName { get; set; }     // PlayerName = Name of the Player in this Game.
+            public int TeamNumber { get; set; }         // TeamNumber = 2 = T-Side, 3 = CT-Side
+            public string? TeamName { get; set; }       // TeamName = TeamClanName from Faceit team_xxxxx
         }
+
 
         // =====================
         // Parser and snapshots
         // =====================
-        private CsDemoParser? demo = null;
-        private PlayerSnapshot[]? snapshot = null;
+        private CsDemoParser? demo = null; // An object is created to process the read DemoStream and read out the desired information.
+        private PlayerSnapshot[]? snapshot = null; // The information collected from the demo is saved in an array.
 
-        // =============================
-        // Bitfields for voice indices
-        // =============================
+
+        // ============================================================================================
+        // Bitfields for voice indices, the calculated bitfield numbers are stored in these variables
+        // ============================================================================================
         private int teamAP1, teamAP2, teamAP3, teamAP4, teamAP5;
         private int teamBP1, teamBP2, teamBP3, teamBP4, teamBP5;
 
-        // ===================================
-        // Checkbox groups for easy toggling
-        // ===================================
+
+        // ====================================================================================================
+        // Checkbox groups for easy toggling. All checkboxes are grouped into a list to keep the code cleaner.
+        // =====================================================================================================
         private readonly List<CheckBox> teamACheckboxes = new();
         private readonly List<CheckBox> teamBCheckboxes = new();
+
+
+        // =====================================================================
+        // The shared instance used to display non-blocking copy notifications.
+        // =====================================================================
+        private readonly ToolTip _copyToolTip = new ToolTip();
+
 
         // =================
         // Form constructor
@@ -48,11 +58,13 @@ namespace FaceitDemoVoiceCalc
         {
             InitializeComponent();
             InitializeCheckboxGroup();
-            InitializeCheckboxHandlers();
+            InitializeEventHandlers();
         }
+
 
         /// <summary>
         /// Opens a form of the given type, either modal or non-modal.
+        /// A more modern way to open a Windows form, this is about HowTo and About.
         /// </summary>
         private void OpenForm<T>(bool modal = true)
             where T : Form, new()
@@ -64,9 +76,9 @@ namespace FaceitDemoVoiceCalc
                 frm.Show();
         }
 
-        // ==================
-        // Menu event handlers
-        // ==================
+        // =======================
+        // Menubar event handlers
+        // =======================
         private void howToUseToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // Show usage instructions
@@ -78,6 +90,7 @@ namespace FaceitDemoVoiceCalc
             // Show application information
             OpenForm<About>();
         }
+
 
         // ====================================
         // Drag & drop for demo file selection
@@ -114,11 +127,12 @@ namespace FaceitDemoVoiceCalc
 
             // Show warning for invalid format
             MessageBox.Show(
-                "Please only save files with the extension .dem.",
+                "Please only drop files with the extension .dem.",
                 "Invalid format",
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Warning);
         }
+
 
         // =====================================
         // Demo file parsing and snapshot load
@@ -129,9 +143,9 @@ namespace FaceitDemoVoiceCalc
         private async void readDemoFile(string demoPath)
         {
             demo = new CsDemoParser();
-            snapshot = null;
+            snapshot = null; // Clear the snapshot
 
-            var tcs = new TaskCompletionSource<bool>();
+            var tcs = new TaskCompletionSource<bool>(); // Speedup the readprocess
 
             // Handler to capture player snapshots on round start
             void OnRoundStart(Source1RoundStartEvent e)
@@ -180,6 +194,7 @@ namespace FaceitDemoVoiceCalc
             loadCTTDataGrid();
         }
 
+
         // =====================================
         // DataGrid configuration and loading
         // =====================================
@@ -199,6 +214,7 @@ namespace FaceitDemoVoiceCalc
             dgv.Columns["Players"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
         }
 
+
         /// <summary>
         /// Populates the CT and T grids with player data from the snapshot.
         /// </summary>
@@ -210,8 +226,8 @@ namespace FaceitDemoVoiceCalc
                 return;
             }
 
-            var ctPlayers = snapshot.Where(p => p.TeamNumber == 3).OrderBy(p => p.UserId).ToList();
-            var tPlayers = snapshot.Where(p => p.TeamNumber == 2).OrderBy(p => p.UserId).ToList();
+            var ctPlayers = snapshot.Where(p => p.TeamNumber == 3).OrderBy(p => p.UserId).ToList(); // Get CT Data from the Snapshot.
+            var tPlayers = snapshot.Where(p => p.TeamNumber == 2).OrderBy(p => p.UserId).ToList();  // Get  T Data from the Snapshot.
 
             dGv_CT.DataSource = CreateDataTable(ctPlayers, out var teamAName);
             dGv_T.DataSource = CreateDataTable(tPlayers, out var teamBName);
@@ -224,9 +240,11 @@ namespace FaceitDemoVoiceCalc
 
             lbl_ReadInfo.ForeColor = Color.DarkGreen;
             lbl_ReadInfo.Text = "File loaded";
+            btn_CopyToClipboard.Enabled = true;
 
             resetAll();
         }
+
 
         /// <summary>
         /// Builds a DataTable for a list of players and returns the team name.
@@ -247,6 +265,7 @@ namespace FaceitDemoVoiceCalc
             return table;
         }
 
+
         // =====================================
         // Checkbox group initialization
         // =====================================
@@ -259,10 +278,13 @@ namespace FaceitDemoVoiceCalc
             teamBCheckboxes.AddRange(new[] { cb_TeamBP1, cb_TeamBP2, cb_TeamBP3, cb_TeamBP4, cb_TeamBP5 });
         }
 
+
         /// <summary>
-        /// Sets up individual checkbox change handlers to update voice bitfields.
+        /// Registers all UI event handlers:
+        /// – Checkbox CheckedChanged for both teams to update voice bitfields.
+        /// – Click event of the Copy button to copy the console text to the clipboard.
         /// </summary>
-        private void InitializeCheckboxHandlers()
+        private void InitializeEventHandlers()
         {
             // Team A (CT) checkboxes
             cb_TeamAP1.CheckedChanged += (s, e) => UpdateBitField((CheckBox)s, dGv_CT.Rows[0], ref teamAP1);
@@ -277,7 +299,35 @@ namespace FaceitDemoVoiceCalc
             cb_TeamBP3.CheckedChanged += (s, e) => UpdateBitField((CheckBox)s, dGv_T.Rows[2], ref teamBP3);
             cb_TeamBP4.CheckedChanged += (s, e) => UpdateBitField((CheckBox)s, dGv_T.Rows[3], ref teamBP4);
             cb_TeamBP5.CheckedChanged += (s, e) => UpdateBitField((CheckBox)s, dGv_T.Rows[4], ref teamBP5);
+
+            // Copy-to-Clipboard Button Handler            
+            btn_CopyToClipboard.Click += (s, e) =>
+            {
+                Clipboard.SetText(tb_ConsoleCommand.Text);
+                ShowCopyTooltip();
+                this.ActiveControl = null; // Remove dirty focus xD.
+            };
+
         }
+
+
+        /// <summary>
+        /// Displays a transient “Copied!” tooltip above the copy button.
+        /// Configures and shows the <see cref="_copyToolTip"/> with zero delay and a 1 second auto-pop duration.
+        /// </summary>
+        private void ShowCopyTooltip()
+        {
+            _copyToolTip.AutomaticDelay = 0;
+            _copyToolTip.AutoPopDelay = 1000;
+            _copyToolTip.InitialDelay = 0;
+            _copyToolTip.ReshowDelay = 0;
+            _copyToolTip.ShowAlways = true;
+
+            // Show tooltip over the TextBox
+            var offset = new Point(btn_CopyToClipboard.Width / 2, -btn_CopyToClipboard.Height / 2);
+            _copyToolTip.Show("Copied!", btn_CopyToClipboard, offset, 1000);
+        }
+
 
         // =====================================
         // Checkbox toggle and reset methods
@@ -290,6 +340,7 @@ namespace FaceitDemoVoiceCalc
             foreach (var cb in checkboxes)
                 cb.Checked = isChecked;
         }
+
 
         /// <summary>
         /// Resets all checkboxes and console prompt after loading a new file.
@@ -304,6 +355,7 @@ namespace FaceitDemoVoiceCalc
                 "select one or more players you would like to hear in the demo ..";
         }
 
+
         /// <summary>
         /// Generic method to clear and enable checkboxes in the provided list.
         /// </summary>
@@ -315,6 +367,7 @@ namespace FaceitDemoVoiceCalc
                 cb.Checked = false;
             }
         }
+
 
         // =====================================
         // Bulk select handlers
@@ -328,6 +381,7 @@ namespace FaceitDemoVoiceCalc
         {
             ToggleCheckboxes(teamBCheckboxes, cb_AllTeamB.Checked);
         }
+
 
         // =====================================
         // Bitfield calculation
@@ -350,6 +404,7 @@ namespace FaceitDemoVoiceCalc
             changeConsoleCommand();
         }
 
+
         /// <summary>
         /// Computes the bitfield for a given spec ID (must be 4..13).
         /// </summary>
@@ -369,6 +424,7 @@ namespace FaceitDemoVoiceCalc
 
             return 1 << (specPlayerId - 1);
         }
+
 
         /// <summary>
         /// Updates the console command textbox based on current combined bitfields.

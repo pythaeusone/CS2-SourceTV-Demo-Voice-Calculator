@@ -55,6 +55,7 @@
             cb_AllTeamB = new CheckBox();
             lbl_ConsolCommand = new Label();
             lbl_ReadInfo = new Label();
+            btn_CopyToClipboard = new Button();
             menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dGv_CT).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dGv_T).BeginInit();
@@ -334,11 +335,24 @@
             lbl_ReadInfo.Text = " ";
             lbl_ReadInfo.TextAlign = ContentAlignment.MiddleLeft;
             // 
+            // btn_CopyToClipboard
+            // 
+            btn_CopyToClipboard.Enabled = false;
+            btn_CopyToClipboard.FlatStyle = FlatStyle.Flat;
+            btn_CopyToClipboard.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            btn_CopyToClipboard.Location = new Point(348, 361);
+            btn_CopyToClipboard.Name = "btn_CopyToClipboard";
+            btn_CopyToClipboard.Size = new Size(120, 25);
+            btn_CopyToClipboard.TabIndex = 25;
+            btn_CopyToClipboard.Text = "Copy Command";
+            btn_CopyToClipboard.UseVisualStyleBackColor = true;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(822, 417);
+            Controls.Add(btn_CopyToClipboard);
             Controls.Add(lbl_ReadInfo);
             Controls.Add(lbl_ConsolCommand);
             Controls.Add(cb_AllTeamB);
@@ -406,5 +420,6 @@
         private Label lbl_ReadInfo;
         private ToolStripMenuItem howToUseToolStripMenuItem;
         private ToolStripMenuItem aboutToolStripMenuItem;
+        private Button btn_CopyToClipboard;
     }
 }
