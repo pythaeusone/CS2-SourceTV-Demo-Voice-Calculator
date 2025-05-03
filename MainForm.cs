@@ -140,26 +140,30 @@ namespace FaceitDemoVoiceCalc
         }
 
 
-        // =====================================
-        // Demo file parsing and snapshot load
-        // =====================================
         /// <summary>
-        /// Reads the demo file asynchronously and captures player info at first round start or until all 10 are joined.
+        /// Reads a CS1 demo file and captures up to 10 players into the snapshot array.
+        /// Uses PlayerConnectFull events to collect players as they fully connect; if fewer
+        /// than 10 are collected by the first round start, falls back to capture all players
+        /// known at that point. Finally ensures that any late joins (e.g. after knife rounds)
+        /// are included by waiting for the complete demo read, and performs a last-resort
+        /// pass over demo.Players before loading the UI grid.
         /// </summary>
+        /// <param name="demoPath">Path to the .dem file to read.</param>
         private async void readDemoFile(string demoPath)
         {
+            // Initialize parser and clear previous snapshot
             demo = new CsDemoParser();
             snapshot = null;
 
+            // TaskCompletionSource to signal when we've got enough players
             var tcs = new TaskCompletionSource<bool>();
+            bool roundFallbackDone = false;
 
-            // Sub. the Event.
-            demo.Source1GameEvents.PlayerConnectFull += OnPlayerConnectFull;
-
-            // Local handler with exactly the right type.
-            void OnPlayerConnectFull(Source1PlayerConnectFullEvent e)
+            // Listen for fully-connected players and collect them.
+            demo.Source1GameEvents.PlayerConnectFull += (Source1PlayerConnectFullEvent e) =>
             {
-                var currentPlayers = demo.Players
+                // Build a distinct list of current players using PlayerInfo.Name
+                var list = demo.Players
                     .Where(p => !string.IsNullOrWhiteSpace(p.PlayerInfo.Name))
                     .Select(p => new PlayerSnapshot
                     {
@@ -168,42 +172,98 @@ namespace FaceitDemoVoiceCalc
                         TeamNumber = (int)p.Team.TeamNum,
                         TeamName = p.Team.ClanTeamname
                     })
+                    .DistinctBy(ps => ps.UserId)
                     .ToArray();
 
-                if (currentPlayers.Length >= 10)
+                // Once we have 10 or more unique players, set snapshot and signal completion
+                if (list.Length >= 10)
                 {
-                    snapshot = currentPlayers;
-                    demo.Source1GameEvents.PlayerConnectFull -= OnPlayerConnectFull;
+                    snapshot = list;
                     tcs.TrySetResult(true);
                 }
-            }
+            };
+
+            // Fallback at first RoundStart: capture any players known so far by PlayerName
+            demo.Source1GameEvents.RoundStart += (Source1RoundStartEvent e) =>
+            {
+                if (roundFallbackDone)
+                    return; // only run fallback once
+
+                roundFallbackDone = true;
+
+                var list = demo.Players
+                    .Where(p => !string.IsNullOrWhiteSpace(p.PlayerName))
+                    .Select(p => new PlayerSnapshot
+                    {
+                        UserId = p.PlayerInfo.Userid + 1,
+                        PlayerName = p.PlayerName!,
+                        TeamNumber = (int)p.Team.TeamNum,
+                        TeamName = p.Team.ClanTeamname
+                    })
+                    .DistinctBy(ps => ps.UserId)
+                    .ToArray();
+
+                // If any players were found at this stage, treat that as a completion
+                if (list.Length > 0)
+                {
+                    snapshot = list;
+                    tcs.TrySetResult(true);
+                }
+            };
 
             try
             {
+                // Open demo file stream with a large buffer for speed
                 using var stream = new FileStream(
                     demoPath,
-                    FileMode.Open,
-                    FileAccess.Read,
-                    FileShare.Read,
+                    FileMode.Open, FileAccess.Read, FileShare.Read,
                     bufferSize: 4096 * 1024);
 
                 var reader = DemoFileReader.Create(demo, stream);
                 var readTask = reader.ReadAllAsync().AsTask();
 
-                // Wait until all 10 are there or the file has finished reading.
+                // Wait until either:
+                // - tcs.Task signals we've got enough players,
+                // - or the demo file has been fully read
                 await Task.WhenAny(readTask, tcs.Task);
+
+                // Ensure the read completes so late join events are processed
+                await readTask;
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Error reading the demo: {ex.Message}");
                 return;
             }
+            finally
+            {
+                // Detach event handlers to prevent memory leaks or duplicate handling
+                demo.Source1GameEvents.PlayerConnectFull -= null!;
+                demo.Source1GameEvents.RoundStart -= null!;
+            }
 
+            // Final fallback: if still fewer than 10, grab everyone present in demo.Players
+            if (snapshot == null || snapshot.Length < 10)
+            {
+                snapshot = demo.Players
+                    .Where(p => p.PlayerInfo != null)
+                    .Select(p => new PlayerSnapshot
+                    {
+                        UserId = p.PlayerInfo.Userid + 1,
+                        PlayerName = !string.IsNullOrWhiteSpace(p.PlayerName)
+                                        ? p.PlayerName!
+                                        : p.PlayerInfo.Name ?? "Unknown",
+                        TeamNumber = (int)p.Team.TeamNum,
+                        TeamName = p.Team.ClanTeamname
+                    })
+                    .DistinctBy(ps => ps.UserId)  // ensure unique entries
+                    .OrderBy(ps => ps.UserId)     // sort by Spec ID
+                    .ToArray();
+            }
+
+            // Populate the grid using the captured snapshot
             loadCTTDataGrid();
         }
-
-
-
 
 
         // =====================================
