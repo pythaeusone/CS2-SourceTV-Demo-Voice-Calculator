@@ -48,6 +48,12 @@ namespace FaceitDemoVoiceCalc
         private readonly ToolTip _copyToolTip = new ToolTip();
 
 
+        // -------------------------------------
+        // Class-level field to prevent recursion
+        // -------------------------------------
+        private bool _isSyncingSelectAll = false;
+
+
         // =================
         // Form constructor
         // =================
@@ -266,9 +272,6 @@ namespace FaceitDemoVoiceCalc
         }
 
 
-        // =====================================
-        // Checkbox group initialization
-        // =====================================
         /// <summary>
         /// Assigns checkboxes to their respective team lists for batch operations.
         /// </summary>
@@ -281,33 +284,148 @@ namespace FaceitDemoVoiceCalc
 
         /// <summary>
         /// Registers all UI event handlers:
-        /// – Checkbox CheckedChanged for both teams to update voice bitfields.
-        /// – Click event of the Copy button to copy the console text to the clipboard.
+        /// – Links each individual team checkbox to UpdateBitField and SyncSelectAllCheckbox.
+        /// – Links each "Select All" checkbox to bulk ToggleCheckboxes via named handlers.
+        /// – Links the Copy button to copy the console command to the clipboard and show a tooltip.
         /// </summary>
         private void InitializeEventHandlers()
         {
-            // Team A (CT) checkboxes
-            cb_TeamAP1.CheckedChanged += (s, e) => UpdateBitField((CheckBox)s, dGv_CT.Rows[0], ref teamAP1);
-            cb_TeamAP2.CheckedChanged += (s, e) => UpdateBitField((CheckBox)s, dGv_CT.Rows[1], ref teamAP2);
-            cb_TeamAP3.CheckedChanged += (s, e) => UpdateBitField((CheckBox)s, dGv_CT.Rows[2], ref teamAP3);
-            cb_TeamAP4.CheckedChanged += (s, e) => UpdateBitField((CheckBox)s, dGv_CT.Rows[3], ref teamAP4);
-            cb_TeamAP5.CheckedChanged += (s, e) => UpdateBitField((CheckBox)s, dGv_CT.Rows[4], ref teamAP5);
+            // Team A (CT) individual checkboxes
+            for (int i = 0; i < teamACheckboxes.Count; i++)
+            {
+                int index = i; // capture for closure
+                teamACheckboxes[i].CheckedChanged += (s, e) =>
+                {
+                    // 1) Update the bitfield for this player
+                    UpdateBitField(
+                        (CheckBox)s,
+                        dGv_CT.Rows[index],
+                        ref GetTeamAFieldByIndex(index)
+                    );
+                    // 2) Synchronize the "Select All Team A" checkbox
+                    SyncSelectAllCheckbox(teamACheckboxes, cb_AllTeamA);
+                };
+            }
 
-            // Team B (T) checkboxes
-            cb_TeamBP1.CheckedChanged += (s, e) => UpdateBitField((CheckBox)s, dGv_T.Rows[0], ref teamBP1);
-            cb_TeamBP2.CheckedChanged += (s, e) => UpdateBitField((CheckBox)s, dGv_T.Rows[1], ref teamBP2);
-            cb_TeamBP3.CheckedChanged += (s, e) => UpdateBitField((CheckBox)s, dGv_T.Rows[2], ref teamBP3);
-            cb_TeamBP4.CheckedChanged += (s, e) => UpdateBitField((CheckBox)s, dGv_T.Rows[3], ref teamBP4);
-            cb_TeamBP5.CheckedChanged += (s, e) => UpdateBitField((CheckBox)s, dGv_T.Rows[4], ref teamBP5);
+            // Team B (T) individual checkboxes
+            for (int i = 0; i < teamBCheckboxes.Count; i++)
+            {
+                int index = i;
+                teamBCheckboxes[i].CheckedChanged += (s, e) =>
+                {
+                    UpdateBitField(
+                        (CheckBox)s,
+                        dGv_T.Rows[index],
+                        ref GetTeamBFieldByIndex(index)
+                    );
+                    SyncSelectAllCheckbox(teamBCheckboxes, cb_AllTeamB);
+                };
+            }
 
-            // Copy-to-Clipboard Button Handler            
+            // Bulk-select handlers (named methods allow unsubscription if needed)
+            cb_AllTeamA.CheckStateChanged += cb_AllTeamA_CheckStateChanged;
+            cb_AllTeamB.CheckStateChanged += cb_AllTeamB_CheckStateChanged;
+
+            // Copy-to-Clipboard button
             btn_CopyToClipboard.Click += (s, e) =>
             {
                 Clipboard.SetText(tb_ConsoleCommand.Text);
                 ShowCopyTooltip();
-                this.ActiveControl = null; // Remove dirty focus xD.
+                this.ActiveControl = null; // Remove focus to avoid accidental re-triggers
             };
+        }
 
+        /// <summary>
+        /// Named handler for "Select All Team A" – toggles all Team A checkboxes.
+        /// Guarded by _isSyncingSelectAll to avoid loops when SyncSelectAllCheckbox sets Checked.
+        /// </summary>
+        private void cb_AllTeamA_CheckStateChanged(object sender, EventArgs e)
+        {
+            if (_isSyncingSelectAll) return;
+            ToggleCheckboxes(teamACheckboxes, cb_AllTeamA.Checked);
+        }
+
+        /// <summary>
+        /// Named handler for "Select All Team B" – toggles all Team B checkboxes.
+        /// Guarded by _isSyncingSelectAll to avoid loops when SyncSelectAllCheckbox sets Checked.
+        /// </summary>
+        private void cb_AllTeamB_CheckStateChanged(object sender, EventArgs e)
+        {
+            if (_isSyncingSelectAll) return;
+            ToggleCheckboxes(teamBCheckboxes, cb_AllTeamB.Checked);
+        }
+
+        /// <summary>
+        /// Synchronizes the given "Select All" checkbox based on its group's states.
+        /// Prevents recursive toggles via the _isSyncingSelectAll flag.
+        /// </summary>
+        /// <param name="groupCheckboxes">
+        /// The list of individual checkboxes in this group.
+        /// </param>
+        /// <param name="selectAllCheckbox">
+        /// The "Select All" checkbox to update.
+        /// </param>
+        private void SyncSelectAllCheckbox(List<CheckBox> groupCheckboxes, CheckBox selectAllCheckbox)
+        {
+            _isSyncingSelectAll = true;
+            // If every individual checkbox is checked, mark "Select All" as checked, else uncheck.
+            selectAllCheckbox.Checked = groupCheckboxes.All(cb => cb.Checked);
+            _isSyncingSelectAll = false;
+        }
+
+        /// <summary>
+        /// Returns a reference to the Team A bitfield variable by zero-based index.
+        /// </summary>
+        /// <param name="index">Index into teamACheckboxes (0..4).</param>
+        /// <returns>Reference to teamAP1…teamAP5.</returns>
+        /// <exception cref="IndexOutOfRangeException">
+        /// If index is not in 0..4.
+        /// </exception>
+        private ref int GetTeamAFieldByIndex(int index)
+        {
+            switch (index)
+            {
+                case 0: return ref teamAP1;
+                case 1: return ref teamAP2;
+                case 2: return ref teamAP3;
+                case 3: return ref teamAP4;
+                case 4: return ref teamAP5;
+                default: throw new IndexOutOfRangeException(nameof(index));
+            }
+        }
+
+        /// <summary>
+        /// Returns a reference to the Team B bitfield variable by zero-based index.
+        /// </summary>
+        /// <param name="index">Index into teamBCheckboxes (0..4).</param>
+        /// <returns>Reference to teamBP1…teamBP5.</returns>
+        /// <exception cref="IndexOutOfRangeException">
+        /// If index is not in 0..4.
+        /// </exception>
+        private ref int GetTeamBFieldByIndex(int index)
+        {
+            switch (index)
+            {
+                case 0: return ref teamBP1;
+                case 1: return ref teamBP2;
+                case 2: return ref teamBP3;
+                case 3: return ref teamBP4;
+                case 4: return ref teamBP5;
+                default: throw new IndexOutOfRangeException(nameof(index));
+            }
+        }
+
+
+        // =====================================
+        // Checkbox toggle and reset methods
+        // =====================================
+        /// <summary>
+        /// Toggles all checkboxes in the given list to the specified state.
+        /// </summary>
+        private void ToggleCheckboxes(List<CheckBox> checkboxes, bool isChecked)
+        {
+            foreach (var cb in checkboxes)
+                cb.Checked = isChecked;
         }
 
 
@@ -326,19 +444,6 @@ namespace FaceitDemoVoiceCalc
             // Show tooltip over the TextBox
             var offset = new Point(btn_CopyToClipboard.Width / 2, -btn_CopyToClipboard.Height / 2);
             _copyToolTip.Show("Copied!", btn_CopyToClipboard, offset, 1000);
-        }
-
-
-        // =====================================
-        // Checkbox toggle and reset methods
-        // =====================================
-        /// <summary>
-        /// Toggles all checkboxes in the given list to the specified state.
-        /// </summary>
-        private void ToggleCheckboxes(List<CheckBox> checkboxes, bool isChecked)
-        {
-            foreach (var cb in checkboxes)
-                cb.Checked = isChecked;
         }
 
 
@@ -369,18 +474,18 @@ namespace FaceitDemoVoiceCalc
         }
 
 
-        // =====================================
-        // Bulk select handlers
-        // =====================================
-        private void cb_AllTeamA_CheckStateChanged(object sender, EventArgs e)
-        {
-            ToggleCheckboxes(teamACheckboxes, cb_AllTeamA.Checked);
-        }
+        //// =====================================
+        //// Bulk select handlers
+        //// =====================================
+        //private void cb_AllTeamA_CheckStateChanged(object sender, EventArgs e)
+        //{
+        //    ToggleCheckboxes(teamACheckboxes, cb_AllTeamA.Checked);
+        //}
 
-        private void cb_AllTeamB_CheckStateChanged(object sender, EventArgs e)
-        {
-            ToggleCheckboxes(teamBCheckboxes, cb_AllTeamB.Checked);
-        }
+        //private void cb_AllTeamB_CheckStateChanged(object sender, EventArgs e)
+        //{
+        //    ToggleCheckboxes(teamBCheckboxes, cb_AllTeamB.Checked);
+        //}
 
 
         // =====================================
