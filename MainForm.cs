@@ -144,37 +144,39 @@ namespace FaceitDemoVoiceCalc
         // Demo file parsing and snapshot load
         // =====================================
         /// <summary>
-        /// Reads the demo file asynchronously and captures player info at first round start.
+        /// Reads the demo file asynchronously and captures player info at first round start or until all 10 are joined.
         /// </summary>
         private async void readDemoFile(string demoPath)
         {
             demo = new CsDemoParser();
-            snapshot = null; // Clear the snapshot
+            snapshot = null;
 
-            var tcs = new TaskCompletionSource<bool>(); // Speedup the readprocess
+            var tcs = new TaskCompletionSource<bool>();
 
-            // Handler to capture player snapshots on round start
-            void OnRoundStart(Source1RoundStartEvent e)
+            // Sub. the Event.
+            demo.Source1GameEvents.PlayerConnectFull += OnPlayerConnectFull;
+
+            // Local handler with exactly the right type.
+            void OnPlayerConnectFull(Source1PlayerConnectFullEvent e)
             {
-                if (snapshot == null)
-                {
-                    snapshot = demo.Players
-                        .Where(p => !string.IsNullOrWhiteSpace(p.PlayerName))
-                        .Select(p => new PlayerSnapshot
-                        {
-                            UserId = p.PlayerInfo.Userid + 1,
-                            PlayerName = p.PlayerName,
-                            TeamNumber = (int)p.Team.TeamNum,
-                            TeamName = p.Team.ClanTeamname
-                        })
-                        .ToArray();
+                var currentPlayers = demo.Players
+                    .Where(p => !string.IsNullOrWhiteSpace(p.PlayerInfo.Name))
+                    .Select(p => new PlayerSnapshot
+                    {
+                        UserId = p.PlayerInfo.Userid + 1,
+                        PlayerName = p.PlayerInfo.Name!,
+                        TeamNumber = (int)p.Team.TeamNum,
+                        TeamName = p.Team.ClanTeamname
+                    })
+                    .ToArray();
 
-                    demo.Source1GameEvents.RoundStart -= OnRoundStart;
+                if (currentPlayers.Length >= 10)
+                {
+                    snapshot = currentPlayers;
+                    demo.Source1GameEvents.PlayerConnectFull -= OnPlayerConnectFull;
                     tcs.TrySetResult(true);
                 }
             }
-
-            demo.Source1GameEvents.RoundStart += OnRoundStart;
 
             try
             {
@@ -188,7 +190,7 @@ namespace FaceitDemoVoiceCalc
                 var reader = DemoFileReader.Create(demo, stream);
                 var readTask = reader.ReadAllAsync().AsTask();
 
-                // Wait for either round start or end of file
+                // Wait until all 10 are there or the file has finished reading.
                 await Task.WhenAny(readTask, tcs.Task);
             }
             catch (Exception ex)
@@ -199,6 +201,9 @@ namespace FaceitDemoVoiceCalc
 
             loadCTTDataGrid();
         }
+
+
+
 
 
         // =====================================
@@ -335,6 +340,7 @@ namespace FaceitDemoVoiceCalc
             };
         }
 
+
         /// <summary>
         /// Named handler for "Select All Team A" – toggles all Team A checkboxes.
         /// Guarded by _isSyncingSelectAll to avoid loops when SyncSelectAllCheckbox sets Checked.
@@ -345,6 +351,7 @@ namespace FaceitDemoVoiceCalc
             ToggleCheckboxes(teamACheckboxes, cb_AllTeamA.Checked);
         }
 
+
         /// <summary>
         /// Named handler for "Select All Team B" – toggles all Team B checkboxes.
         /// Guarded by _isSyncingSelectAll to avoid loops when SyncSelectAllCheckbox sets Checked.
@@ -354,6 +361,7 @@ namespace FaceitDemoVoiceCalc
             if (_isSyncingSelectAll) return;
             ToggleCheckboxes(teamBCheckboxes, cb_AllTeamB.Checked);
         }
+
 
         /// <summary>
         /// Synchronizes the given "Select All" checkbox based on its group's states.
@@ -372,6 +380,7 @@ namespace FaceitDemoVoiceCalc
             selectAllCheckbox.Checked = groupCheckboxes.All(cb => cb.Checked);
             _isSyncingSelectAll = false;
         }
+
 
         /// <summary>
         /// Returns a reference to the Team A bitfield variable by zero-based index.
@@ -393,6 +402,7 @@ namespace FaceitDemoVoiceCalc
                 default: throw new IndexOutOfRangeException(nameof(index));
             }
         }
+
 
         /// <summary>
         /// Returns a reference to the Team B bitfield variable by zero-based index.
@@ -472,20 +482,6 @@ namespace FaceitDemoVoiceCalc
                 cb.Checked = false;
             }
         }
-
-
-        //// =====================================
-        //// Bulk select handlers
-        //// =====================================
-        //private void cb_AllTeamA_CheckStateChanged(object sender, EventArgs e)
-        //{
-        //    ToggleCheckboxes(teamACheckboxes, cb_AllTeamA.Checked);
-        //}
-
-        //private void cb_AllTeamB_CheckStateChanged(object sender, EventArgs e)
-        //{
-        //    ToggleCheckboxes(teamBCheckboxes, cb_AllTeamB.Checked);
-        //}
 
 
         // =====================================

@@ -56,6 +56,7 @@
             lbl_ConsolCommand = new Label();
             lbl_ReadInfo = new Label();
             btn_CopyToClipboard = new Button();
+            btn_MoveToCSFolder = new Button();
             menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dGv_CT).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dGv_T).BeginInit();
@@ -90,19 +91,19 @@
             lbl_demoFilePath.AutoSize = true;
             lbl_demoFilePath.Location = new Point(12, 30);
             lbl_demoFilePath.Name = "lbl_demoFilePath";
-            lbl_demoFilePath.Size = new Size(87, 15);
+            lbl_demoFilePath.Size = new Size(52, 15);
             lbl_demoFilePath.TabIndex = 1;
-            lbl_demoFilePath.Text = "Demo Filepath:";
+            lbl_demoFilePath.Text = "Filepath:";
             // 
             // tb_demoFilePath
             // 
             tb_demoFilePath.AllowDrop = true;
-            tb_demoFilePath.Location = new Point(105, 27);
+            tb_demoFilePath.Location = new Point(70, 27);
             tb_demoFilePath.Name = "tb_demoFilePath";
             tb_demoFilePath.ReadOnly = true;
-            tb_demoFilePath.Size = new Size(703, 23);
+            tb_demoFilePath.Size = new Size(634, 23);
             tb_demoFilePath.TabIndex = 2;
-            tb_demoFilePath.Text = "drop File here ...";
+            tb_demoFilePath.Text = "drop demo File here ...";
             tb_demoFilePath.DragDrop += tb_demoFilePath_DragDrop;
             tb_demoFilePath.DragEnter += tb_demoFilePath_DragEnter;
             // 
@@ -347,11 +348,24 @@
             btn_CopyToClipboard.Text = "Copy Command";
             btn_CopyToClipboard.UseVisualStyleBackColor = true;
             // 
+            // btn_MoveToCSFolder
+            // 
+            btn_MoveToCSFolder.Enabled = false;
+            btn_MoveToCSFolder.FlatStyle = FlatStyle.Flat;
+            btn_MoveToCSFolder.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            btn_MoveToCSFolder.Location = new Point(710, 27);
+            btn_MoveToCSFolder.Name = "btn_MoveToCSFolder";
+            btn_MoveToCSFolder.Size = new Size(100, 23);
+            btn_MoveToCSFolder.TabIndex = 26;
+            btn_MoveToCSFolder.Text = "Move to CS2";
+            btn_MoveToCSFolder.UseVisualStyleBackColor = true;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(822, 417);
+            Controls.Add(btn_MoveToCSFolder);
             Controls.Add(btn_CopyToClipboard);
             Controls.Add(lbl_ReadInfo);
             Controls.Add(lbl_ConsolCommand);
@@ -383,7 +397,7 @@
             MaximizeBox = false;
             Name = "MainForm";
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "Faceit Demo Voice Calculator v0.6";
+            Text = "Faceit Demo Voice Calculator v0.7";
             menuStrip1.ResumeLayout(false);
             menuStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)dGv_CT).EndInit();
@@ -421,5 +435,6 @@
         private ToolStripMenuItem howToUseToolStripMenuItem;
         private ToolStripMenuItem aboutToolStripMenuItem;
         private Button btn_CopyToClipboard;
+        private Button btn_MoveToCSFolder;
     }
 }
