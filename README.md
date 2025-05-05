@@ -53,6 +53,8 @@ Huge thanks to the following awesome people for testing and feedback:
 
 - [DemoFile](https://www.nuget.org/packages/DemoFile/)
 - [DemoFile.Game.Cs](https://www.nuget.org/packages/DemoFile.Game.Cs)
+- [WindowsAPICodePackCore](https://www.nuget.org/packages/WindowsAPICodePackCore)
+- [WindowsAPICodePackShell](https://www.nuget.org/packages/WindowsAPICodePackShell)
 
 ### 🔁 Transitive Dependencies
 
