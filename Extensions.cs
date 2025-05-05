@@ -1,12 +1,12 @@
-﻿using System;
+﻿using Microsoft.VisualBasic;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using System.Windows.Forms;
 
-namespace UpdateVerwaltung.Models
+namespace FaceitDemoVoiceCalc
 {
     /// <summary>
     /// Provides extension methods for various common operations.
@@ -154,5 +154,112 @@ namespace UpdateVerwaltung.Models
             return BitConverter.ToString(hashBytes).Replace("-", "").ToLowerInvariant();
         }
 
+
+        /// <summary>
+        /// Checks whether the specified path points to an existing file.
+        /// </summary>
+        /// <param name="path">The file path to check.</param>
+        /// <returns>True if the file exists at the given path; otherwise, false.</returns>
+        public static bool DoesFileExist(this string path)
+        {
+            return File.Exists(path);
+        }
+
+
+        /// <summary>
+        /// Moves the file from its current path into the specified directory,
+        /// prompting the user via an InputBox for a new filename. If the chosen
+        /// name already exists at the destination, the user is prompted again.
+        /// Returns true if the move-and-rename operation succeeded; otherwise, false.
+        /// </summary>
+        /// <param name="sourcePath">The full path of the file to move and rename.</param>
+        /// <param name="destinationDirectory">The directory to which the file will be moved.</param>
+        /// <returns>
+        /// True if the file was successfully moved and renamed; false if canceled,
+        /// if an error occurred, or if the chosen name was left empty.
+        /// </returns>
+        public static bool MoveAndRenameFile(this string sourcePath, string destinationDirectory)
+        {
+            // Verify that the source file exists
+            if (!File.Exists(sourcePath))
+            {
+                MessageBox.Show(
+                    $"Source file not found:\n{sourcePath}",
+                    "Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                );
+                return false;
+            }
+
+            // Ensure the destination directory exists (create if necessary)
+            if (!Directory.Exists(destinationDirectory))
+            {
+                try
+                {
+                    Directory.CreateDirectory(destinationDirectory);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(
+                        $"Unable to create destination directory:\n{ex.Message}",
+                        "Error",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error
+                    );
+                    return false;
+                }
+            }
+
+            // Use the original filename as the default suggestion
+            string defaultName = Path.GetFileName(sourcePath);
+
+            while (true)
+            {
+                // Prompt the user for a new filename (including extension)
+                // Correct positional call: Prompt, Title, DefaultResponse
+                string newFileName = Interaction.InputBox(
+                    "Please enter the new filename (including extension):",
+                    "New Filename",
+                    defaultName
+                );
+
+                // If the user cancels or submits an empty name, abort
+                if (string.IsNullOrWhiteSpace(newFileName))
+                    return false;
+
+                // Compose the full destination path
+                string destinationPath = Path.Combine(destinationDirectory, newFileName);
+
+                // If a file with that name already exists, warn and retry
+                if (File.Exists(destinationPath))
+                {
+                    MessageBox.Show(
+                        "A file with this name already exists. Please choose a different name.",
+                        "Name Already Taken",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning
+                    );
+                    continue;  // prompt again
+                }
+
+                // Attempt to move (and rename) the file
+                try
+                {
+                    File.Move(sourcePath, destinationPath);
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(
+                        $"Error while moving/renaming the file:\n{ex.Message}",
+                        "Error",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error
+                    );
+                    return false;
+                }
+            }
+        }
     }
 }

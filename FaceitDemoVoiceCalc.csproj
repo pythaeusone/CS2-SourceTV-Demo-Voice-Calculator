@@ -26,6 +26,8 @@
   <ItemGroup>
     <PackageReference Include="DemoFile" Version="0.29.1" />
     <PackageReference Include="DemoFile.Game.Cs" Version="0.29.1" />
+    <PackageReference Include="WindowsAPICodePackCore" Version="8.0.8" />
+    <PackageReference Include="WindowsAPICodePackShell" Version="8.0.8" />
   </ItemGroup>
 
 </Project>
