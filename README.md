@@ -1,4 +1,5 @@
-![grafik](https://github.com/user-attachments/assets/3966a25b-dc35-4103-b5b7-00402fec4b9b)
+![grafik](https://github.com/user-attachments/assets/a19843c3-6fb6-4361-9d67-7da8c9b8b9d3)
+
 
 
 # 🎧 Faceit Demo Voice Audio Bitfield Calculator
