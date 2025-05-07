@@ -162,121 +162,121 @@ namespace FaceitDemoVoiceCalc
         /// pass over demo.Players before loading the UI grid.
         /// </summary>
         /// <param name="demoPath">Path to the .dem file to read.</param>
-        private async void ReadDemoFile(string demoPath)
-        {
-            // Initialize parser and clear previous snapshot
-            _demo = new CsDemoParser();
-            _snapshot = null;
+        //private async void ReadDemoFile(string demoPath)
+        //{
+        //    // Initialize parser and clear previous snapshot
+        //    _demo = new CsDemoParser();
+        //    _snapshot = null;
 
-            // TaskCompletionSource to signal when we've got enough players
-            var tcs = new TaskCompletionSource<bool>();
-            bool roundFallbackDone = false;
+        //    // TaskCompletionSource to signal when we've got enough players
+        //    var tcs = new TaskCompletionSource<bool>();
+        //    bool roundFallbackDone = false;
 
-            // Listen for fully-connected players and collect them.
-            _demo.Source1GameEvents.PlayerConnectFull += (Source1PlayerConnectFullEvent e) =>
-            {
-                // Build a distinct list of current players using PlayerInfo.Name
-                var list = _demo.Players
-                    .Where(p => !string.IsNullOrWhiteSpace(p.PlayerInfo.Name))
-                    .Select(p => new PlayerSnapshot
-                    {
-                        UserId = p.PlayerInfo.Userid + 1,
-                        PlayerName = p.PlayerInfo.Name!,
-                        TeamNumber = (int)p.Team.TeamNum,
-                        TeamName = p.Team.ClanTeamname
-                    })
-                    .DistinctBy(ps => ps.UserId)
-                    .ToArray();
+        //    // Listen for fully-connected players and collect them.
+        //    _demo.Source1GameEvents.PlayerConnectFull += (Source1PlayerConnectFullEvent e) =>
+        //    {
+        //        // Build a distinct list of current players using PlayerInfo.Name
+        //        var list = _demo.Players
+        //            .Where(p => !string.IsNullOrWhiteSpace(p.PlayerInfo.Name))
+        //            .Select(p => new PlayerSnapshot
+        //            {
+        //                UserId = p.PlayerInfo.Userid + 1,
+        //                PlayerName = p.PlayerInfo.Name!,
+        //                TeamNumber = (int)p.Team.TeamNum,
+        //                TeamName = p.Team.ClanTeamname
+        //            })
+        //            .DistinctBy(ps => ps.UserId)
+        //            .ToArray();
 
-                // Once we have 10 or more unique players, set snapshot and signal completion
-                if (list.Length >= 10)
-                {
-                    _snapshot = list;
-                    tcs.TrySetResult(true);
-                }
-            };
+        //        // Once we have 10 or more unique players, set snapshot and signal completion
+        //        if (list.Length >= 10)
+        //        {
+        //            _snapshot = list;
+        //            tcs.TrySetResult(true);
+        //        }
+        //    };
 
-            // Fallback at first RoundStart: capture any players known so far by PlayerName
-            _demo.Source1GameEvents.RoundStart += (Source1RoundStartEvent e) =>
-            {
-                if (roundFallbackDone)
-                    return; // only run fallback once
+        //    // Fallback at first RoundStart: capture any players known so far by PlayerName
+        //    _demo.Source1GameEvents.RoundStart += (Source1RoundStartEvent e) =>
+        //    {
+        //        if (roundFallbackDone)
+        //            return; // only run fallback once
 
-                roundFallbackDone = true;
+        //        roundFallbackDone = true;
 
-                var list = _demo.Players
-                    .Where(p => !string.IsNullOrWhiteSpace(p.PlayerName))
-                    .Select(p => new PlayerSnapshot
-                    {
-                        UserId = p.PlayerInfo.Userid + 1,
-                        PlayerName = p.PlayerName!,
-                        TeamNumber = (int)p.Team.TeamNum,
-                        TeamName = p.Team.ClanTeamname
-                    })
-                    .DistinctBy(ps => ps.UserId)
-                    .ToArray();
+        //        var list = _demo.Players
+        //            .Where(p => !string.IsNullOrWhiteSpace(p.PlayerName))
+        //            .Select(p => new PlayerSnapshot
+        //            {
+        //                UserId = p.PlayerInfo.Userid + 1,
+        //                PlayerName = p.PlayerName!,
+        //                TeamNumber = (int)p.Team.TeamNum,
+        //                TeamName = p.Team.ClanTeamname
+        //            })
+        //            .DistinctBy(ps => ps.UserId)
+        //            .ToArray();
 
-                // If any players were found at this stage, treat that as a completion
-                if (list.Length > 0)
-                {
-                    _snapshot = list;
-                    tcs.TrySetResult(true);
-                }
-            };
+        //        // If any players were found at this stage, treat that as a completion
+        //        if (list.Length > 0)
+        //        {
+        //            _snapshot = list;
+        //            tcs.TrySetResult(true);
+        //        }
+        //    };
 
-            try
-            {
-                // Open demo file stream with a large buffer for speed
-                using var stream = new FileStream(
-                    demoPath,
-                    FileMode.Open, FileAccess.Read, FileShare.Read,
-                    bufferSize: 4096 * 1024);
+        //    try
+        //    {
+        //        // Open demo file stream with a large buffer for speed
+        //        using var stream = new FileStream(
+        //            demoPath,
+        //            FileMode.Open, FileAccess.Read, FileShare.Read,
+        //            bufferSize: 4096 * 1024);
 
-                var reader = DemoFileReader.Create(_demo, stream);
-                var readTask = reader.ReadAllAsync().AsTask();
+        //        var reader = DemoFileReader.Create(_demo, stream);
+        //        var readTask = reader.ReadAllAsync().AsTask();
 
-                // Wait until either:
-                // - tcs.Task signals we've got enough players,
-                // - or the demo file has been fully read
-                await Task.WhenAny(readTask, tcs.Task);
+        //        // Wait until either:
+        //        // - tcs.Task signals we've got enough players,
+        //        // - or the demo file has been fully read
+        //        await Task.WhenAny(readTask, tcs.Task);
 
-                // Ensure the read completes so late join events are processed
-                await readTask;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error reading the demo: {ex.Message}");
-                return;
-            }
-            finally
-            {
-                // Detach event handlers to prevent memory leaks or duplicate handling
-                _demo.Source1GameEvents.PlayerConnectFull -= null!;
-                _demo.Source1GameEvents.RoundStart -= null!;
-            }
+        //        // Ensure the read completes so late join events are processed
+        //        await readTask;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MessageBox.Show($"Error reading the demo: {ex.Message}");
+        //        return;
+        //    }
+        //    finally
+        //    {
+        //        // Detach event handlers to prevent memory leaks or duplicate handling
+        //        _demo.Source1GameEvents.PlayerConnectFull -= null!;
+        //        _demo.Source1GameEvents.RoundStart -= null!;
+        //    }
 
-            // Final fallback: if still fewer than 10, grab everyone present in demo.Players
-            if (_snapshot == null || _snapshot.Length < 10)
-            {
-                _snapshot = _demo.Players
-                    .Where(p => p.PlayerInfo != null)
-                    .Select(p => new PlayerSnapshot
-                    {
-                        UserId = p.PlayerInfo.Userid + 1,
-                        PlayerName = !string.IsNullOrWhiteSpace(p.PlayerName)
-                                        ? p.PlayerName!
-                                        : p.PlayerInfo.Name ?? "Unknown",
-                        TeamNumber = (int)p.Team.TeamNum,
-                        TeamName = p.Team.ClanTeamname
-                    })
-                    .DistinctBy(ps => ps.UserId)  // ensure unique entries
-                    .OrderBy(ps => ps.UserId)     // sort by Spec ID
-                    .ToArray();
-            }
+        //    // Final fallback: if still fewer than 10, grab everyone present in demo.Players
+        //    if (_snapshot == null || _snapshot.Length < 10)
+        //    {
+        //        _snapshot = _demo.Players
+        //            .Where(p => p.PlayerInfo != null)
+        //            .Select(p => new PlayerSnapshot
+        //            {
+        //                UserId = p.PlayerInfo.Userid + 1,
+        //                PlayerName = !string.IsNullOrWhiteSpace(p.PlayerName)
+        //                                ? p.PlayerName!
+        //                                : p.PlayerInfo.Name ?? "Unknown",
+        //                TeamNumber = (int)p.Team.TeamNum,
+        //                TeamName = p.Team.ClanTeamname
+        //            })
+        //            .DistinctBy(ps => ps.UserId)  // ensure unique entries
+        //            .OrderBy(ps => ps.UserId)     // sort by Spec ID
+        //            .ToArray();
+        //    }
 
-            // Populate the grid using the captured snapshot
-            LoadCTTDataGrid();
-        }
+        //    // Populate the grid using the captured snapshot
+        //    LoadCTTDataGrid();
+        //}
 
         /// <summary>
         /// Reads a CS2 demo file and collects players until both teams (team 2 and 3) have 5 players each.
@@ -764,7 +764,7 @@ namespace FaceitDemoVoiceCalc
                     if (_sourceHash.HashesAreEqual(_destinationHash)) // Hash are the same, move was ok 
                     {
                         tb_demoFilePath.Text = movedFullFilePath;
-                        ReadDemoFile(movedFullFilePath);
+                        ReadDemoFile2(movedFullFilePath);
                         MessageBox.Show("File was moved successfully.",
                             "All fine",
                             MessageBoxButtons.OK,
