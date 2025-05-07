@@ -397,7 +397,7 @@
             MaximizeBox = false;
             Name = "MainForm";
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "Faceit Demo Voice Calculator v0.8";
+            Text = "Faceit Demo Voice Calculator v0.9";
             menuStrip1.ResumeLayout(false);
             menuStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)dGv_CT).EndInit();

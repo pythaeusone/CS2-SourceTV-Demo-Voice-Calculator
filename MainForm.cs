@@ -24,22 +24,22 @@ namespace FaceitDemoVoiceCalc
         // =====================
         // Parser and snapshots
         // =====================
-        private CsDemoParser? demo = null; // An object is created to process the read DemoStream and read out the desired information.
-        private PlayerSnapshot[]? snapshot = null; // The information collected from the demo is saved in an array.
+        private CsDemoParser? _demo = null; // An object is created to process the read DemoStream and read out the desired information.
+        private PlayerSnapshot[]? _snapshot = null; // The information collected from the demo is saved in an array.
 
 
         // ============================================================================================
         // Bitfields for voice indices, the calculated bitfield numbers are stored in these variables
         // ============================================================================================
-        private int teamAP1, teamAP2, teamAP3, teamAP4, teamAP5;
-        private int teamBP1, teamBP2, teamBP3, teamBP4, teamBP5;
+        private int _teamAP1, _teamAP2, _teamAP3, _teamAP4, _teamAP5;
+        private int _teamBP1, _teamBP2, _teamBP3, _teamBP4, _teamBP5;
 
 
         // ====================================================================================================
         // Checkbox groups for easy toggling. All checkboxes are grouped into a list to keep the code cleaner.
         // =====================================================================================================
-        private readonly List<CheckBox> teamACheckboxes = new();
-        private readonly List<CheckBox> teamBCheckboxes = new();
+        private readonly List<CheckBox> _teamACheckboxes = new();
+        private readonly List<CheckBox> _teamBCheckboxes = new();
 
 
         // =====================================================================
@@ -63,8 +63,8 @@ namespace FaceitDemoVoiceCalc
         // ------------------------------------------
         // The hash values before and after the move
         // ------------------------------------------
-        private byte[]? sourceHash = null;
-        private byte[]? destinationHash = null;
+        private byte[]? _sourceHash = null;
+        private byte[]? _destinationHash = null;
 
 
         // =================
@@ -139,7 +139,7 @@ namespace FaceitDemoVoiceCalc
                     lbl_ReadInfo.ForeColor = Color.Red;
                     lbl_ReadInfo.Text = "Read demo file";
 
-                    ReadDemoFile(file);
+                    ReadDemoFile2(file);
                     return;
                 }
             }
@@ -165,18 +165,18 @@ namespace FaceitDemoVoiceCalc
         private async void ReadDemoFile(string demoPath)
         {
             // Initialize parser and clear previous snapshot
-            demo = new CsDemoParser();
-            snapshot = null;
+            _demo = new CsDemoParser();
+            _snapshot = null;
 
             // TaskCompletionSource to signal when we've got enough players
             var tcs = new TaskCompletionSource<bool>();
             bool roundFallbackDone = false;
 
             // Listen for fully-connected players and collect them.
-            demo.Source1GameEvents.PlayerConnectFull += (Source1PlayerConnectFullEvent e) =>
+            _demo.Source1GameEvents.PlayerConnectFull += (Source1PlayerConnectFullEvent e) =>
             {
                 // Build a distinct list of current players using PlayerInfo.Name
-                var list = demo.Players
+                var list = _demo.Players
                     .Where(p => !string.IsNullOrWhiteSpace(p.PlayerInfo.Name))
                     .Select(p => new PlayerSnapshot
                     {
@@ -191,20 +191,20 @@ namespace FaceitDemoVoiceCalc
                 // Once we have 10 or more unique players, set snapshot and signal completion
                 if (list.Length >= 10)
                 {
-                    snapshot = list;
+                    _snapshot = list;
                     tcs.TrySetResult(true);
                 }
             };
 
             // Fallback at first RoundStart: capture any players known so far by PlayerName
-            demo.Source1GameEvents.RoundStart += (Source1RoundStartEvent e) =>
+            _demo.Source1GameEvents.RoundStart += (Source1RoundStartEvent e) =>
             {
                 if (roundFallbackDone)
                     return; // only run fallback once
 
                 roundFallbackDone = true;
 
-                var list = demo.Players
+                var list = _demo.Players
                     .Where(p => !string.IsNullOrWhiteSpace(p.PlayerName))
                     .Select(p => new PlayerSnapshot
                     {
@@ -219,7 +219,7 @@ namespace FaceitDemoVoiceCalc
                 // If any players were found at this stage, treat that as a completion
                 if (list.Length > 0)
                 {
-                    snapshot = list;
+                    _snapshot = list;
                     tcs.TrySetResult(true);
                 }
             };
@@ -232,7 +232,7 @@ namespace FaceitDemoVoiceCalc
                     FileMode.Open, FileAccess.Read, FileShare.Read,
                     bufferSize: 4096 * 1024);
 
-                var reader = DemoFileReader.Create(demo, stream);
+                var reader = DemoFileReader.Create(_demo, stream);
                 var readTask = reader.ReadAllAsync().AsTask();
 
                 // Wait until either:
@@ -251,14 +251,14 @@ namespace FaceitDemoVoiceCalc
             finally
             {
                 // Detach event handlers to prevent memory leaks or duplicate handling
-                demo.Source1GameEvents.PlayerConnectFull -= null!;
-                demo.Source1GameEvents.RoundStart -= null!;
+                _demo.Source1GameEvents.PlayerConnectFull -= null!;
+                _demo.Source1GameEvents.RoundStart -= null!;
             }
 
             // Final fallback: if still fewer than 10, grab everyone present in demo.Players
-            if (snapshot == null || snapshot.Length < 10)
+            if (_snapshot == null || _snapshot.Length < 10)
             {
-                snapshot = demo.Players
+                _snapshot = _demo.Players
                     .Where(p => p.PlayerInfo != null)
                     .Select(p => new PlayerSnapshot
                     {
@@ -275,6 +275,88 @@ namespace FaceitDemoVoiceCalc
             }
 
             // Populate the grid using the captured snapshot
+            LoadCTTDataGrid();
+        }
+
+        /// <summary>
+        /// Reads a CS2 demo file and collects players until both teams (team 2 and 3) have 5 players each.
+        /// This function is for testing the read function of Pro Matches
+        /// </summary>
+        /// <param name="demoPath">Pfad zur .dem-Datei.</param>
+        private async void ReadDemoFile2(string demoPath)
+        {
+            // Initialisierung
+            _demo = new CsDemoParser();
+            _snapshot = null;
+            var tcs = new TaskCompletionSource<bool>();
+            bool done = false;
+            const int neededPerTeam = 5;
+            var collected = new List<PlayerSnapshot>();
+
+            // RoundStart event for player registration
+            _demo.Source1GameEvents.RoundStart += (Source1RoundStartEvent e) =>
+            {
+                if (done) return;
+
+                foreach (var p in _demo.Players)
+                {
+                    if (string.IsNullOrWhiteSpace(p.PlayerName))
+                        continue;
+
+                    int team = (int)p.Team.TeamNum;
+                    if (team != 2 && team != 3)
+                        continue;
+
+                    // Check whether the player has already been recorded (UserId +1 for 1-based index)
+                    if (collected.Any(x => x.UserId == p.PlayerInfo.Userid + 1))
+                        continue;
+
+                    // Add players if team is not yet full
+                    if (collected.Count(x => x.TeamNumber == team) < neededPerTeam)
+                    {
+                        collected.Add(new PlayerSnapshot
+                        {
+                            UserId = p.PlayerInfo.Userid + 1,
+                            PlayerName = p.PlayerName!,
+                            TeamNumber = team,
+                            TeamName = p.Team.ClanTeamname
+                        });
+                    }
+                }
+
+                // Check whether both teams are complete
+                bool teamsComplete = collected.Count(x => x.TeamNumber == 2) >= neededPerTeam &&
+                                     collected.Count(x => x.TeamNumber == 3) >= neededPerTeam;
+                if (teamsComplete)
+                {
+                    done = true;
+                    _snapshot = collected.ToArray();
+                    tcs.TrySetResult(true);
+                }
+            };
+
+            try
+            {
+                // Read demo
+                using var stream = new FileStream(demoPath, FileMode.Open, FileAccess.Read, FileShare.Read, 4096 * 1024);
+                var reader = DemoFileReader.Create(_demo, stream);
+                var readTask = reader.ReadAllAsync().AsTask();
+
+                // Wait for teams or the end of the demo
+                await Task.WhenAny(readTask, tcs.Task);
+                await readTask; // Process remaining events
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error when reading the demo: {ex.Message}");
+                return;
+            }
+            finally
+            {
+                _demo.Source1GameEvents.RoundStart -= null!;
+            }
+
+            // Update UI
             LoadCTTDataGrid();
         }
 
@@ -304,14 +386,14 @@ namespace FaceitDemoVoiceCalc
         /// </summary>
         private void LoadCTTDataGrid()
         {
-            if (snapshot == null)
+            if (_snapshot == null)
             {
                 MessageBox.Show("Error reading demo file!");
                 return;
             }
 
-            var ctPlayers = snapshot.Where(p => p.TeamNumber == 3).OrderBy(p => p.UserId).ToList(); // Get CT Data from the Snapshot.
-            var tPlayers = snapshot.Where(p => p.TeamNumber == 2).OrderBy(p => p.UserId).ToList();  // Get  T Data from the Snapshot.
+            var ctPlayers = _snapshot.Where(p => p.TeamNumber == 3).OrderBy(p => p.UserId).ToList(); // Get CT Data from the Snapshot.
+            var tPlayers = _snapshot.Where(p => p.TeamNumber == 2).OrderBy(p => p.UserId).ToList();  // Get  T Data from the Snapshot.
 
             dGv_CT.DataSource = CreateDataTable(ctPlayers, out var teamAName);
             dGv_T.DataSource = CreateDataTable(tPlayers, out var teamBName);
@@ -356,8 +438,8 @@ namespace FaceitDemoVoiceCalc
         /// </summary>
         private void InitializeCheckboxGroup()
         {
-            teamACheckboxes.AddRange(new[] { cb_TeamAP1, cb_TeamAP2, cb_TeamAP3, cb_TeamAP4, cb_TeamAP5 });
-            teamBCheckboxes.AddRange(new[] { cb_TeamBP1, cb_TeamBP2, cb_TeamBP3, cb_TeamBP4, cb_TeamBP5 });
+            _teamACheckboxes.AddRange(new[] { cb_TeamAP1, cb_TeamAP2, cb_TeamAP3, cb_TeamAP4, cb_TeamAP5 });
+            _teamBCheckboxes.AddRange(new[] { cb_TeamBP1, cb_TeamBP2, cb_TeamBP3, cb_TeamBP4, cb_TeamBP5 });
         }
 
 
@@ -370,10 +452,10 @@ namespace FaceitDemoVoiceCalc
         private void InitializeEventHandlers()
         {
             // Team A (CT) individual checkboxes
-            for (int i = 0; i < teamACheckboxes.Count; i++)
+            for (int i = 0; i < _teamACheckboxes.Count; i++)
             {
                 int index = i; // capture for closure
-                teamACheckboxes[i].CheckedChanged += (s, e) =>
+                _teamACheckboxes[i].CheckedChanged += (s, e) =>
                 {
                     // 1) Update the bitfield for this player
                     UpdateBitField(
@@ -382,22 +464,22 @@ namespace FaceitDemoVoiceCalc
                         ref GetTeamAFieldByIndex(index)
                     );
                     // 2) Synchronize the "Select All Team A" checkbox
-                    SyncSelectAllCheckbox(teamACheckboxes, cb_AllTeamA);
+                    SyncSelectAllCheckbox(_teamACheckboxes, cb_AllTeamA);
                 };
             }
 
             // Team B (T) individual checkboxes
-            for (int i = 0; i < teamBCheckboxes.Count; i++)
+            for (int i = 0; i < _teamBCheckboxes.Count; i++)
             {
                 int index = i;
-                teamBCheckboxes[i].CheckedChanged += (s, e) =>
+                _teamBCheckboxes[i].CheckedChanged += (s, e) =>
                 {
                     UpdateBitField(
                         (CheckBox)s,
                         dGv_T.Rows[index],
                         ref GetTeamBFieldByIndex(index)
                     );
-                    SyncSelectAllCheckbox(teamBCheckboxes, cb_AllTeamB);
+                    SyncSelectAllCheckbox(_teamBCheckboxes, cb_AllTeamB);
                 };
             }
 
@@ -428,7 +510,7 @@ namespace FaceitDemoVoiceCalc
         private void CB_AllTeamA_CheckStateChanged(object sender, EventArgs e)
         {
             if (_isSyncingSelectAll) return;
-            ToggleCheckboxes(teamACheckboxes, cb_AllTeamA.Checked);
+            ToggleCheckboxes(_teamACheckboxes, cb_AllTeamA.Checked);
         }
 
 
@@ -439,7 +521,7 @@ namespace FaceitDemoVoiceCalc
         private void CB_AllTeamB_CheckStateChanged(object sender, EventArgs e)
         {
             if (_isSyncingSelectAll) return;
-            ToggleCheckboxes(teamBCheckboxes, cb_AllTeamB.Checked);
+            ToggleCheckboxes(_teamBCheckboxes, cb_AllTeamB.Checked);
         }
 
 
@@ -474,11 +556,11 @@ namespace FaceitDemoVoiceCalc
         {
             switch (index)
             {
-                case 0: return ref teamAP1;
-                case 1: return ref teamAP2;
-                case 2: return ref teamAP3;
-                case 3: return ref teamAP4;
-                case 4: return ref teamAP5;
+                case 0: return ref _teamAP1;
+                case 1: return ref _teamAP2;
+                case 2: return ref _teamAP3;
+                case 3: return ref _teamAP4;
+                case 4: return ref _teamAP5;
                 default: throw new IndexOutOfRangeException(nameof(index));
             }
         }
@@ -496,11 +578,11 @@ namespace FaceitDemoVoiceCalc
         {
             switch (index)
             {
-                case 0: return ref teamBP1;
-                case 1: return ref teamBP2;
-                case 2: return ref teamBP3;
-                case 3: return ref teamBP4;
-                case 4: return ref teamBP5;
+                case 0: return ref _teamBP1;
+                case 1: return ref _teamBP2;
+                case 2: return ref _teamBP3;
+                case 3: return ref _teamBP4;
+                case 4: return ref _teamBP5;
                 default: throw new IndexOutOfRangeException(nameof(index));
             }
         }
@@ -542,8 +624,8 @@ namespace FaceitDemoVoiceCalc
         /// </summary>
         private void ResetAll()
         {
-            ResetCheckboxes(teamACheckboxes);
-            ResetCheckboxes(teamBCheckboxes);
+            ResetCheckboxes(_teamACheckboxes);
+            ResetCheckboxes(_teamBCheckboxes);
             ResetCheckboxes(new List<CheckBox> { cb_AllTeamA, cb_AllTeamB });
 
             tb_ConsoleCommand.Text =
@@ -596,11 +678,11 @@ namespace FaceitDemoVoiceCalc
                 throw new ArgumentException("Invalid spec ID in the cell.");
             }
 
-            if (specPlayerId < 4 || specPlayerId > 13)
+            if (specPlayerId < 1 || specPlayerId > 13)
             {
                 throw new ArgumentOutOfRangeException(
                     nameof(specPlayerId),
-                    "Spec-ID must be between 4 and 13.");
+                    "Spec-ID must be between 1 and 13.");
             }
 
             return 1 << (specPlayerId - 1);
@@ -612,8 +694,8 @@ namespace FaceitDemoVoiceCalc
         /// </summary>
         public void ChangeConsoleCommand()
         {
-            int voiceBitField = teamAP1 + teamAP2 + teamAP3 + teamAP4 + teamAP5
-                               + teamBP1 + teamBP2 + teamBP3 + teamBP4 + teamBP5;
+            int voiceBitField = _teamAP1 + _teamAP2 + _teamAP3 + _teamAP4 + _teamAP5
+                               + _teamBP1 + _teamBP2 + _teamBP3 + _teamBP4 + _teamBP5;
 
             tb_ConsoleCommand.Text =
                 $"tv_listen_voice_indices {voiceBitField}; tv_listen_voice_indices_h {voiceBitField}";
@@ -629,7 +711,7 @@ namespace FaceitDemoVoiceCalc
         {
             string? movedFullFilePath = null;
             string? sourceFile = null;
-            sourceHash = null; destinationHash = null;
+            _sourceHash = null; _destinationHash = null;
 
             // Ensure we have a valid demo folder path (prompt if necessary)
             if (string.IsNullOrWhiteSpace(_csDemoFolderPath) || !Directory.Exists(_csDemoFolderPath))
@@ -658,7 +740,7 @@ namespace FaceitDemoVoiceCalc
                     try
                     {
                         // Get Hash from Source
-                        sourceHash = sourceFile.ComputeFileHash();
+                        _sourceHash = sourceFile.ComputeFileHash();
                         // Move and rename; returns new full path or null
                         movedFullFilePath = sourceFile.MoveAndRenameFile(_csDemoFolderPath);
                     }
@@ -674,12 +756,12 @@ namespace FaceitDemoVoiceCalc
             if (!string.IsNullOrWhiteSpace(movedFullFilePath))
             {
                 // Get destination Hash
-                destinationHash = movedFullFilePath.ComputeFileHash();
+                _destinationHash = movedFullFilePath.ComputeFileHash();
                 // Hash should not be null
-                if (sourceHash != null && destinationHash != null)
+                if (_sourceHash != null && _destinationHash != null)
                 {
 
-                    if (sourceHash.HashesAreEqual(destinationHash)) // Hash are the same, move was ok 
+                    if (_sourceHash.HashesAreEqual(_destinationHash)) // Hash are the same, move was ok 
                     {
                         tb_demoFilePath.Text = movedFullFilePath;
                         ReadDemoFile(movedFullFilePath);
