@@ -156,6 +156,35 @@ namespace FaceitDemoVoiceCalc
 
 
         /// <summary>
+        /// Calculates the SHA-256 hash of a file and returns the result as byte[].
+        /// </summary>
+        public static byte[] ComputeFileHash(this string path)
+        {
+            using (var sha256 = SHA256.Create())
+            using (var stream = File.OpenRead(path))
+            {
+                return sha256.ComputeHash(stream);
+            }
+        }
+
+
+        /// <summary>
+        /// Compares two hash arrays at byte level.
+        /// </summary>
+        public static bool HashesAreEqual(this byte[] hash1, byte[] hash2)
+        {
+            if (hash1.Length != hash2.Length)
+                return false;
+            for (int i = 0; i < hash1.Length; i++)
+            {
+                if (hash1[i] != hash2[i])
+                    return false;
+            }
+            return true;
+        }
+
+
+        /// <summary>
         /// Checks whether the specified path points to an existing file.
         /// </summary>
         /// <param name="path">The file path to check.</param>
@@ -168,17 +197,17 @@ namespace FaceitDemoVoiceCalc
 
         /// <summary>
         /// Moves the file from its current path into the specified directory,
-        /// prompting the user via an InputBox for a new filename. If the chosen
-        /// name already exists at the destination, the user is prompted again.
-        /// Returns true if the move-and-rename operation succeeded; otherwise, false.
+        /// prompting the user via an InputBox for a new filename (without extension).
+        /// The .dem extension is automatically added. If the chosen name already exists
+        /// at the destination, the user is prompted again.
+        /// Returns the full new file path if successful; otherwise, null.
         /// </summary>
         /// <param name="sourcePath">The full path of the file to move and rename.</param>
         /// <param name="destinationDirectory">The directory to which the file will be moved.</param>
         /// <returns>
-        /// True if the file was successfully moved and renamed; false if canceled,
-        /// if an error occurred, or if the chosen name was left empty.
+        /// The full destination path of the renamed file if successful; otherwise, null.
         /// </returns>
-        public static bool MoveAndRenameFile(this string sourcePath, string destinationDirectory)
+        public static string MoveAndRenameFile(this string sourcePath, string destinationDirectory)
         {
             // Verify that the source file exists
             if (!File.Exists(sourcePath))
@@ -189,7 +218,7 @@ namespace FaceitDemoVoiceCalc
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error
                 );
-                return false;
+                return null;
             }
 
             // Ensure the destination directory exists (create if necessary)
@@ -207,26 +236,28 @@ namespace FaceitDemoVoiceCalc
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Error
                     );
-                    return false;
+                    return null;
                 }
             }
 
-            // Use the original filename as the default suggestion
-            string defaultName = Path.GetFileName(sourcePath);
+            // Use the original filename (without extension) as the default suggestion
+            string defaultName = Path.GetFileNameWithoutExtension(sourcePath);
 
             while (true)
             {
-                // Prompt the user for a new filename (including extension)
-                // Correct positional call: Prompt, Title, DefaultResponse
-                string newFileName = Interaction.InputBox(
-                    "Please enter the new filename (including extension):",
+                // Prompt the user for a new filename (without extension)
+                string userInput = Microsoft.VisualBasic.Interaction.InputBox(
+                    "Please enter the new filename (without extension):",
                     "New Filename",
                     defaultName
                 );
 
                 // If the user cancels or submits an empty name, abort
-                if (string.IsNullOrWhiteSpace(newFileName))
-                    return false;
+                if (string.IsNullOrWhiteSpace(userInput))
+                    return null;
+
+                // Ensure the filename ends with .dem
+                string newFileName = Path.ChangeExtension(userInput, ".dem");
 
                 // Compose the full destination path
                 string destinationPath = Path.Combine(destinationDirectory, newFileName);
@@ -240,14 +271,14 @@ namespace FaceitDemoVoiceCalc
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Warning
                     );
-                    continue;  // prompt again
+                    continue;
                 }
 
-                // Attempt to move (and rename) the file
+                // Attempt to move and rename the file
                 try
                 {
                     File.Move(sourcePath, destinationPath);
-                    return true;
+                    return destinationPath;
                 }
                 catch (Exception ex)
                 {
@@ -257,9 +288,10 @@ namespace FaceitDemoVoiceCalc
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Error
                     );
-                    return false;
+                    return null;
                 }
             }
         }
+
     }
 }

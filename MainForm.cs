@@ -54,6 +54,19 @@ namespace FaceitDemoVoiceCalc
         private bool _isSyncingSelectAll = false;
 
 
+        // ---------------------
+        // CS2 Demo Folder Path
+        // ---------------------
+        private string? _csDemoFolderPath = null;
+
+
+        // ------------------------------------------
+        // The hash values before and after the move
+        // ------------------------------------------
+        private byte[]? sourceHash = null;
+        private byte[]? destinationHash = null;
+
+
         // =================
         // Form constructor
         // =================
@@ -85,13 +98,13 @@ namespace FaceitDemoVoiceCalc
         // =======================
         // Menubar event handlers
         // =======================
-        private void howToUseToolStripMenuItem_Click(object sender, EventArgs e)
+        private void HowToUseToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // Show usage instructions
             OpenForm<HowTo>();
         }
 
-        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        private void AboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // Show application information
             OpenForm<About>();
@@ -101,7 +114,7 @@ namespace FaceitDemoVoiceCalc
         // ====================================
         // Drag & drop for demo file selection
         // ====================================
-        private void tb_demoFilePath_DragEnter(object sender, DragEventArgs e)
+        private void TB_demoFilePath_DragEnter(object sender, DragEventArgs e)
         {
             // Enable copy effect if file drop
             e.Effect = e.Data.GetDataPresent(DataFormats.FileDrop)
@@ -109,7 +122,7 @@ namespace FaceitDemoVoiceCalc
                 : DragDropEffects.None;
         }
 
-        private void tb_demoFilePath_DragDrop(object sender, DragEventArgs e)
+        private void TB_demoFilePath_DragDrop(object sender, DragEventArgs e)
         {
             // Ensure dropped data contains file paths
             if (!e.Data.GetDataPresent(DataFormats.FileDrop)) return;
@@ -126,7 +139,7 @@ namespace FaceitDemoVoiceCalc
                     lbl_ReadInfo.ForeColor = Color.Red;
                     lbl_ReadInfo.Text = "Read demo file";
 
-                    readDemoFile(file);
+                    ReadDemoFile(file);
                     return;
                 }
             }
@@ -149,7 +162,7 @@ namespace FaceitDemoVoiceCalc
         /// pass over demo.Players before loading the UI grid.
         /// </summary>
         /// <param name="demoPath">Path to the .dem file to read.</param>
-        private async void readDemoFile(string demoPath)
+        private async void ReadDemoFile(string demoPath)
         {
             // Initialize parser and clear previous snapshot
             demo = new CsDemoParser();
@@ -262,7 +275,7 @@ namespace FaceitDemoVoiceCalc
             }
 
             // Populate the grid using the captured snapshot
-            loadCTTDataGrid();
+            LoadCTTDataGrid();
         }
 
 
@@ -289,7 +302,7 @@ namespace FaceitDemoVoiceCalc
         /// <summary>
         /// Populates the CT and T grids with player data from the snapshot.
         /// </summary>
-        private void loadCTTDataGrid()
+        private void LoadCTTDataGrid()
         {
             if (snapshot == null)
             {
@@ -312,8 +325,9 @@ namespace FaceitDemoVoiceCalc
             lbl_ReadInfo.ForeColor = Color.DarkGreen;
             lbl_ReadInfo.Text = "File loaded";
             btn_CopyToClipboard.Enabled = true;
+            btn_MoveToCSFolder.Enabled = true;
 
-            resetAll();
+            ResetAll();
         }
 
 
@@ -388,8 +402,8 @@ namespace FaceitDemoVoiceCalc
             }
 
             // Bulk-select handlers (named methods allow unsubscription if needed)
-            cb_AllTeamA.CheckStateChanged += cb_AllTeamA_CheckStateChanged;
-            cb_AllTeamB.CheckStateChanged += cb_AllTeamB_CheckStateChanged;
+            cb_AllTeamA.CheckStateChanged += CB_AllTeamA_CheckStateChanged;
+            cb_AllTeamB.CheckStateChanged += CB_AllTeamB_CheckStateChanged;
 
             // Copy-to-Clipboard button
             btn_CopyToClipboard.Click += (s, e) =>
@@ -398,6 +412,12 @@ namespace FaceitDemoVoiceCalc
                 ShowCopyTooltip();
                 this.ActiveControl = null; // Remove focus to avoid accidental re-triggers
             };
+
+            // Move to CS2 Folder button
+            btn_MoveToCSFolder.Click += (s, e) =>
+            {
+                MoveToCSFolder();
+            };
         }
 
 
@@ -405,7 +425,7 @@ namespace FaceitDemoVoiceCalc
         /// Named handler for "Select All Team A" – toggles all Team A checkboxes.
         /// Guarded by _isSyncingSelectAll to avoid loops when SyncSelectAllCheckbox sets Checked.
         /// </summary>
-        private void cb_AllTeamA_CheckStateChanged(object sender, EventArgs e)
+        private void CB_AllTeamA_CheckStateChanged(object sender, EventArgs e)
         {
             if (_isSyncingSelectAll) return;
             ToggleCheckboxes(teamACheckboxes, cb_AllTeamA.Checked);
@@ -416,7 +436,7 @@ namespace FaceitDemoVoiceCalc
         /// Named handler for "Select All Team B" – toggles all Team B checkboxes.
         /// Guarded by _isSyncingSelectAll to avoid loops when SyncSelectAllCheckbox sets Checked.
         /// </summary>
-        private void cb_AllTeamB_CheckStateChanged(object sender, EventArgs e)
+        private void CB_AllTeamB_CheckStateChanged(object sender, EventArgs e)
         {
             if (_isSyncingSelectAll) return;
             ToggleCheckboxes(teamBCheckboxes, cb_AllTeamB.Checked);
@@ -520,7 +540,7 @@ namespace FaceitDemoVoiceCalc
         /// <summary>
         /// Resets all checkboxes and console prompt after loading a new file.
         /// </summary>
-        private void resetAll()
+        private void ResetAll()
         {
             ResetCheckboxes(teamACheckboxes);
             ResetCheckboxes(teamBCheckboxes);
@@ -559,17 +579,17 @@ namespace FaceitDemoVoiceCalc
             }
 
             field = checkbox.Checked
-                ? getPlayBitField(row.Cells[0].Value)
+                ? GetPlayBitField(row.Cells[0].Value)
                 : 0;
 
-            changeConsoleCommand();
+            ChangeConsoleCommand();
         }
 
 
         /// <summary>
         /// Computes the bitfield for a given spec ID (must be 4..13).
         /// </summary>
-        private int getPlayBitField(object cellValue)
+        private int GetPlayBitField(object cellValue)
         {
             if (cellValue == null || !int.TryParse(cellValue.ToString(), out int specPlayerId))
             {
@@ -590,7 +610,7 @@ namespace FaceitDemoVoiceCalc
         /// <summary>
         /// Updates the console command textbox based on current combined bitfields.
         /// </summary>
-        public void changeConsoleCommand()
+        public void ChangeConsoleCommand()
         {
             int voiceBitField = teamAP1 + teamAP2 + teamAP3 + teamAP4 + teamAP5
                                + teamBP1 + teamBP2 + teamBP3 + teamBP4 + teamBP5;
@@ -598,5 +618,99 @@ namespace FaceitDemoVoiceCalc
             tb_ConsoleCommand.Text =
                 $"tv_listen_voice_indices {voiceBitField}; tv_listen_voice_indices_h {voiceBitField}";
         }
+
+
+        /// <summary>
+        /// Ensures a CS2 demo folder is configured, then moves and renames
+        /// the file specified in the textbox into that folder. If successful,
+        /// updates the textbox and reloads the demo file.
+        /// </summary>
+        private void MoveToCSFolder()
+        {
+            string? movedFullFilePath = null;
+            string? sourceFile = null;
+            sourceHash = null; destinationHash = null;
+
+            // Ensure we have a valid demo folder path (prompt if necessary)
+            if (string.IsNullOrWhiteSpace(_csDemoFolderPath) || !Directory.Exists(_csDemoFolderPath))
+            {
+                // Fetches the path from the config
+                _csDemoFolderPath = CS2PathConfig.GetPath();
+
+                // If the path is invalid or does not exist
+                if (!Directory.Exists(_csDemoFolderPath))
+                {
+                    // Calls the path config function then
+                    CS2PathConfig.EnsurePathConfigured();
+                    // Fetches the path from the config again
+                    _csDemoFolderPath = CS2PathConfig.GetPath();
+                }
+            }
+
+            // If folder exists, attempt move/rename
+            if (!string.IsNullOrWhiteSpace(_csDemoFolderPath) && Directory.Exists(_csDemoFolderPath))
+            {
+                sourceFile = tb_demoFilePath.Text;
+
+                // Only proceed if user provided a non-empty path
+                if (!string.IsNullOrWhiteSpace(sourceFile))
+                {
+                    try
+                    {
+                        // Get Hash from Source
+                        sourceHash = sourceFile.ComputeFileHash();
+                        // Move and rename; returns new full path or null
+                        movedFullFilePath = sourceFile.MoveAndRenameFile(_csDemoFolderPath);
+                    }
+                    catch
+                    {
+                        // Optional: log exception
+                        movedFullFilePath = null;
+                    }
+                }
+            }
+
+            // If move succeeded, update UI and reload demo
+            if (!string.IsNullOrWhiteSpace(movedFullFilePath))
+            {
+                // Get destination Hash
+                destinationHash = movedFullFilePath.ComputeFileHash();
+                // Hash should not be null
+                if (sourceHash != null && destinationHash != null)
+                {
+
+                    if (sourceHash.HashesAreEqual(destinationHash)) // Hash are the same, move was ok 
+                    {
+                        tb_demoFilePath.Text = movedFullFilePath;
+                        ReadDemoFile(movedFullFilePath);
+                        MessageBox.Show("File was moved successfully.",
+                            "All fine",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Information
+                            );
+                    }
+                    else // File move has gone wrong
+                    {
+                        MessageBox.Show(
+                        "Error while moving the file!",
+                        "Error",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error
+                        );
+                    }
+                }
+            }
+            else
+            {
+                // Operation was canceled or failed without exception
+                MessageBox.Show(
+                    "File move was canceled or failed.",
+                    "Operation Canceled",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information
+                );
+            }
+        }
+
     }
 }

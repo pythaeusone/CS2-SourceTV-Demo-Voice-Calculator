@@ -77,14 +77,14 @@
             howToUseToolStripMenuItem.Name = "howToUseToolStripMenuItem";
             howToUseToolStripMenuItem.Size = new Size(79, 20);
             howToUseToolStripMenuItem.Text = "How to use";
-            howToUseToolStripMenuItem.Click += howToUseToolStripMenuItem_Click;
+            howToUseToolStripMenuItem.Click += HowToUseToolStripMenuItem_Click;
             // 
             // aboutToolStripMenuItem
             // 
             aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
             aboutToolStripMenuItem.Size = new Size(52, 20);
             aboutToolStripMenuItem.Text = "About";
-            aboutToolStripMenuItem.Click += aboutToolStripMenuItem_Click;
+            aboutToolStripMenuItem.Click += AboutToolStripMenuItem_Click;
             // 
             // lbl_demoFilePath
             // 
@@ -104,8 +104,8 @@
             tb_demoFilePath.Size = new Size(634, 23);
             tb_demoFilePath.TabIndex = 2;
             tb_demoFilePath.Text = "drop demo File here ...";
-            tb_demoFilePath.DragDrop += tb_demoFilePath_DragDrop;
-            tb_demoFilePath.DragEnter += tb_demoFilePath_DragEnter;
+            tb_demoFilePath.DragDrop += TB_demoFilePath_DragDrop;
+            tb_demoFilePath.DragEnter += TB_demoFilePath_DragEnter;
             // 
             // dGv_CT
             // 
@@ -301,7 +301,7 @@
             cb_AllTeamA.TabIndex = 21;
             cb_AllTeamA.Text = "Select All";
             cb_AllTeamA.UseVisualStyleBackColor = true;
-            cb_AllTeamA.CheckStateChanged += cb_AllTeamA_CheckStateChanged;
+            cb_AllTeamA.CheckStateChanged += CB_AllTeamA_CheckStateChanged;
             // 
             // cb_AllTeamB
             // 
@@ -315,7 +315,7 @@
             cb_AllTeamB.TabIndex = 22;
             cb_AllTeamB.Text = "Select All";
             cb_AllTeamB.UseVisualStyleBackColor = true;
-            cb_AllTeamB.CheckStateChanged += cb_AllTeamB_CheckStateChanged;
+            cb_AllTeamB.CheckStateChanged += CB_AllTeamB_CheckStateChanged;
             // 
             // lbl_ConsolCommand
             // 
@@ -397,7 +397,7 @@
             MaximizeBox = false;
             Name = "MainForm";
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "Faceit Demo Voice Calculator v0.7";
+            Text = "Faceit Demo Voice Calculator v0.8";
             menuStrip1.ResumeLayout(false);
             menuStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)dGv_CT).EndInit();
