@@ -135,6 +135,14 @@ namespace FaceitDemoVoiceCalc
                 if (Path.GetExtension(file)
                         .Equals(".dem", StringComparison.OrdinalIgnoreCase))
                 {
+                    // Clear All
+                    btn_MoveToCSFolder.Enabled = false;
+                    btn_CopyToClipboard.Enabled = false;
+                    DisableAll();
+                    tb_ConsoleCommand.Text =
+                        "select one or more players you would like to hear in the demo ..";
+
+                    // Show reading
                     tb_demoFilePath.Text = file;
                     lbl_ReadInfo.ForeColor = Color.Red;
                     lbl_ReadInfo.Text = "Read demo file";
@@ -627,9 +635,17 @@ namespace FaceitDemoVoiceCalc
             ResetCheckboxes(_teamACheckboxes);
             ResetCheckboxes(_teamBCheckboxes);
             ResetCheckboxes(new List<CheckBox> { cb_AllTeamA, cb_AllTeamB });
+        }
 
-            tb_ConsoleCommand.Text =
-                "select one or more players you would like to hear in the demo ..";
+
+        /// <summary>
+        /// Disable all checkboxes and console prompt after loading a new file.
+        /// </summary>
+        private void DisableAll()
+        {
+            DisableCheckboxes(_teamACheckboxes);
+            DisableCheckboxes(_teamBCheckboxes);
+            DisableCheckboxes(new List<CheckBox> { cb_AllTeamA, cb_AllTeamB });
         }
 
 
@@ -641,6 +657,19 @@ namespace FaceitDemoVoiceCalc
             foreach (var cb in checkboxes)
             {
                 cb.Enabled = true;
+                cb.Checked = false;
+            }
+        }
+
+
+        /// <summary>
+        /// Generic method to clear and disable checkboxes in the provided list.
+        /// </summary>
+        private void DisableCheckboxes(List<CheckBox> checkboxes)
+        {
+            foreach (var cb in checkboxes)
+            {
+                cb.Enabled = false;
                 cb.Checked = false;
             }
         }
@@ -793,6 +822,5 @@ namespace FaceitDemoVoiceCalc
                 );
             }
         }
-
     }
 }
