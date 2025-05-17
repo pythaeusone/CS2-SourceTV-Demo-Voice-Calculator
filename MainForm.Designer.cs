@@ -32,6 +32,8 @@
             menuStrip1 = new MenuStrip();
             howToUseToolStripMenuItem = new ToolStripMenuItem();
             aboutToolStripMenuItem = new ToolStripMenuItem();
+            settingsToolStripMenuItem = new ToolStripMenuItem();
+            changeDemoFolderPathToolStripMenuItem = new ToolStripMenuItem();
             lbl_demoFilePath = new Label();
             tb_demoFilePath = new TextBox();
             dGv_CT = new DataGridView();
@@ -64,7 +66,7 @@
             // 
             // menuStrip1
             // 
-            menuStrip1.Items.AddRange(new ToolStripItem[] { howToUseToolStripMenuItem, aboutToolStripMenuItem });
+            menuStrip1.Items.AddRange(new ToolStripItem[] { howToUseToolStripMenuItem, aboutToolStripMenuItem, settingsToolStripMenuItem });
             menuStrip1.Location = new Point(0, 0);
             menuStrip1.Name = "menuStrip1";
             menuStrip1.RightToLeft = RightToLeft.No;
@@ -85,6 +87,20 @@
             aboutToolStripMenuItem.Size = new Size(52, 20);
             aboutToolStripMenuItem.Text = "About";
             aboutToolStripMenuItem.Click += AboutToolStripMenuItem_Click;
+            // 
+            // settingsToolStripMenuItem
+            // 
+            settingsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { changeDemoFolderPathToolStripMenuItem });
+            settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
+            settingsToolStripMenuItem.Size = new Size(61, 20);
+            settingsToolStripMenuItem.Text = "Settings";
+            // 
+            // changeDemoFolderPathToolStripMenuItem
+            // 
+            changeDemoFolderPathToolStripMenuItem.Name = "changeDemoFolderPathToolStripMenuItem";
+            changeDemoFolderPathToolStripMenuItem.Size = new Size(211, 22);
+            changeDemoFolderPathToolStripMenuItem.Text = "Change Demo folder path";
+            changeDemoFolderPathToolStripMenuItem.Click += changeDemoFolderPathToolStripMenuItem_Click;
             // 
             // lbl_demoFilePath
             // 
@@ -397,7 +413,7 @@
             MaximizeBox = false;
             Name = "MainForm";
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "Faceit Demo Voice Calculator v0.9";
+            Text = "Faceit Demo Voice Calculator v0.9.1";
             menuStrip1.ResumeLayout(false);
             menuStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)dGv_CT).EndInit();
@@ -436,5 +452,7 @@
         private ToolStripMenuItem aboutToolStripMenuItem;
         private Button btn_CopyToClipboard;
         private Button btn_MoveToCSFolder;
+        private ToolStripMenuItem settingsToolStripMenuItem;
+        private ToolStripMenuItem changeDemoFolderPathToolStripMenuItem;
     }
 }
