@@ -1,4 +1,5 @@
-![grafik](https://github.com/user-attachments/assets/a19843c3-6fb6-4361-9d67-7da8c9b8b9d3)
+![grafik](https://github.com/user-attachments/assets/5b038310-9bd6-496b-9e40-835267fc12b6)
+
 
 
 
