@@ -582,11 +582,11 @@ namespace FaceitDemoVoiceCalc
                 throw new ArgumentException("Invalid spec ID in the cell.");
             }
 
-            if (specPlayerId < 1 || specPlayerId > 13)
+            if (specPlayerId < 1 || specPlayerId > 15)
             {
                 throw new ArgumentOutOfRangeException(
                     nameof(specPlayerId),
-                    "Spec-ID must be between 1 and 13.");
+                    "Spec-ID must be between 1 and 15.");
             }
 
             return 1 << (specPlayerId - 1);
@@ -698,6 +698,12 @@ namespace FaceitDemoVoiceCalc
             }
         }
 
+
+        /// <summary>
+        /// Ensures a CS2 demo folder is configured
+        /// the file specified in the textbox into that folder. If successful,
+        /// updates the textbox and reloads the demo file.
+        /// </summary>
         private void changeDemoFolderPathToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // Calls the path config function then
