@@ -326,22 +326,22 @@ namespace FaceitDemoVoiceCalc
             {
                 Enabled = false, // Acts as a label only
                 Font = new Font(SystemFonts.DefaultFont, FontStyle.Bold),
-                Image = (Image?)resourceManager.GetObject("player_icon")
+                Image = (Image?)resourceManager.GetObject("iconPlayer")
             };
 
             // Menu item for copying SteamID64
             var copySteamId = new ToolStripMenuItem("Copy SteamID64")
             {
-                Image = (Image?)resourceManager.GetObject("steam_icon")
+                Image = (Image?)resourceManager.GetObject("iconSteam")
             };
 
             // Define multiple profile links with their label, URL base, and associated icon from resources
             var profileDefinitions = new (string Label, string UrlPrefix, Image Icon)[]
             {
-                ("Open Steam Profile", _steamProfileLink, (Image)resourceManager.GetObject("steam_icon")),
-                ("Open cswatch.in Profile", _cswatchProfileLink, (Image)resourceManager.GetObject("cswatch_icon")),
-                ("Open leetify.com Profile", _leetifyProfileLink, (Image)resourceManager.GetObject("leetfiy_icon")),
-                ("Open csstats.gg Profile", _csStatsProfileLink, (Image)resourceManager.GetObject("csstats_icon"))
+                ("Open Steam Profile", _steamProfileLink, (Image)resourceManager.GetObject("iconSteam")),
+                ("Open cswatch.in Profile", _cswatchProfileLink, (Image)resourceManager.GetObject("iconCsWatch")),
+                ("Open leetify.com Profile", _leetifyProfileLink, (Image)resourceManager.GetObject("iconLeetify")),
+                ("Open csstats.gg Profile", _csStatsProfileLink, (Image)resourceManager.GetObject("iconCsStats"))
             };
 
             // Create menu items from profile definitions
