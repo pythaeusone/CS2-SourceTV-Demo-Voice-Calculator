@@ -59,6 +59,8 @@
             lbl_ReadInfo = new Label();
             btn_CopyToClipboard = new Button();
             btn_MoveToCSFolder = new Button();
+            comboBox_SteamIDA = new ComboBox();
+            comboBox_SteamIDB = new ComboBox();
             menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dGv_CT).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dGv_T).BeginInit();
@@ -311,7 +313,7 @@
             cb_AllTeamA.AutoSize = true;
             cb_AllTeamA.Enabled = false;
             cb_AllTeamA.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            cb_AllTeamA.Location = new Point(12, 259);
+            cb_AllTeamA.Location = new Point(12, 263);
             cb_AllTeamA.Name = "cb_AllTeamA";
             cb_AllTeamA.Size = new Size(78, 19);
             cb_AllTeamA.TabIndex = 21;
@@ -324,7 +326,7 @@
             cb_AllTeamB.AutoSize = true;
             cb_AllTeamB.Enabled = false;
             cb_AllTeamB.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            cb_AllTeamB.Location = new Point(729, 259);
+            cb_AllTeamB.Location = new Point(730, 263);
             cb_AllTeamB.Name = "cb_AllTeamB";
             cb_AllTeamB.RightToLeft = RightToLeft.Yes;
             cb_AllTeamB.Size = new Size(78, 19);
@@ -376,11 +378,35 @@
             btn_MoveToCSFolder.Text = "Move to CS2";
             btn_MoveToCSFolder.UseVisualStyleBackColor = true;
             // 
+            // comboBox_SteamIDA
+            // 
+            comboBox_SteamIDA.Enabled = false;
+            comboBox_SteamIDA.FormattingEnabled = true;
+            comboBox_SteamIDA.Location = new Point(158, 259);
+            comboBox_SteamIDA.Name = "comboBox_SteamIDA";
+            comboBox_SteamIDA.Size = new Size(200, 23);
+            comboBox_SteamIDA.TabIndex = 27;
+            comboBox_SteamIDA.Text = "Select to copy SteamID64";
+            comboBox_SteamIDA.SelectedIndexChanged += comboBox_SteamIDA_SelectedIndexChanged;
+            // 
+            // comboBox_SteamIDB
+            // 
+            comboBox_SteamIDB.Enabled = false;
+            comboBox_SteamIDB.FormattingEnabled = true;
+            comboBox_SteamIDB.Location = new Point(458, 259);
+            comboBox_SteamIDB.Name = "comboBox_SteamIDB";
+            comboBox_SteamIDB.Size = new Size(200, 23);
+            comboBox_SteamIDB.TabIndex = 28;
+            comboBox_SteamIDB.Text = "Select to copy SteamID64";
+            comboBox_SteamIDB.SelectedIndexChanged += comboBox_SteamIDB_SelectedIndexChanged;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(822, 417);
+            Controls.Add(comboBox_SteamIDB);
+            Controls.Add(comboBox_SteamIDA);
             Controls.Add(btn_MoveToCSFolder);
             Controls.Add(btn_CopyToClipboard);
             Controls.Add(lbl_ReadInfo);
@@ -413,7 +439,7 @@
             MaximizeBox = false;
             Name = "MainForm";
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "Faceit Demo Voice Calculator v0.9.2";
+            Text = "Faceit Demo Voice Calculator v0.9.3";
             menuStrip1.ResumeLayout(false);
             menuStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)dGv_CT).EndInit();
@@ -454,5 +480,7 @@
         private Button btn_MoveToCSFolder;
         private ToolStripMenuItem settingsToolStripMenuItem;
         private ToolStripMenuItem changeDemoFolderPathToolStripMenuItem;
+        private ComboBox comboBox_SteamIDA;
+        private ComboBox comboBox_SteamIDB;
     }
 }

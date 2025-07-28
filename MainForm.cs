@@ -1,6 +1,8 @@
 ﻿using DemoFile;
 using DemoFile.Game.Cs;
 using System.Data;
+using static CMsgServerNetworkStats.Types;
+using static System.Net.WebRequestMethods;
 
 namespace FaceitDemoVoiceCalc
 {
@@ -18,6 +20,12 @@ namespace FaceitDemoVoiceCalc
             public string? PlayerName { get; set; }     // PlayerName = Name of the Player in this Game.
             public int TeamNumber { get; set; }         // TeamNumber = 2 = T-Side, 3 = CT-Side
             public string? TeamName { get; set; }       // TeamName = TeamClanName from Faceit team_xxxxx
+            public ulong? PlayerSteamID { get; set; }   // Get the SteamID64 number
+
+            public override string ToString()
+            {
+                return PlayerName ?? "Unknown Player";
+            }
         }
 
 
@@ -65,6 +73,12 @@ namespace FaceitDemoVoiceCalc
         // ------------------------------------------
         private byte[]? _sourceHash = null;
         private byte[]? _destinationHash = null;
+
+
+        // ------------------------------------------
+        // Static Link part to Steam Profiles
+        // ------------------------------------------
+        private static string _steamProfileLink = "http://steamcommunity.com/profiles/";
 
 
         // =================
@@ -136,6 +150,7 @@ namespace FaceitDemoVoiceCalc
                         .Equals(".dem", StringComparison.OrdinalIgnoreCase))
                 {
                     // Clear All
+                    comboBox_SteamIDA.Enabled = false; comboBox_SteamIDB.Enabled = false;
                     btn_MoveToCSFolder.Enabled = false;
                     btn_CopyToClipboard.Enabled = false;
                     DisableAll();
@@ -202,7 +217,8 @@ namespace FaceitDemoVoiceCalc
                             UserId = p.PlayerInfo.Userid + 1,
                             PlayerName = p.PlayerName!,
                             TeamNumber = team,
-                            TeamName = p.Team.ClanTeamname
+                            TeamName = p.Team.ClanTeamname,
+                            PlayerSteamID = p.PlayerInfo.Steamid
                         });
                     }
                 }
@@ -287,10 +303,15 @@ namespace FaceitDemoVoiceCalc
             ConfigureDataGrid(dGv_CT);
             ConfigureDataGrid(dGv_T);
 
+            LoadComboBox(ctPlayers, comboBox_SteamIDA);
+            LoadComboBox(tPlayers, comboBox_SteamIDB);
+
             lbl_ReadInfo.ForeColor = Color.DarkGreen;
             lbl_ReadInfo.Text = "File loaded";
             btn_CopyToClipboard.Enabled = true;
             btn_MoveToCSFolder.Enabled = true;
+            comboBox_SteamIDA.Enabled = true;
+            comboBox_SteamIDB.Enabled = true;
 
             ResetAll();
         }
@@ -313,6 +334,28 @@ namespace FaceitDemoVoiceCalc
             }
 
             return table;
+        }
+
+
+        /// <summary>
+        /// Populates a ComboBox with player data SteamID64.
+        /// </summary>
+        private void LoadComboBox(List<PlayerSnapshot> players, ComboBox cb)
+        {
+            cb.DataSource = null; // empty the DataSource
+            cb.Items.Clear();
+
+            // Add placeholder
+            cb.Items.Add("Select to copy SteamID64");
+
+            // Add players
+            foreach (var player in players)
+            {
+                cb.Items.Add(player);
+            }
+
+            // Set selected index to 0
+            cb.SelectedIndex = 0;
         }
 
 
@@ -521,6 +564,8 @@ namespace FaceitDemoVoiceCalc
             DisableCheckboxes(_teamACheckboxes);
             DisableCheckboxes(_teamBCheckboxes);
             DisableCheckboxes(new List<CheckBox> { cb_AllTeamA, cb_AllTeamB });
+
+
         }
 
 
@@ -710,6 +755,40 @@ namespace FaceitDemoVoiceCalc
             CS2PathConfig.EnsurePathConfigured();
             // Fetches the path from the config again
             _csDemoFolderPath = CS2PathConfig.GetPath();
+        }
+
+        /// <summary>
+        /// Handles the selection change event for the CT team ComboBox.
+        /// If a player is selected (i.e. not the placeholder), their name and SteamID64 are copied & shown in a message box.
+        /// </summary>
+        private void comboBox_SteamIDA_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (comboBox_SteamIDA.SelectedIndex <= 0)
+                return; // return because placeholder Text.
+
+            if (comboBox_SteamIDA.SelectedItem is PlayerSnapshot player)
+            {
+                var fullLink = _steamProfileLink + player.PlayerSteamID;
+                Clipboard.SetText(fullLink);
+                MessageBox.Show($"The SteamID: {player.PlayerSteamID} belonging to player {player.PlayerName} has been successfully generated as a Steam link.");
+            }
+        }
+
+        /// <summary>
+        /// Handles the selection change event for the T team ComboBox.
+        /// If a player is selected (i.e. not the placeholder), their name and SteamID64 are copied & shown in a message box.
+        /// </summary>
+        private void comboBox_SteamIDB_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (comboBox_SteamIDB.SelectedIndex <= 0)
+                return; // return because placeholder Text.
+
+            if (comboBox_SteamIDB.SelectedItem is PlayerSnapshot player)
+            {
+                var fullLink = _steamProfileLink + player.PlayerSteamID;
+                Clipboard.SetText(fullLink);
+                MessageBox.Show($"The SteamID: {player.PlayerSteamID} belonging to player {player.PlayerName} has been successfully generated as a Steam link.");
+            }
         }
     }
 }
