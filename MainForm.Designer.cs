@@ -59,8 +59,6 @@
             lbl_ReadInfo = new Label();
             btn_CopyToClipboard = new Button();
             btn_MoveToCSFolder = new Button();
-            comboBox_SteamIDA = new ComboBox();
-            comboBox_SteamIDB = new ComboBox();
             menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dGv_CT).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dGv_T).BeginInit();
@@ -133,13 +131,14 @@
             dGv_CT.AllowUserToResizeRows = false;
             dGv_CT.BackgroundColor = SystemColors.Control;
             dGv_CT.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dGv_CT.Enabled = false;
             dGv_CT.Location = new Point(33, 103);
             dGv_CT.MultiSelect = false;
             dGv_CT.Name = "dGv_CT";
             dGv_CT.ReadOnly = true;
-            dGv_CT.Size = new Size(325, 150);
+            dGv_CT.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dGv_CT.Size = new Size(325, 147);
             dGv_CT.TabIndex = 3;
+            dGv_CT.MouseDown += dGv_CT_MouseDown;
             // 
             // dGv_T
             // 
@@ -149,13 +148,14 @@
             dGv_T.AllowUserToResizeRows = false;
             dGv_T.BackgroundColor = SystemColors.Control;
             dGv_T.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dGv_T.Enabled = false;
             dGv_T.Location = new Point(458, 103);
             dGv_T.MultiSelect = false;
             dGv_T.Name = "dGv_T";
             dGv_T.ReadOnly = true;
-            dGv_T.Size = new Size(325, 150);
+            dGv_T.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dGv_T.Size = new Size(325, 147);
             dGv_T.TabIndex = 4;
+            dGv_T.MouseDown += dGv_T_MouseDown;
             // 
             // lbl_TeamA
             // 
@@ -201,7 +201,7 @@
             // 
             cb_TeamAP1.AutoSize = true;
             cb_TeamAP1.Enabled = false;
-            cb_TeamAP1.Location = new Point(12, 131);
+            cb_TeamAP1.Location = new Point(12, 129);
             cb_TeamAP1.Name = "cb_TeamAP1";
             cb_TeamAP1.Size = new Size(15, 14);
             cb_TeamAP1.TabIndex = 9;
@@ -211,7 +211,7 @@
             // 
             cb_TeamAP2.AutoSize = true;
             cb_TeamAP2.Enabled = false;
-            cb_TeamAP2.Location = new Point(12, 156);
+            cb_TeamAP2.Location = new Point(12, 154);
             cb_TeamAP2.Name = "cb_TeamAP2";
             cb_TeamAP2.Size = new Size(15, 14);
             cb_TeamAP2.TabIndex = 10;
@@ -221,7 +221,7 @@
             // 
             cb_TeamAP3.AutoSize = true;
             cb_TeamAP3.Enabled = false;
-            cb_TeamAP3.Location = new Point(12, 181);
+            cb_TeamAP3.Location = new Point(12, 179);
             cb_TeamAP3.Name = "cb_TeamAP3";
             cb_TeamAP3.Size = new Size(15, 14);
             cb_TeamAP3.TabIndex = 11;
@@ -231,7 +231,7 @@
             // 
             cb_TeamAP4.AutoSize = true;
             cb_TeamAP4.Enabled = false;
-            cb_TeamAP4.Location = new Point(12, 206);
+            cb_TeamAP4.Location = new Point(12, 204);
             cb_TeamAP4.Name = "cb_TeamAP4";
             cb_TeamAP4.Size = new Size(15, 14);
             cb_TeamAP4.TabIndex = 12;
@@ -241,7 +241,7 @@
             // 
             cb_TeamAP5.AutoSize = true;
             cb_TeamAP5.Enabled = false;
-            cb_TeamAP5.Location = new Point(12, 231);
+            cb_TeamAP5.Location = new Point(12, 229);
             cb_TeamAP5.Name = "cb_TeamAP5";
             cb_TeamAP5.Size = new Size(15, 14);
             cb_TeamAP5.TabIndex = 13;
@@ -251,7 +251,7 @@
             // 
             cb_TeamBP5.AutoSize = true;
             cb_TeamBP5.Enabled = false;
-            cb_TeamBP5.Location = new Point(793, 231);
+            cb_TeamBP5.Location = new Point(793, 229);
             cb_TeamBP5.Name = "cb_TeamBP5";
             cb_TeamBP5.Size = new Size(15, 14);
             cb_TeamBP5.TabIndex = 18;
@@ -261,7 +261,7 @@
             // 
             cb_TeamBP4.AutoSize = true;
             cb_TeamBP4.Enabled = false;
-            cb_TeamBP4.Location = new Point(793, 206);
+            cb_TeamBP4.Location = new Point(793, 204);
             cb_TeamBP4.Name = "cb_TeamBP4";
             cb_TeamBP4.Size = new Size(15, 14);
             cb_TeamBP4.TabIndex = 17;
@@ -271,7 +271,7 @@
             // 
             cb_TeamBP3.AutoSize = true;
             cb_TeamBP3.Enabled = false;
-            cb_TeamBP3.Location = new Point(793, 181);
+            cb_TeamBP3.Location = new Point(793, 179);
             cb_TeamBP3.Name = "cb_TeamBP3";
             cb_TeamBP3.Size = new Size(15, 14);
             cb_TeamBP3.TabIndex = 16;
@@ -281,7 +281,7 @@
             // 
             cb_TeamBP2.AutoSize = true;
             cb_TeamBP2.Enabled = false;
-            cb_TeamBP2.Location = new Point(793, 156);
+            cb_TeamBP2.Location = new Point(793, 154);
             cb_TeamBP2.Name = "cb_TeamBP2";
             cb_TeamBP2.Size = new Size(15, 14);
             cb_TeamBP2.TabIndex = 15;
@@ -291,7 +291,7 @@
             // 
             cb_TeamBP1.AutoSize = true;
             cb_TeamBP1.Enabled = false;
-            cb_TeamBP1.Location = new Point(793, 131);
+            cb_TeamBP1.Location = new Point(793, 129);
             cb_TeamBP1.Name = "cb_TeamBP1";
             cb_TeamBP1.Size = new Size(15, 14);
             cb_TeamBP1.TabIndex = 14;
@@ -313,7 +313,7 @@
             cb_AllTeamA.AutoSize = true;
             cb_AllTeamA.Enabled = false;
             cb_AllTeamA.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            cb_AllTeamA.Location = new Point(12, 263);
+            cb_AllTeamA.Location = new Point(12, 256);
             cb_AllTeamA.Name = "cb_AllTeamA";
             cb_AllTeamA.Size = new Size(78, 19);
             cb_AllTeamA.TabIndex = 21;
@@ -326,7 +326,7 @@
             cb_AllTeamB.AutoSize = true;
             cb_AllTeamB.Enabled = false;
             cb_AllTeamB.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            cb_AllTeamB.Location = new Point(730, 263);
+            cb_AllTeamB.Location = new Point(730, 256);
             cb_AllTeamB.Name = "cb_AllTeamB";
             cb_AllTeamB.RightToLeft = RightToLeft.Yes;
             cb_AllTeamB.Size = new Size(78, 19);
@@ -378,35 +378,11 @@
             btn_MoveToCSFolder.Text = "Move to CS2";
             btn_MoveToCSFolder.UseVisualStyleBackColor = true;
             // 
-            // comboBox_SteamIDA
-            // 
-            comboBox_SteamIDA.Enabled = false;
-            comboBox_SteamIDA.FormattingEnabled = true;
-            comboBox_SteamIDA.Location = new Point(158, 259);
-            comboBox_SteamIDA.Name = "comboBox_SteamIDA";
-            comboBox_SteamIDA.Size = new Size(200, 23);
-            comboBox_SteamIDA.TabIndex = 27;
-            comboBox_SteamIDA.Text = "Select to copy SteamID64";
-            comboBox_SteamIDA.SelectedIndexChanged += comboBox_SteamIDA_SelectedIndexChanged;
-            // 
-            // comboBox_SteamIDB
-            // 
-            comboBox_SteamIDB.Enabled = false;
-            comboBox_SteamIDB.FormattingEnabled = true;
-            comboBox_SteamIDB.Location = new Point(458, 259);
-            comboBox_SteamIDB.Name = "comboBox_SteamIDB";
-            comboBox_SteamIDB.Size = new Size(200, 23);
-            comboBox_SteamIDB.TabIndex = 28;
-            comboBox_SteamIDB.Text = "Select to copy SteamID64";
-            comboBox_SteamIDB.SelectedIndexChanged += comboBox_SteamIDB_SelectedIndexChanged;
-            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(822, 417);
-            Controls.Add(comboBox_SteamIDB);
-            Controls.Add(comboBox_SteamIDA);
             Controls.Add(btn_MoveToCSFolder);
             Controls.Add(btn_CopyToClipboard);
             Controls.Add(lbl_ReadInfo);
@@ -480,7 +456,5 @@
         private Button btn_MoveToCSFolder;
         private ToolStripMenuItem settingsToolStripMenuItem;
         private ToolStripMenuItem changeDemoFolderPathToolStripMenuItem;
-        private ComboBox comboBox_SteamIDA;
-        private ComboBox comboBox_SteamIDB;
     }
 }

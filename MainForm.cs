@@ -1,8 +1,7 @@
 ﻿using DemoFile;
 using DemoFile.Game.Cs;
 using System.Data;
-using static CMsgServerNetworkStats.Types;
-using static System.Net.WebRequestMethods;
+using System.Resources;
 
 namespace FaceitDemoVoiceCalc
 {
@@ -76,9 +75,12 @@ namespace FaceitDemoVoiceCalc
 
 
         // ------------------------------------------
-        // Static Link part to Steam Profiles
+        // Static Links part to Steam Profiles etc.
         // ------------------------------------------
         private static string _steamProfileLink = "http://steamcommunity.com/profiles/";
+        private static string _cswatchProfileLink = "https://cswatch.in/player/";
+        private static string _csStatsProfileLink = "https://csstats.gg/player/";
+        private static string _leetifyProfileLink = "https://leetify.com/app/profile/";
 
 
         // =================
@@ -150,7 +152,6 @@ namespace FaceitDemoVoiceCalc
                         .Equals(".dem", StringComparison.OrdinalIgnoreCase))
                 {
                     // Clear All
-                    comboBox_SteamIDA.Enabled = false; comboBox_SteamIDB.Enabled = false;
                     btn_MoveToCSFolder.Enabled = false;
                     btn_CopyToClipboard.Enabled = false;
                     DisableAll();
@@ -271,12 +272,135 @@ namespace FaceitDemoVoiceCalc
             dgv.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
             dgv.RowHeadersVisible = false;
             dgv.ClearSelection();
+            dgv.EnableHeadersVisualStyles = false; // Prevents Windows default marking
+            dgv.ColumnHeadersDefaultCellStyle.SelectionBackColor = dgv.ColumnHeadersDefaultCellStyle.BackColor;
+            dgv.ColumnHeadersDefaultCellStyle.SelectionForeColor = dgv.ColumnHeadersDefaultCellStyle.ForeColor;
 
             var specIdColumn = dgv.Columns["Spec ID"];
             specIdColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             specIdColumn.Width++;
 
             dgv.Columns["Players"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+
+            // Disable sorting for all columns
+            foreach (DataGridViewColumn column in dgv.Columns)
+            {
+                column.SortMode = DataGridViewColumnSortMode.NotSortable;
+            }
+        }
+
+
+        /// <summary>
+        /// Configures a context menu for the given DataGridView, allowing SteamID actions
+        /// and links to external profile pages. Menu items include icons and are updated
+        /// dynamically based on the right-clicked row.
+        /// </summary>
+        private void ConfigureContextMenu(DataGridView dgv, List<PlayerSnapshot> playerList)
+        {
+            var resourceManager = new ResourceManager(typeof(MainForm));
+
+            // Header label (disabled menu item) for player name
+            var playerHeader = new ToolStripMenuItem("Player")
+            {
+                Enabled = false, // Acts as a label only
+                Font = new Font(SystemFonts.DefaultFont, FontStyle.Bold),
+                Image = (Image?)resourceManager.GetObject("player_icon")
+            };
+
+            // Menu item for copying SteamID64
+            var copySteamId = new ToolStripMenuItem("Copy SteamID64")
+            {
+                Image = (Image?)resourceManager.GetObject("steam_icon")
+            };
+
+            // Define multiple profile links with their label, URL base, and associated icon from resources
+            var profileDefinitions = new (string Label, string UrlPrefix, Image Icon)[]
+            {
+                ("Open Steam Profile", _steamProfileLink, (Image)resourceManager.GetObject("steam_icon")),
+                ("Open cswatch.in Profile", _cswatchProfileLink, (Image)resourceManager.GetObject("cswatch_icon")),
+                ("Open leetify.com Profile", _leetifyProfileLink, (Image)resourceManager.GetObject("leetify_icon")),
+                ("Open csstats.gg Profile", _csStatsProfileLink, (Image)resourceManager.GetObject("csstats_icon"))
+            };
+
+            // Create menu items from profile definitions
+            var profileItems = profileDefinitions.Select(def => new ToolStripMenuItem(def.Label)
+            {
+                Image = def.Icon
+            }).ToList();
+
+            // Add items to the context menu
+            ContextMenuStrip cms = new ContextMenuStrip();
+            cms.Items.Add(playerHeader);           // Header
+            cms.Items.Add(new ToolStripSeparator()); // Separator above Copy
+            cms.Items.Add(copySteamId);            // Copy item
+            cms.Items.Add(new ToolStripSeparator()); // Separator below Copy
+            cms.Items.AddRange(profileItems.ToArray()); // All profile links
+
+            dgv.ContextMenuStrip = cms;
+
+            // Copy SteamID64 to clipboard
+            copySteamId.Click += (s, e) =>
+            {
+                if (copySteamId.Tag is PlayerSnapshot p && p.PlayerSteamID.HasValue)
+                {
+                    Clipboard.SetText(p.PlayerSteamID.ToString());
+                    MessageBox.Show($"SteamID64 for {p.PlayerName} copied to clipboard.", "Info");
+                }
+            };
+
+            // Handle profile link clicks
+            foreach (var (menuItem, def) in profileItems.Zip(profileDefinitions))
+            {
+                menuItem.Click += (s, e) =>
+                {
+                    if (menuItem.Tag is PlayerSnapshot p && p.PlayerSteamID.HasValue)
+                    {
+                        string url = def.UrlPrefix + p.PlayerSteamID;
+                        System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+                        {
+                            FileName = url,
+                            UseShellExecute = true
+                        });
+                    }
+                };
+            }
+
+            // Right-click handling
+            dgv.MouseDown += (s, e) =>
+            {
+                if (e.Button == MouseButtons.Right)
+                {
+                    var hit = dgv.HitTest(e.X, e.Y);
+                    if (hit.Type == DataGridViewHitTestType.Cell && hit.RowIndex >= 0)
+                    {
+                        dgv.ClearSelection();
+                        dgv.Rows[hit.RowIndex].Selected = true;
+                        dgv.CurrentCell = dgv.Rows[hit.RowIndex].Cells[hit.ColumnIndex];
+
+                        string playerName = dgv.Rows[hit.RowIndex].Cells[1].Value?.ToString() ?? "";
+                        var player = playerList.FirstOrDefault(p => p.PlayerName == playerName);
+
+                        if (player != null)
+                        {
+                            playerHeader.Text = player.PlayerName;
+                            copySteamId.Text = $"Copy SteamID64";
+                            copySteamId.Tag = player;
+                            profileItems.ForEach(i => i.Tag = player);
+                        }
+                        else
+                        {
+                            playerHeader.Text = "Unknown Player";
+                            copySteamId.Text = "Player not found";
+                            copySteamId.Tag = null;
+                            profileItems.ForEach(i =>
+                            {
+                                i.Text = "-";
+                                i.Tag = null;
+                            });
+                        }
+                    }
+                }
+            };
         }
 
 
@@ -302,16 +426,13 @@ namespace FaceitDemoVoiceCalc
 
             ConfigureDataGrid(dGv_CT);
             ConfigureDataGrid(dGv_T);
-
-            LoadComboBox(ctPlayers, comboBox_SteamIDA);
-            LoadComboBox(tPlayers, comboBox_SteamIDB);
+            ConfigureContextMenu(dGv_CT, ctPlayers);
+            ConfigureContextMenu(dGv_T, tPlayers);
 
             lbl_ReadInfo.ForeColor = Color.DarkGreen;
             lbl_ReadInfo.Text = "File loaded";
             btn_CopyToClipboard.Enabled = true;
             btn_MoveToCSFolder.Enabled = true;
-            comboBox_SteamIDA.Enabled = true;
-            comboBox_SteamIDB.Enabled = true;
 
             ResetAll();
         }
@@ -334,28 +455,6 @@ namespace FaceitDemoVoiceCalc
             }
 
             return table;
-        }
-
-
-        /// <summary>
-        /// Populates a ComboBox with player data SteamID64.
-        /// </summary>
-        private void LoadComboBox(List<PlayerSnapshot> players, ComboBox cb)
-        {
-            cb.DataSource = null; // empty the DataSource
-            cb.Items.Clear();
-
-            // Add placeholder
-            cb.Items.Add("Select to copy SteamID64");
-
-            // Add players
-            foreach (var player in players)
-            {
-                cb.Items.Add(player);
-            }
-
-            // Set selected index to 0
-            cb.SelectedIndex = 0;
         }
 
 
@@ -757,38 +856,27 @@ namespace FaceitDemoVoiceCalc
             _csDemoFolderPath = CS2PathConfig.GetPath();
         }
 
-        /// <summary>
-        /// Handles the selection change event for the CT team ComboBox.
-        /// If a player is selected (i.e. not the placeholder), their name and SteamID64 are copied & shown in a message box.
-        /// </summary>
-        private void comboBox_SteamIDA_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (comboBox_SteamIDA.SelectedIndex <= 0)
-                return; // return because placeholder Text.
 
-            if (comboBox_SteamIDA.SelectedItem is PlayerSnapshot player)
-            {
-                var fullLink = _steamProfileLink + player.PlayerSteamID;
-                Clipboard.SetText(fullLink);
-                MessageBox.Show($"The SteamID: {player.PlayerSteamID} belonging to player {player.PlayerName} has been successfully generated as a Steam link.");
-            }
+        /// <summary>
+        /// Handles the MouseDown event for the CT DataGridView.
+        /// Clears the selection and current cell from the T DataGridView when the CT DataGridView is clicked.
+        /// Ensures only one DataGridView has an active selection/focus at a time.
+        /// </summary>
+        private void dGv_CT_MouseDown(object sender, MouseEventArgs e)
+        {
+            dGv_T.ClearSelection();
+            dGv_T.CurrentCell = null;
         }
 
         /// <summary>
-        /// Handles the selection change event for the T team ComboBox.
-        /// If a player is selected (i.e. not the placeholder), their name and SteamID64 are copied & shown in a message box.
+        /// Handles the MouseDown event for the T DataGridView.
+        /// Clears the selection and current cell from the CT DataGridView when the T DataGridView is clicked.
+        /// Ensures only one DataGridView has an active selection/focus at a time.
         /// </summary>
-        private void comboBox_SteamIDB_SelectedIndexChanged(object sender, EventArgs e)
+        private void dGv_T_MouseDown(object sender, MouseEventArgs e)
         {
-            if (comboBox_SteamIDB.SelectedIndex <= 0)
-                return; // return because placeholder Text.
-
-            if (comboBox_SteamIDB.SelectedItem is PlayerSnapshot player)
-            {
-                var fullLink = _steamProfileLink + player.PlayerSteamID;
-                Clipboard.SetText(fullLink);
-                MessageBox.Show($"The SteamID: {player.PlayerSteamID} belonging to player {player.PlayerName} has been successfully generated as a Steam link.");
-            }
+            dGv_CT.ClearSelection();
+            dGv_CT.CurrentCell = null;
         }
     }
 }
