@@ -1,4 +1,5 @@
-![grafik](https://github.com/user-attachments/assets/5b038310-9bd6-496b-9e40-835267fc12b6)
+<img width="823" height="447" alt="grafik" src="https://github.com/user-attachments/assets/26178079-8c4a-4526-b34e-6e9828dd0c6e" />
+
 
 
 
