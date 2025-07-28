@@ -6,12 +6,17 @@ namespace FaceitDemoVoiceCalc
         ///  The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main()
+        static void Main(string[] args)
         {
-            // To customize application configuration such as set high DPI settings or default font,
-            // see https://aka.ms/applicationconfiguration.
-            ApplicationConfiguration.Initialize();
-            Application.Run(new MainForm());
+            MainForm mainForm = new MainForm();
+
+            if (args.Length > 0 && File.Exists(args[0]) && Path.GetExtension(args[0]).Equals(".dem", StringComparison.OrdinalIgnoreCase))
+            {
+                // Passes the file to the form at startup
+                mainForm.SetDemoFileOnStartup(args[0]);
+            }
+
+            Application.Run(mainForm);
         }
     }
 }

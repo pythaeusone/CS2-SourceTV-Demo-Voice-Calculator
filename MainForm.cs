@@ -128,6 +128,28 @@ namespace FaceitDemoVoiceCalc
 
 
         // ====================================
+        // When the program is called via CLI
+        // ====================================
+        public void SetDemoFileOnStartup(string filePath)
+        {
+            if (!File.Exists(filePath) || Path.GetExtension(filePath).ToLower() != ".dem") return;
+
+            tb_demoFilePath.Text = filePath;
+            lbl_ReadInfo.ForeColor = Color.Red;
+            lbl_ReadInfo.Text = "Read demo file";
+
+            // The same logic as drag & drop
+            DisableAll();
+            btn_MoveToCSFolder.Enabled = false;
+            btn_CopyToClipboard.Enabled = false;
+            tb_ConsoleCommand.Text = "select one or more players you would like to hear in the demo ..";
+
+            ReadDemoFile2(filePath);
+        }
+
+
+
+        // ====================================
         // Drag & drop for demo file selection
         // ====================================
         private void TB_demoFilePath_DragEnter(object sender, DragEventArgs e)
@@ -318,7 +340,7 @@ namespace FaceitDemoVoiceCalc
             {
                 ("Open Steam Profile", _steamProfileLink, (Image)resourceManager.GetObject("steam_icon")),
                 ("Open cswatch.in Profile", _cswatchProfileLink, (Image)resourceManager.GetObject("cswatch_icon")),
-                ("Open leetify.com Profile", _leetifyProfileLink, (Image)resourceManager.GetObject("leetify_icon")),
+                ("Open leetify.com Profile", _leetifyProfileLink, (Image)resourceManager.GetObject("leetfiy_icon")),
                 ("Open csstats.gg Profile", _csStatsProfileLink, (Image)resourceManager.GetObject("csstats_icon"))
             };
 
