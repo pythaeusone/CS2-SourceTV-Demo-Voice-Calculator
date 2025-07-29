@@ -33,6 +33,7 @@ Huge thanks to the following awesome people for testing and feedback:
 - **_starbaek_05**
 - **WaZaRo**
 - **KEROVSKI**
+- **Thorw from cswatch.in Discord**
 - and everyone else from the **ChiefKinzo Discord**!
 
 ---
