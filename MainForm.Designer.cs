@@ -31,9 +31,14 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             menuStrip1 = new MenuStrip();
             howToUseToolStripMenuItem = new ToolStripMenuItem();
-            aboutToolStripMenuItem = new ToolStripMenuItem();
             settingsToolStripMenuItem = new ToolStripMenuItem();
             changeDemoFolderPathToolStripMenuItem = new ToolStripMenuItem();
+            toolStripSeparator1 = new ToolStripSeparator();
+            addToShellContextMenuToolStripMenuItem = new ToolStripMenuItem();
+            removeFromShellContextMenuToolStripMenuItem = new ToolStripMenuItem();
+            infoToolStripMenuItem = new ToolStripMenuItem();
+            checkForUpdatesToolStripMenuItem = new ToolStripMenuItem();
+            aboutToolStripMenuItem1 = new ToolStripMenuItem();
             lbl_demoFilePath = new Label();
             tb_demoFilePath = new TextBox();
             dGv_CT = new DataGridView();
@@ -59,6 +64,7 @@
             lbl_ReadInfo = new Label();
             btn_CopyToClipboard = new Button();
             btn_MoveToCSFolder = new Button();
+            toolStripSeparator2 = new ToolStripSeparator();
             menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dGv_CT).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dGv_T).BeginInit();
@@ -66,7 +72,7 @@
             // 
             // menuStrip1
             // 
-            menuStrip1.Items.AddRange(new ToolStripItem[] { howToUseToolStripMenuItem, aboutToolStripMenuItem, settingsToolStripMenuItem });
+            menuStrip1.Items.AddRange(new ToolStripItem[] { howToUseToolStripMenuItem, settingsToolStripMenuItem, infoToolStripMenuItem });
             menuStrip1.Location = new Point(0, 0);
             menuStrip1.Name = "menuStrip1";
             menuStrip1.RightToLeft = RightToLeft.No;
@@ -81,16 +87,9 @@
             howToUseToolStripMenuItem.Text = "How to use";
             howToUseToolStripMenuItem.Click += HowToUseToolStripMenuItem_Click;
             // 
-            // aboutToolStripMenuItem
-            // 
-            aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            aboutToolStripMenuItem.Size = new Size(52, 20);
-            aboutToolStripMenuItem.Text = "About";
-            aboutToolStripMenuItem.Click += AboutToolStripMenuItem_Click;
-            // 
             // settingsToolStripMenuItem
             // 
-            settingsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { changeDemoFolderPathToolStripMenuItem });
+            settingsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { changeDemoFolderPathToolStripMenuItem, toolStripSeparator1, addToShellContextMenuToolStripMenuItem, removeFromShellContextMenuToolStripMenuItem });
             settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
             settingsToolStripMenuItem.Size = new Size(61, 20);
             settingsToolStripMenuItem.Text = "Settings";
@@ -98,9 +97,49 @@
             // changeDemoFolderPathToolStripMenuItem
             // 
             changeDemoFolderPathToolStripMenuItem.Name = "changeDemoFolderPathToolStripMenuItem";
-            changeDemoFolderPathToolStripMenuItem.Size = new Size(211, 22);
+            changeDemoFolderPathToolStripMenuItem.Size = new Size(257, 22);
             changeDemoFolderPathToolStripMenuItem.Text = "Change Demo folder path";
             changeDemoFolderPathToolStripMenuItem.Click += changeDemoFolderPathToolStripMenuItem_Click;
+            // 
+            // toolStripSeparator1
+            // 
+            toolStripSeparator1.Name = "toolStripSeparator1";
+            toolStripSeparator1.Size = new Size(254, 6);
+            // 
+            // addToShellContextMenuToolStripMenuItem
+            // 
+            addToShellContextMenuToolStripMenuItem.Name = "addToShellContextMenuToolStripMenuItem";
+            addToShellContextMenuToolStripMenuItem.Size = new Size(257, 22);
+            addToShellContextMenuToolStripMenuItem.Text = "Add to Shell-Context-Menu";
+            addToShellContextMenuToolStripMenuItem.Click += addToShellContextMenuToolStripMenuItem_Click;
+            // 
+            // removeFromShellContextMenuToolStripMenuItem
+            // 
+            removeFromShellContextMenuToolStripMenuItem.Name = "removeFromShellContextMenuToolStripMenuItem";
+            removeFromShellContextMenuToolStripMenuItem.Size = new Size(257, 22);
+            removeFromShellContextMenuToolStripMenuItem.Text = "Remove from Shell-Context-Menu";
+            removeFromShellContextMenuToolStripMenuItem.Click += removeFromShellContextMenuToolStripMenuItem_Click;
+            // 
+            // infoToolStripMenuItem
+            // 
+            infoToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { checkForUpdatesToolStripMenuItem, toolStripSeparator2, aboutToolStripMenuItem1 });
+            infoToolStripMenuItem.Name = "infoToolStripMenuItem";
+            infoToolStripMenuItem.Size = new Size(40, 20);
+            infoToolStripMenuItem.Text = "Info";
+            // 
+            // checkForUpdatesToolStripMenuItem
+            // 
+            checkForUpdatesToolStripMenuItem.Name = "checkForUpdatesToolStripMenuItem";
+            checkForUpdatesToolStripMenuItem.Size = new Size(180, 22);
+            checkForUpdatesToolStripMenuItem.Text = "Check for Updates";
+            checkForUpdatesToolStripMenuItem.Click += checkForUpdatesToolStripMenuItem_Click;
+            // 
+            // aboutToolStripMenuItem1
+            // 
+            aboutToolStripMenuItem1.Name = "aboutToolStripMenuItem1";
+            aboutToolStripMenuItem1.Size = new Size(180, 22);
+            aboutToolStripMenuItem1.Text = "About";
+            aboutToolStripMenuItem1.Click += aboutToolStripMenuItem1_Click;
             // 
             // lbl_demoFilePath
             // 
@@ -378,6 +417,11 @@
             btn_MoveToCSFolder.Text = "Move to CS2";
             btn_MoveToCSFolder.UseVisualStyleBackColor = true;
             // 
+            // toolStripSeparator2
+            // 
+            toolStripSeparator2.Name = "toolStripSeparator2";
+            toolStripSeparator2.Size = new Size(177, 6);
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -415,7 +459,6 @@
             MaximizeBox = false;
             Name = "MainForm";
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "Faceit Demo Voice Calculator v0.9.5";
             menuStrip1.ResumeLayout(false);
             menuStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)dGv_CT).EndInit();
@@ -451,10 +494,16 @@
         private Label lbl_ConsolCommand;
         private Label lbl_ReadInfo;
         private ToolStripMenuItem howToUseToolStripMenuItem;
-        private ToolStripMenuItem aboutToolStripMenuItem;
         private Button btn_CopyToClipboard;
         private Button btn_MoveToCSFolder;
         private ToolStripMenuItem settingsToolStripMenuItem;
         private ToolStripMenuItem changeDemoFolderPathToolStripMenuItem;
+        private ToolStripSeparator toolStripSeparator1;
+        private ToolStripMenuItem addToShellContextMenuToolStripMenuItem;
+        private ToolStripMenuItem removeFromShellContextMenuToolStripMenuItem;
+        private ToolStripMenuItem infoToolStripMenuItem;
+        private ToolStripMenuItem checkForUpdatesToolStripMenuItem;
+        private ToolStripMenuItem aboutToolStripMenuItem1;
+        private ToolStripSeparator toolStripSeparator2;
     }
 }

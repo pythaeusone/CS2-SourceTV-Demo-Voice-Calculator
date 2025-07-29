@@ -1,9 +1,4 @@
-﻿using Microsoft.VisualBasic;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 using System.Text;
 
 namespace FaceitDemoVoiceCalc
@@ -13,6 +8,17 @@ namespace FaceitDemoVoiceCalc
     /// </summary>
     internal static class Extensions
     {
+        public static void ShowMsgBox(string msg, string title, MessageBoxIcon icon)
+        {
+            MessageBox.Show(msg,
+                            title,
+                            MessageBoxButtons.OK,
+                            icon
+                            );
+        }
+
+
+
         /// <summary>
         /// Splits a string into two halves.
         /// </summary>

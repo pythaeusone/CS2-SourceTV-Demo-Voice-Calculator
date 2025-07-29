@@ -83,6 +83,12 @@ namespace FaceitDemoVoiceCalc
         private static string _leetifyProfileLink = "https://leetify.com/app/profile/";
 
 
+        // ------------------------------------------
+        // Verson Nr. of this project
+        // ------------------------------------------
+        private const string VERSIONNR = "v.0.9.4";
+
+
         // =================
         // Form constructor
         // =================
@@ -92,8 +98,12 @@ namespace FaceitDemoVoiceCalc
         public MainForm()
         {
             InitializeComponent();
+
+            // Costum
+            this.Text = "Faceit Demo Voice Calculator " + VERSIONNR;
             InitializeCheckboxGroup();
             InitializeEventHandlers();
+            AddShellContextMenu.ValidateShellIntegration();
         }
 
 
@@ -111,20 +121,7 @@ namespace FaceitDemoVoiceCalc
                 frm.Show();
         }
 
-        // =======================
-        // Menubar event handlers
-        // =======================
-        private void HowToUseToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            // Show usage instructions
-            OpenForm<HowTo>();
-        }
 
-        private void AboutToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            // Show application information
-            OpenForm<About>();
-        }
 
 
         // ====================================
@@ -319,29 +316,27 @@ namespace FaceitDemoVoiceCalc
         /// </summary>
         private void ConfigureContextMenu(DataGridView dgv, List<PlayerSnapshot> playerList)
         {
-            var resourceManager = new ResourceManager(typeof(MainForm));
-
             // Header label (disabled menu item) for player name
             var playerHeader = new ToolStripMenuItem("Player")
             {
                 Enabled = false, // Acts as a label only
                 Font = new Font(SystemFonts.DefaultFont, FontStyle.Bold),
-                Image = (Image?)resourceManager.GetObject("iconPlayer")
+                Image = Properties.Resources.iconPlayer
             };
 
             // Menu item for copying SteamID64
             var copySteamId = new ToolStripMenuItem("Copy SteamID64")
             {
-                Image = (Image?)resourceManager.GetObject("iconSteam")
+                Image = Properties.Resources.iconSteam
             };
 
             // Define multiple profile links with their label, URL base, and associated icon from resources
             var profileDefinitions = new (string Label, string UrlPrefix, Image Icon)[]
             {
-                ("Open Steam Profile", _steamProfileLink, (Image)resourceManager.GetObject("iconSteam")),
-                ("Open cswatch.in Profile", _cswatchProfileLink, (Image)resourceManager.GetObject("iconCsWatch")),
-                ("Open leetify.com Profile", _leetifyProfileLink, (Image)resourceManager.GetObject("iconLeetify")),
-                ("Open csstats.gg Profile", _csStatsProfileLink, (Image)resourceManager.GetObject("iconCsStats"))
+                ("Open Steam Profile", _steamProfileLink, Properties.Resources.iconSteam),
+                ("Open cswatch.in Profile", _cswatchProfileLink, Properties.Resources.iconCsWatch),
+                ("Open leetify.com Profile", _leetifyProfileLink, Properties.Resources.iconLeetify),
+                ("Open csstats.gg Profile", _csStatsProfileLink, Properties.Resources.iconCsStats)
             };
 
             // Create menu items from profile definitions
@@ -866,20 +861,6 @@ namespace FaceitDemoVoiceCalc
 
 
         /// <summary>
-        /// Ensures a CS2 demo folder is configured
-        /// the file specified in the textbox into that folder. If successful,
-        /// updates the textbox and reloads the demo file.
-        /// </summary>
-        private void changeDemoFolderPathToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            // Calls the path config function then
-            CS2PathConfig.EnsurePathConfigured();
-            // Fetches the path from the config again
-            _csDemoFolderPath = CS2PathConfig.GetPath();
-        }
-
-
-        /// <summary>
         /// Handles the MouseDown event for the CT DataGridView.
         /// Clears the selection and current cell from the T DataGridView when the CT DataGridView is clicked.
         /// Ensures only one DataGridView has an active selection/focus at a time.
@@ -899,6 +880,71 @@ namespace FaceitDemoVoiceCalc
         {
             dGv_CT.ClearSelection();
             dGv_CT.CurrentCell = null;
+        }
+
+
+        // =======================
+        // Menubar event handlers
+        // =======================
+
+        /// <summary>
+        /// Opens the 'How To Use' window showing usage instructions for the application.
+        /// </summary>
+        private void HowToUseToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // Show usage instructions
+            OpenForm<HowTo>();
+        }
+
+
+        /// <summary>
+        /// Adds the application to the Windows shell context menu for quick access.
+        /// </summary>
+        private void addToShellContextMenuToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AddShellContextMenu.AddShellIntegration();
+        }
+
+
+        /// <summary>
+        /// Removes the application from the Windows shell context menu.
+        /// </summary>
+        private void removeFromShellContextMenuToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AddShellContextMenu.RemoveShellIntegration();
+        }
+
+
+        /// <summary>
+        /// Opens the 'About' window displaying information about the application.
+        /// </summary>
+        private void aboutToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            // Show application information
+            OpenForm<About>();
+        }
+
+
+        /// <summary>
+        /// Checks if a newer version of the application is available via GitHub releases.
+        /// </summary>
+        private void checkForUpdatesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _ = VersionChecker.IsNewerVersionAvailable(VERSIONNR);
+        }
+
+
+        /// <summary>
+        /// Ensures a CS2 demo folder is configured
+        /// the file specified in the textbox into that folder. If successful,
+        /// updates the textbox and reloads the demo file.
+        /// </summary>
+        private void changeDemoFolderPathToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // Calls the path config function then
+            CS2PathConfig.EnsurePathConfigured();
+            // Fetches the path from the config again
+            _csDemoFolderPath = CS2PathConfig.GetPath();
         }
     }
 }
