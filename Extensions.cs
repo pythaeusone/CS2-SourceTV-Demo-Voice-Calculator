@@ -17,8 +17,6 @@ namespace FaceitDemoVoiceCalc
                             );
         }
 
-
-
         /// <summary>
         /// Splits a string into two halves.
         /// </summary>

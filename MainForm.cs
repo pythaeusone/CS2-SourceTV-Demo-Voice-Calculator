@@ -86,7 +86,7 @@ namespace FaceitDemoVoiceCalc
         // ------------------------------------------
         // Verson Nr. of this project
         // ------------------------------------------
-        private const string VERSIONNR = "v.0.9.6";
+        private const string VERSIONNR = "v.0.9.7";
 
 
         // =================
@@ -269,6 +269,22 @@ namespace FaceitDemoVoiceCalc
             {
                 MessageBox.Show($"Error when reading the demo: {ex.Message}");
                 return;
+                // Workaround: Explicitly filter this field name
+                //if (ex.Message.Contains("m_pDestructiblePartsSystemComponent"))
+                //{
+                //    MessageBox.Show(
+                //        "This demo contains new fields that are not supported by the current parser.\n" +
+                //        "Please wait for an update or use an older CS2 demo.",
+                //        "Parser-Inkompatibel",
+                //        MessageBoxButtons.OK,
+                //        MessageBoxIcon.Warning);
+                //    return;
+                //}
+                //else
+                //{
+                //    MessageBox.Show($"Error when reading the demo: {ex.Message}");
+                //    return;
+                //}
             }
             finally
             {
@@ -360,7 +376,7 @@ namespace FaceitDemoVoiceCalc
             {
                 if (copySteamId.Tag is PlayerSnapshot p && p.PlayerSteamID.HasValue)
                 {
-                    Clipboard.SetText(p.PlayerSteamID.ToString());
+                    Clipboard.SetText(p.PlayerSteamID.ToString() ?? "Error reading SteamID");
                     MessageBox.Show($"SteamID64 for {p.PlayerName} copied to clipboard.", "Info");
                 }
             };
@@ -743,11 +759,11 @@ namespace FaceitDemoVoiceCalc
                 throw new ArgumentException("Invalid spec ID in the cell.");
             }
 
-            if (specPlayerId < 1 || specPlayerId > 15)
+            if (specPlayerId < 1 || specPlayerId > 20)
             {
                 throw new ArgumentOutOfRangeException(
                     nameof(specPlayerId),
-                    "Spec-ID must be between 1 and 15.");
+                    "Spec-ID must be between 1 and 20.");
             }
 
             return 1 << (specPlayerId - 1);
