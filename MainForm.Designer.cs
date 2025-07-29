@@ -38,6 +38,7 @@
             removeFromShellContextMenuToolStripMenuItem = new ToolStripMenuItem();
             infoToolStripMenuItem = new ToolStripMenuItem();
             checkForUpdatesToolStripMenuItem = new ToolStripMenuItem();
+            toolStripSeparator2 = new ToolStripSeparator();
             aboutToolStripMenuItem1 = new ToolStripMenuItem();
             lbl_demoFilePath = new Label();
             tb_demoFilePath = new TextBox();
@@ -64,7 +65,7 @@
             lbl_ReadInfo = new Label();
             btn_CopyToClipboard = new Button();
             btn_MoveToCSFolder = new Button();
-            toolStripSeparator2 = new ToolStripSeparator();
+            lbl_MapName = new Label();
             menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dGv_CT).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dGv_T).BeginInit();
@@ -130,14 +131,19 @@
             // checkForUpdatesToolStripMenuItem
             // 
             checkForUpdatesToolStripMenuItem.Name = "checkForUpdatesToolStripMenuItem";
-            checkForUpdatesToolStripMenuItem.Size = new Size(180, 22);
+            checkForUpdatesToolStripMenuItem.Size = new Size(171, 22);
             checkForUpdatesToolStripMenuItem.Text = "Check for Updates";
             checkForUpdatesToolStripMenuItem.Click += checkForUpdatesToolStripMenuItem_Click;
+            // 
+            // toolStripSeparator2
+            // 
+            toolStripSeparator2.Name = "toolStripSeparator2";
+            toolStripSeparator2.Size = new Size(168, 6);
             // 
             // aboutToolStripMenuItem1
             // 
             aboutToolStripMenuItem1.Name = "aboutToolStripMenuItem1";
-            aboutToolStripMenuItem1.Size = new Size(180, 22);
+            aboutToolStripMenuItem1.Size = new Size(171, 22);
             aboutToolStripMenuItem1.Text = "About";
             aboutToolStripMenuItem1.Click += aboutToolStripMenuItem1_Click;
             // 
@@ -199,22 +205,22 @@
             // lbl_TeamA
             // 
             lbl_TeamA.Font = new Font("Segoe UI", 12F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point, 0);
-            lbl_TeamA.Location = new Point(12, 73);
+            lbl_TeamA.Location = new Point(33, 73);
             lbl_TeamA.Name = "lbl_TeamA";
-            lbl_TeamA.Size = new Size(350, 21);
+            lbl_TeamA.Size = new Size(275, 21);
             lbl_TeamA.TabIndex = 5;
             lbl_TeamA.Text = "Team A";
-            lbl_TeamA.TextAlign = ContentAlignment.MiddleCenter;
+            lbl_TeamA.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // lbl_TeamB
             // 
             lbl_TeamB.Font = new Font("Segoe UI", 12F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point, 0);
-            lbl_TeamB.Location = new Point(458, 73);
+            lbl_TeamB.Location = new Point(508, 73);
             lbl_TeamB.Name = "lbl_TeamB";
-            lbl_TeamB.Size = new Size(350, 21);
+            lbl_TeamB.Size = new Size(275, 21);
             lbl_TeamB.TabIndex = 6;
             lbl_TeamB.Text = "Team B";
-            lbl_TeamB.TextAlign = ContentAlignment.MiddleCenter;
+            lbl_TeamB.TextAlign = ContentAlignment.MiddleRight;
             // 
             // lbl_VS
             // 
@@ -417,16 +423,21 @@
             btn_MoveToCSFolder.Text = "Move to CS2";
             btn_MoveToCSFolder.UseVisualStyleBackColor = true;
             // 
-            // toolStripSeparator2
+            // lbl_MapName
             // 
-            toolStripSeparator2.Name = "toolStripSeparator2";
-            toolStripSeparator2.Size = new Size(177, 6);
+            lbl_MapName.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lbl_MapName.Location = new Point(310, 69);
+            lbl_MapName.Name = "lbl_MapName";
+            lbl_MapName.Size = new Size(193, 25);
+            lbl_MapName.TabIndex = 27;
+            lbl_MapName.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(822, 417);
+            Controls.Add(lbl_MapName);
             Controls.Add(btn_MoveToCSFolder);
             Controls.Add(btn_CopyToClipboard);
             Controls.Add(lbl_ReadInfo);
@@ -505,5 +516,6 @@
         private ToolStripMenuItem checkForUpdatesToolStripMenuItem;
         private ToolStripMenuItem aboutToolStripMenuItem1;
         private ToolStripSeparator toolStripSeparator2;
+        private Label lbl_MapName;
     }
 }

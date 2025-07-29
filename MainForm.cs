@@ -84,9 +84,15 @@ namespace FaceitDemoVoiceCalc
 
 
         // ------------------------------------------
+        // Other Global Strings
+        // ------------------------------------------
+        string _mapName = "no Mapname!";
+
+
+        // ------------------------------------------
         // Verson Nr. of this project
         // ------------------------------------------
-        private const string VERSIONNR = "v.0.9.7";
+        private const string _VERSIONNR = "v.0.9.7";
 
 
         // =================
@@ -100,7 +106,7 @@ namespace FaceitDemoVoiceCalc
             InitializeComponent();
 
             // Costum
-            this.Text = "Faceit Demo Voice Calculator " + VERSIONNR;
+            this.Text = "Faceit Demo Voice Calculator " + _VERSIONNR;
             InitializeCheckboxGroup();
             InitializeEventHandlers();
             AddShellContextMenu.ValidateShellIntegration();
@@ -141,7 +147,7 @@ namespace FaceitDemoVoiceCalc
             btn_CopyToClipboard.Enabled = false;
             tb_ConsoleCommand.Text = "select one or more players you would like to hear in the demo ..";
 
-            ReadDemoFile2(filePath);
+            ReadDemoFile(filePath);
         }
 
 
@@ -182,7 +188,7 @@ namespace FaceitDemoVoiceCalc
                     lbl_ReadInfo.ForeColor = Color.Red;
                     lbl_ReadInfo.Text = "Read demo file";
 
-                    ReadDemoFile2(file);
+                    ReadDemoFile(file);
                     return;
                 }
             }
@@ -201,7 +207,7 @@ namespace FaceitDemoVoiceCalc
         /// This function is for testing the read function of Pro Matches
         /// </summary>
         /// <param name="demoPath">Pfad zur .dem-Datei.</param>
-        private async void ReadDemoFile2(string demoPath)
+        private async void ReadDemoFile(string demoPath)
         {
             // Initialisierung
             _demo = new CsDemoParser();
@@ -251,6 +257,7 @@ namespace FaceitDemoVoiceCalc
                     done = true;
                     _snapshot = collected.ToArray();
                     tcs.TrySetResult(true);
+                    _mapName = _demo.ServerInfo?.MapName ?? "no Mapname!";
                 }
             };
 
@@ -456,6 +463,7 @@ namespace FaceitDemoVoiceCalc
 
             lbl_TeamA.Text = teamAName;
             lbl_TeamB.Text = teamBName;
+            lbl_MapName.Text = _mapName;
 
             ConfigureDataGrid(dGv_CT);
             ConfigureDataGrid(dGv_T);
@@ -845,7 +853,7 @@ namespace FaceitDemoVoiceCalc
                     if (_sourceHash.HashesAreEqual(_destinationHash)) // Hash are the same, move was ok 
                     {
                         tb_demoFilePath.Text = movedFullFilePath;
-                        ReadDemoFile2(movedFullFilePath);
+                        ReadDemoFile(movedFullFilePath);
                         MessageBox.Show("File was moved successfully.",
                             "All fine",
                             MessageBoxButtons.OK,
@@ -946,7 +954,7 @@ namespace FaceitDemoVoiceCalc
         /// </summary>
         private void checkForUpdatesToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            _ = VersionChecker.IsNewerVersionAvailable(VERSIONNR);
+            _ = VersionChecker.IsNewerVersionAvailable(_VERSIONNR);
         }
 
 
