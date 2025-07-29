@@ -86,7 +86,7 @@ namespace FaceitDemoVoiceCalc
         // ------------------------------------------
         // Verson Nr. of this project
         // ------------------------------------------
-        private const string VERSIONNR = "v.0.9.4";
+        private const string VERSIONNR = "v.0.9.6";
 
 
         // =================
