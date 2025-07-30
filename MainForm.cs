@@ -88,12 +88,13 @@ namespace FaceitDemoVoiceCalc
         // ------------------------------------------
         string _mapName = "no Mapname!";
         string _duration = "00:00:00";
+        string _hostName = "No Hostname";
 
 
         // ------------------------------------------
         // Verson Nr. of this project
         // ------------------------------------------
-        private const string _VERSIONNR = "v.0.9.8";
+        private const string _VERSIONNR = "v.0.9.9";
 
 
         // =================
@@ -232,8 +233,8 @@ namespace FaceitDemoVoiceCalc
                     if (team != 2 && team != 3)
                         continue;
 
-                    // Check whether the player has already been recorded (UserId +1 for 1-based index)
-                    if (collected.Any(x => x.UserId == p.PlayerInfo.Userid + 1))
+                    // Check whether the player has already been recorded
+                    if (collected.Any(x => x.UserId == (int)p.EntityIndex.Value))
                         continue;
 
                     // Add players if team is not yet full
@@ -241,7 +242,7 @@ namespace FaceitDemoVoiceCalc
                     {
                         collected.Add(new PlayerSnapshot
                         {
-                            UserId = p.PlayerInfo.Userid + 1,
+                            UserId = (int)p.EntityIndex.Value,
                             PlayerName = p.PlayerName!,
                             TeamNumber = team,
                             TeamName = p.Team.ClanTeamname,
@@ -260,6 +261,7 @@ namespace FaceitDemoVoiceCalc
                     tcs.TrySetResult(true);
                     _mapName = _demo.ServerInfo?.MapName ?? "no Mapname!";
                     _duration = TicksToTimeString(_demo.TickCount.Value);
+                    _hostName = _demo.ServerInfo?.HostName ?? "No Hostname";
                 }
             };
 
@@ -458,11 +460,27 @@ namespace FaceitDemoVoiceCalc
             ConfigureContextMenu(dGv_T, tPlayers);
 
             lbl_ReadInfo.ForeColor = Color.DarkGreen;
-            lbl_ReadInfo.Text = "File loaded";
-            btn_CopyToClipboard.Enabled = true;
-            btn_MoveToCSFolder.Enabled = true;
 
-            ResetAll();
+            // If the demo comes from a SourceTV server, it will also have audio.
+            if (_hostName.Contains("SourceTV"))
+            {
+                lbl_ReadInfo.Text = "File loaded with audio stream";
+                tb_ConsoleCommand.Text = "select one or more players you would like to hear in the demo...";
+
+                btn_CopyToClipboard.Enabled = true;
+                ResetAll();
+            }
+            else
+            {
+                lbl_ReadInfo.Text = "File loaded, audio stream may not be available!";
+                tb_ConsoleCommand.Text = "The loaded demo comes from competitive mode and has no audio...";
+
+                btn_CopyToClipboard.Enabled = false;
+                DisableAll();
+            }
+
+
+            btn_MoveToCSFolder.Enabled = true;
         }
 
 

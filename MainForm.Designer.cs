@@ -351,7 +351,7 @@
             tb_ConsoleCommand.ReadOnly = true;
             tb_ConsoleCommand.Size = new Size(750, 29);
             tb_ConsoleCommand.TabIndex = 20;
-            tb_ConsoleCommand.Text = "select one or more players you would like to hear in the demo ...";
+            tb_ConsoleCommand.Text = "select one or more players you would like to hear in the demo...";
             tb_ConsoleCommand.TextAlign = HorizontalAlignment.Center;
             // 
             // cb_AllTeamA
