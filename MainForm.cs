@@ -87,12 +87,13 @@ namespace FaceitDemoVoiceCalc
         // Other Global Strings
         // ------------------------------------------
         string _mapName = "no Mapname!";
+        string _duration = "00:00:00";
 
 
         // ------------------------------------------
         // Verson Nr. of this project
         // ------------------------------------------
-        private const string _VERSIONNR = "v.0.9.7";
+        private const string _VERSIONNR = "v.0.9.8";
 
 
         // =================
@@ -258,6 +259,7 @@ namespace FaceitDemoVoiceCalc
                     _snapshot = collected.ToArray();
                     tcs.TrySetResult(true);
                     _mapName = _demo.ServerInfo?.MapName ?? "no Mapname!";
+                    _duration = TicksToTimeString(_demo.TickCount.Value);
                 }
             };
 
@@ -276,22 +278,6 @@ namespace FaceitDemoVoiceCalc
             {
                 MessageBox.Show($"Error when reading the demo: {ex.Message}");
                 return;
-                // Workaround: Explicitly filter this field name
-                //if (ex.Message.Contains("m_pDestructiblePartsSystemComponent"))
-                //{
-                //    MessageBox.Show(
-                //        "This demo contains new fields that are not supported by the current parser.\n" +
-                //        "Please wait for an update or use an older CS2 demo.",
-                //        "Parser-Inkompatibel",
-                //        MessageBoxButtons.OK,
-                //        MessageBoxIcon.Warning);
-                //    return;
-                //}
-                //else
-                //{
-                //    MessageBox.Show($"Error when reading the demo: {ex.Message}");
-                //    return;
-                //}
             }
             finally
             {
@@ -464,6 +450,7 @@ namespace FaceitDemoVoiceCalc
             lbl_TeamA.Text = teamAName;
             lbl_TeamB.Text = teamBName;
             lbl_MapName.Text = _mapName;
+            lbl_PlayTime.Text = _duration;
 
             ConfigureDataGrid(dGv_CT);
             ConfigureDataGrid(dGv_T);
@@ -885,6 +872,29 @@ namespace FaceitDemoVoiceCalc
 
 
         /// <summary>
+        /// Converts a tick count into a formatted time string (hh:mm:ss) based on the provided tick rate.
+        /// </summary>
+        /// <param name="ticks">The total number of ticks from the demo.</param>
+        /// <param name="tickRate">The tick rate of the server (default is 64 ticks per second).</param>
+        /// <returns>A time string representing the duration in hh:mm:ss format.</returns>
+        /// <exception cref="ArgumentException">Thrown if the tick rate is zero or negative.</exception>
+        public static string TicksToTimeString(int ticks, double tickRate = 64.0)
+        {
+            if (tickRate <= 0)
+                throw new ArgumentException("Tick rate must be greater than 0.");
+
+            // Convert total ticks to seconds
+            double totalSeconds = ticks / tickRate;
+
+            // Create a TimeSpan from the total seconds
+            TimeSpan duration = TimeSpan.FromSeconds(totalSeconds);
+
+            // Return the formatted duration string
+            return duration.ToString(@"hh\:mm\:ss");
+        }
+
+
+        /// <summary>
         /// Handles the MouseDown event for the CT DataGridView.
         /// Clears the selection and current cell from the T DataGridView when the CT DataGridView is clicked.
         /// Ensures only one DataGridView has an active selection/focus at a time.
@@ -970,5 +980,6 @@ namespace FaceitDemoVoiceCalc
             // Fetches the path from the config again
             _csDemoFolderPath = CS2PathConfig.GetPath();
         }
+
     }
 }

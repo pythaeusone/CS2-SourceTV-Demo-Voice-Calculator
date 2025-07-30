@@ -66,6 +66,7 @@
             btn_CopyToClipboard = new Button();
             btn_MoveToCSFolder = new Button();
             lbl_MapName = new Label();
+            lbl_PlayTime = new Label();
             menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dGv_CT).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dGv_T).BeginInit();
@@ -432,11 +433,21 @@
             lbl_MapName.TabIndex = 27;
             lbl_MapName.TextAlign = ContentAlignment.MiddleCenter;
             // 
+            // lbl_PlayTime
+            // 
+            lbl_PlayTime.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lbl_PlayTime.Location = new Point(364, 229);
+            lbl_PlayTime.Name = "lbl_PlayTime";
+            lbl_PlayTime.Size = new Size(88, 21);
+            lbl_PlayTime.TabIndex = 28;
+            lbl_PlayTime.TextAlign = ContentAlignment.MiddleCenter;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(822, 417);
+            Controls.Add(lbl_PlayTime);
             Controls.Add(lbl_MapName);
             Controls.Add(btn_MoveToCSFolder);
             Controls.Add(btn_CopyToClipboard);
@@ -517,5 +528,6 @@
         private ToolStripMenuItem aboutToolStripMenuItem1;
         private ToolStripSeparator toolStripSeparator2;
         private Label lbl_MapName;
+        private Label lbl_PlayTime;
     }
 }
