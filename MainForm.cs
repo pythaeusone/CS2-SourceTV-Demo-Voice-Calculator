@@ -1,4 +1,5 @@
-﻿using DemoFile;
+﻿using CS2VoiceSegmenter;
+using DemoFile;
 using DemoFile.Game.Cs;
 using System.Data;
 using System.Resources;
@@ -1001,18 +1002,25 @@ namespace FaceitDemoVoiceCalc
         private async void extractAudiosFromDemoToolStripMenuItem_Click(object sender, EventArgs e)
         {
             progressBar.Value = 0;
+            extractAudiosFromDemoToolStripMenuItem.Enabled = false;
 
             var progress = new Progress<float>(value =>
             {
-                progressBar.Value = (int)(value * 100);
+                // Update progress bar value in real-time
+                progressBar.Value = Math.Min(100, (int)(value * 100));
             });
 
-            bool result = await AudioExtractor.ExtractAsync(tb_demoFilePath.Text, progress);
+            lbl_progressBarText.Text = "Extract the voice audio files";
+
+            // Run extraction in background thread to prevent UI freeze
+            bool result = await Task.Run(() => AudioExtractor.ExtractAsync(tb_demoFilePath.Text, progress));
+
+            extractAudiosFromDemoToolStripMenuItem.Enabled = true;
 
             if (result)
-                MessageBox.Show("Extraktion abgeschlossen!");
+                lbl_progressBarText.Text = "Extraction complete!";
             else
-                MessageBox.Show("Fehler beim Extrahieren.");
+                lbl_progressBarText.Text = "Error during extraction.";
         }
     }
 }

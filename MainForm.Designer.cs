@@ -72,6 +72,7 @@
             lbl_MapName = new Label();
             lbl_PlayTime = new Label();
             progressBar = new ProgressBar();
+            lbl_progressBarText = new Label();
             menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dGv_CT).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dGv_T).BeginInit();
@@ -479,16 +480,26 @@
             // 
             // progressBar
             // 
+            progressBar.ForeColor = Color.FromArgb(255, 128, 0);
             progressBar.Location = new Point(33, 359);
             progressBar.Name = "progressBar";
             progressBar.Size = new Size(750, 18);
             progressBar.TabIndex = 29;
+            // 
+            // lbl_progressBarText
+            // 
+            lbl_progressBarText.Location = new Point(33, 341);
+            lbl_progressBarText.Name = "lbl_progressBarText";
+            lbl_progressBarText.Size = new Size(750, 15);
+            lbl_progressBarText.TabIndex = 30;
+            lbl_progressBarText.TextAlign = ContentAlignment.BottomCenter;
             // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(822, 417);
+            Controls.Add(lbl_progressBarText);
             Controls.Add(progressBar);
             Controls.Add(lbl_PlayTime);
             Controls.Add(lbl_MapName);
@@ -577,5 +588,6 @@
         private ToolStripMenuItem fileToolStripMenuItem;
         private ToolStripMenuItem workInProgressToolStripMenuItem;
         private ProgressBar progressBar;
+        private Label lbl_progressBarText;
     }
 }
