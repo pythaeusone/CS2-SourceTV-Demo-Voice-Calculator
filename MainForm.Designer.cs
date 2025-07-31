@@ -30,15 +30,19 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             menuStrip1 = new MenuStrip();
-            howToUseToolStripMenuItem = new ToolStripMenuItem();
+            fileToolStripMenuItem = new ToolStripMenuItem();
+            workInProgressToolStripMenuItem = new ToolStripMenuItem();
             settingsToolStripMenuItem = new ToolStripMenuItem();
             changeDemoFolderPathToolStripMenuItem = new ToolStripMenuItem();
             toolStripSeparator1 = new ToolStripSeparator();
             addToShellContextMenuToolStripMenuItem = new ToolStripMenuItem();
             removeFromShellContextMenuToolStripMenuItem = new ToolStripMenuItem();
+            extractorToolStripMenuItem = new ToolStripMenuItem();
+            extractAudiosFromDemoToolStripMenuItem = new ToolStripMenuItem();
             infoToolStripMenuItem = new ToolStripMenuItem();
             checkForUpdatesToolStripMenuItem = new ToolStripMenuItem();
             toolStripSeparator2 = new ToolStripSeparator();
+            smallGuideToolStripMenuItem = new ToolStripMenuItem();
             aboutToolStripMenuItem1 = new ToolStripMenuItem();
             lbl_demoFilePath = new Label();
             tb_demoFilePath = new TextBox();
@@ -67,6 +71,7 @@
             btn_MoveToCSFolder = new Button();
             lbl_MapName = new Label();
             lbl_PlayTime = new Label();
+            progressBar = new ProgressBar();
             menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dGv_CT).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dGv_T).BeginInit();
@@ -74,7 +79,7 @@
             // 
             // menuStrip1
             // 
-            menuStrip1.Items.AddRange(new ToolStripItem[] { howToUseToolStripMenuItem, settingsToolStripMenuItem, infoToolStripMenuItem });
+            menuStrip1.Items.AddRange(new ToolStripItem[] { fileToolStripMenuItem, settingsToolStripMenuItem, extractorToolStripMenuItem, infoToolStripMenuItem });
             menuStrip1.Location = new Point(0, 0);
             menuStrip1.Name = "menuStrip1";
             menuStrip1.RightToLeft = RightToLeft.No;
@@ -82,12 +87,19 @@
             menuStrip1.TabIndex = 0;
             menuStrip1.Text = "menuStrip1";
             // 
-            // howToUseToolStripMenuItem
+            // fileToolStripMenuItem
             // 
-            howToUseToolStripMenuItem.Name = "howToUseToolStripMenuItem";
-            howToUseToolStripMenuItem.Size = new Size(79, 20);
-            howToUseToolStripMenuItem.Text = "How to use";
-            howToUseToolStripMenuItem.Click += HowToUseToolStripMenuItem_Click;
+            fileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { workInProgressToolStripMenuItem });
+            fileToolStripMenuItem.Name = "fileToolStripMenuItem";
+            fileToolStripMenuItem.Size = new Size(37, 20);
+            fileToolStripMenuItem.Text = "File";
+            // 
+            // workInProgressToolStripMenuItem
+            // 
+            workInProgressToolStripMenuItem.Enabled = false;
+            workInProgressToolStripMenuItem.Name = "workInProgressToolStripMenuItem";
+            workInProgressToolStripMenuItem.Size = new Size(163, 22);
+            workInProgressToolStripMenuItem.Text = "Work in progress";
             // 
             // settingsToolStripMenuItem
             // 
@@ -122,9 +134,23 @@
             removeFromShellContextMenuToolStripMenuItem.Text = "Remove from Shell-Context-Menu";
             removeFromShellContextMenuToolStripMenuItem.Click += removeFromShellContextMenuToolStripMenuItem_Click;
             // 
+            // extractorToolStripMenuItem
+            // 
+            extractorToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { extractAudiosFromDemoToolStripMenuItem });
+            extractorToolStripMenuItem.Name = "extractorToolStripMenuItem";
+            extractorToolStripMenuItem.Size = new Size(66, 20);
+            extractorToolStripMenuItem.Text = "Extractor";
+            // 
+            // extractAudiosFromDemoToolStripMenuItem
+            // 
+            extractAudiosFromDemoToolStripMenuItem.Name = "extractAudiosFromDemoToolStripMenuItem";
+            extractAudiosFromDemoToolStripMenuItem.Size = new Size(205, 22);
+            extractAudiosFromDemoToolStripMenuItem.Text = "Extract Voice from Demo";
+            extractAudiosFromDemoToolStripMenuItem.Click += extractAudiosFromDemoToolStripMenuItem_Click;
+            // 
             // infoToolStripMenuItem
             // 
-            infoToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { checkForUpdatesToolStripMenuItem, toolStripSeparator2, aboutToolStripMenuItem1 });
+            infoToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { checkForUpdatesToolStripMenuItem, toolStripSeparator2, smallGuideToolStripMenuItem, aboutToolStripMenuItem1 });
             infoToolStripMenuItem.Name = "infoToolStripMenuItem";
             infoToolStripMenuItem.Size = new Size(40, 20);
             infoToolStripMenuItem.Text = "Info";
@@ -141,6 +167,13 @@
             toolStripSeparator2.Name = "toolStripSeparator2";
             toolStripSeparator2.Size = new Size(168, 6);
             // 
+            // smallGuideToolStripMenuItem
+            // 
+            smallGuideToolStripMenuItem.Name = "smallGuideToolStripMenuItem";
+            smallGuideToolStripMenuItem.Size = new Size(171, 22);
+            smallGuideToolStripMenuItem.Text = "Small Guide";
+            smallGuideToolStripMenuItem.Click += smallGuideToolStripMenuItem_Click;
+            // 
             // aboutToolStripMenuItem1
             // 
             aboutToolStripMenuItem1.Name = "aboutToolStripMenuItem1";
@@ -151,6 +184,7 @@
             // lbl_demoFilePath
             // 
             lbl_demoFilePath.AutoSize = true;
+            lbl_demoFilePath.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lbl_demoFilePath.Location = new Point(12, 30);
             lbl_demoFilePath.Name = "lbl_demoFilePath";
             lbl_demoFilePath.Size = new Size(52, 15);
@@ -160,10 +194,10 @@
             // tb_demoFilePath
             // 
             tb_demoFilePath.AllowDrop = true;
-            tb_demoFilePath.Location = new Point(70, 27);
+            tb_demoFilePath.Location = new Point(72, 27);
             tb_demoFilePath.Name = "tb_demoFilePath";
             tb_demoFilePath.ReadOnly = true;
-            tb_demoFilePath.Size = new Size(634, 23);
+            tb_demoFilePath.Size = new Size(632, 23);
             tb_demoFilePath.TabIndex = 2;
             tb_demoFilePath.Text = "drop demo File here ...";
             tb_demoFilePath.DragDrop += TB_demoFilePath_DragDrop;
@@ -177,7 +211,7 @@
             dGv_CT.AllowUserToResizeRows = false;
             dGv_CT.BackgroundColor = SystemColors.Control;
             dGv_CT.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dGv_CT.Location = new Point(33, 103);
+            dGv_CT.Location = new Point(33, 95);
             dGv_CT.MultiSelect = false;
             dGv_CT.Name = "dGv_CT";
             dGv_CT.ReadOnly = true;
@@ -194,7 +228,7 @@
             dGv_T.AllowUserToResizeRows = false;
             dGv_T.BackgroundColor = SystemColors.Control;
             dGv_T.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dGv_T.Location = new Point(458, 103);
+            dGv_T.Location = new Point(458, 95);
             dGv_T.MultiSelect = false;
             dGv_T.Name = "dGv_T";
             dGv_T.ReadOnly = true;
@@ -206,7 +240,7 @@
             // lbl_TeamA
             // 
             lbl_TeamA.Font = new Font("Segoe UI", 12F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point, 0);
-            lbl_TeamA.Location = new Point(33, 73);
+            lbl_TeamA.Location = new Point(33, 65);
             lbl_TeamA.Name = "lbl_TeamA";
             lbl_TeamA.Size = new Size(275, 21);
             lbl_TeamA.TabIndex = 5;
@@ -216,7 +250,7 @@
             // lbl_TeamB
             // 
             lbl_TeamB.Font = new Font("Segoe UI", 12F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point, 0);
-            lbl_TeamB.Location = new Point(508, 73);
+            lbl_TeamB.Location = new Point(508, 65);
             lbl_TeamB.Name = "lbl_TeamB";
             lbl_TeamB.Size = new Size(275, 21);
             lbl_TeamB.TabIndex = 6;
@@ -226,7 +260,7 @@
             // lbl_VS
             // 
             lbl_VS.Font = new Font("Comic Sans MS", 24F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point, 0);
-            lbl_VS.Location = new Point(364, 146);
+            lbl_VS.Location = new Point(364, 138);
             lbl_VS.Name = "lbl_VS";
             lbl_VS.Size = new Size(88, 48);
             lbl_VS.TabIndex = 7;
@@ -247,7 +281,7 @@
             // 
             cb_TeamAP1.AutoSize = true;
             cb_TeamAP1.Enabled = false;
-            cb_TeamAP1.Location = new Point(12, 129);
+            cb_TeamAP1.Location = new Point(12, 121);
             cb_TeamAP1.Name = "cb_TeamAP1";
             cb_TeamAP1.Size = new Size(15, 14);
             cb_TeamAP1.TabIndex = 9;
@@ -257,7 +291,7 @@
             // 
             cb_TeamAP2.AutoSize = true;
             cb_TeamAP2.Enabled = false;
-            cb_TeamAP2.Location = new Point(12, 154);
+            cb_TeamAP2.Location = new Point(12, 146);
             cb_TeamAP2.Name = "cb_TeamAP2";
             cb_TeamAP2.Size = new Size(15, 14);
             cb_TeamAP2.TabIndex = 10;
@@ -267,7 +301,7 @@
             // 
             cb_TeamAP3.AutoSize = true;
             cb_TeamAP3.Enabled = false;
-            cb_TeamAP3.Location = new Point(12, 179);
+            cb_TeamAP3.Location = new Point(12, 171);
             cb_TeamAP3.Name = "cb_TeamAP3";
             cb_TeamAP3.Size = new Size(15, 14);
             cb_TeamAP3.TabIndex = 11;
@@ -277,7 +311,7 @@
             // 
             cb_TeamAP4.AutoSize = true;
             cb_TeamAP4.Enabled = false;
-            cb_TeamAP4.Location = new Point(12, 204);
+            cb_TeamAP4.Location = new Point(12, 196);
             cb_TeamAP4.Name = "cb_TeamAP4";
             cb_TeamAP4.Size = new Size(15, 14);
             cb_TeamAP4.TabIndex = 12;
@@ -287,7 +321,7 @@
             // 
             cb_TeamAP5.AutoSize = true;
             cb_TeamAP5.Enabled = false;
-            cb_TeamAP5.Location = new Point(12, 229);
+            cb_TeamAP5.Location = new Point(12, 221);
             cb_TeamAP5.Name = "cb_TeamAP5";
             cb_TeamAP5.Size = new Size(15, 14);
             cb_TeamAP5.TabIndex = 13;
@@ -297,7 +331,7 @@
             // 
             cb_TeamBP5.AutoSize = true;
             cb_TeamBP5.Enabled = false;
-            cb_TeamBP5.Location = new Point(793, 229);
+            cb_TeamBP5.Location = new Point(793, 221);
             cb_TeamBP5.Name = "cb_TeamBP5";
             cb_TeamBP5.Size = new Size(15, 14);
             cb_TeamBP5.TabIndex = 18;
@@ -307,7 +341,7 @@
             // 
             cb_TeamBP4.AutoSize = true;
             cb_TeamBP4.Enabled = false;
-            cb_TeamBP4.Location = new Point(793, 204);
+            cb_TeamBP4.Location = new Point(793, 196);
             cb_TeamBP4.Name = "cb_TeamBP4";
             cb_TeamBP4.Size = new Size(15, 14);
             cb_TeamBP4.TabIndex = 17;
@@ -317,7 +351,7 @@
             // 
             cb_TeamBP3.AutoSize = true;
             cb_TeamBP3.Enabled = false;
-            cb_TeamBP3.Location = new Point(793, 179);
+            cb_TeamBP3.Location = new Point(793, 171);
             cb_TeamBP3.Name = "cb_TeamBP3";
             cb_TeamBP3.Size = new Size(15, 14);
             cb_TeamBP3.TabIndex = 16;
@@ -327,7 +361,7 @@
             // 
             cb_TeamBP2.AutoSize = true;
             cb_TeamBP2.Enabled = false;
-            cb_TeamBP2.Location = new Point(793, 154);
+            cb_TeamBP2.Location = new Point(793, 146);
             cb_TeamBP2.Name = "cb_TeamBP2";
             cb_TeamBP2.Size = new Size(15, 14);
             cb_TeamBP2.TabIndex = 15;
@@ -337,7 +371,7 @@
             // 
             cb_TeamBP1.AutoSize = true;
             cb_TeamBP1.Enabled = false;
-            cb_TeamBP1.Location = new Point(793, 129);
+            cb_TeamBP1.Location = new Point(793, 121);
             cb_TeamBP1.Name = "cb_TeamBP1";
             cb_TeamBP1.Size = new Size(15, 14);
             cb_TeamBP1.TabIndex = 14;
@@ -345,13 +379,14 @@
             // 
             // tb_ConsoleCommand
             // 
+            tb_ConsoleCommand.BackColor = SystemColors.Window;
             tb_ConsoleCommand.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            tb_ConsoleCommand.Location = new Point(33, 326);
+            tb_ConsoleCommand.Location = new Point(33, 299);
             tb_ConsoleCommand.Name = "tb_ConsoleCommand";
             tb_ConsoleCommand.ReadOnly = true;
-            tb_ConsoleCommand.Size = new Size(750, 29);
+            tb_ConsoleCommand.Size = new Size(624, 29);
             tb_ConsoleCommand.TabIndex = 20;
-            tb_ConsoleCommand.Text = "select one or more players you would like to hear in the demo...";
+            tb_ConsoleCommand.Text = "Select one or more players you would like to hear in the demo...";
             tb_ConsoleCommand.TextAlign = HorizontalAlignment.Center;
             // 
             // cb_AllTeamA
@@ -359,7 +394,7 @@
             cb_AllTeamA.AutoSize = true;
             cb_AllTeamA.Enabled = false;
             cb_AllTeamA.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            cb_AllTeamA.Location = new Point(12, 256);
+            cb_AllTeamA.Location = new Point(12, 248);
             cb_AllTeamA.Name = "cb_AllTeamA";
             cb_AllTeamA.Size = new Size(78, 19);
             cb_AllTeamA.TabIndex = 21;
@@ -372,7 +407,7 @@
             cb_AllTeamB.AutoSize = true;
             cb_AllTeamB.Enabled = false;
             cb_AllTeamB.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            cb_AllTeamB.Location = new Point(730, 256);
+            cb_AllTeamB.Location = new Point(730, 248);
             cb_AllTeamB.Name = "cb_AllTeamB";
             cb_AllTeamB.RightToLeft = RightToLeft.Yes;
             cb_AllTeamB.Size = new Size(78, 19);
@@ -383,9 +418,9 @@
             // 
             // lbl_ConsolCommand
             // 
-            lbl_ConsolCommand.Location = new Point(96, 300);
+            lbl_ConsolCommand.Location = new Point(33, 275);
             lbl_ConsolCommand.Name = "lbl_ConsolCommand";
-            lbl_ConsolCommand.Size = new Size(627, 23);
+            lbl_ConsolCommand.Size = new Size(624, 23);
             lbl_ConsolCommand.TabIndex = 23;
             lbl_ConsolCommand.Text = "Copy the command below into your CS2 console after you have loaded this demo.";
             lbl_ConsolCommand.TextAlign = ContentAlignment.BottomCenter;
@@ -405,7 +440,7 @@
             btn_CopyToClipboard.Enabled = false;
             btn_CopyToClipboard.FlatStyle = FlatStyle.Flat;
             btn_CopyToClipboard.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            btn_CopyToClipboard.Location = new Point(348, 361);
+            btn_CopyToClipboard.Location = new Point(663, 301);
             btn_CopyToClipboard.Name = "btn_CopyToClipboard";
             btn_CopyToClipboard.Size = new Size(120, 25);
             btn_CopyToClipboard.TabIndex = 25;
@@ -427,7 +462,7 @@
             // lbl_MapName
             // 
             lbl_MapName.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lbl_MapName.Location = new Point(310, 69);
+            lbl_MapName.Location = new Point(310, 61);
             lbl_MapName.Name = "lbl_MapName";
             lbl_MapName.Size = new Size(193, 25);
             lbl_MapName.TabIndex = 27;
@@ -436,17 +471,25 @@
             // lbl_PlayTime
             // 
             lbl_PlayTime.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lbl_PlayTime.Location = new Point(364, 229);
+            lbl_PlayTime.Location = new Point(364, 221);
             lbl_PlayTime.Name = "lbl_PlayTime";
             lbl_PlayTime.Size = new Size(88, 21);
             lbl_PlayTime.TabIndex = 28;
             lbl_PlayTime.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // progressBar
+            // 
+            progressBar.Location = new Point(33, 359);
+            progressBar.Name = "progressBar";
+            progressBar.Size = new Size(750, 18);
+            progressBar.TabIndex = 29;
             // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(822, 417);
+            Controls.Add(progressBar);
             Controls.Add(lbl_PlayTime);
             Controls.Add(lbl_MapName);
             Controls.Add(btn_MoveToCSFolder);
@@ -515,7 +558,6 @@
         private CheckBox cb_AllTeamB;
         private Label lbl_ConsolCommand;
         private Label lbl_ReadInfo;
-        private ToolStripMenuItem howToUseToolStripMenuItem;
         private Button btn_CopyToClipboard;
         private Button btn_MoveToCSFolder;
         private ToolStripMenuItem settingsToolStripMenuItem;
@@ -529,5 +571,11 @@
         private ToolStripSeparator toolStripSeparator2;
         private Label lbl_MapName;
         private Label lbl_PlayTime;
+        private ToolStripMenuItem smallGuideToolStripMenuItem;
+        private ToolStripMenuItem extractorToolStripMenuItem;
+        private ToolStripMenuItem extractAudiosFromDemoToolStripMenuItem;
+        private ToolStripMenuItem fileToolStripMenuItem;
+        private ToolStripMenuItem workInProgressToolStripMenuItem;
+        private ProgressBar progressBar;
     }
 }

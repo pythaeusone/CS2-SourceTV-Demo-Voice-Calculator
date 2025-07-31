@@ -147,7 +147,8 @@ namespace FaceitDemoVoiceCalc
             DisableAll();
             btn_MoveToCSFolder.Enabled = false;
             btn_CopyToClipboard.Enabled = false;
-            tb_ConsoleCommand.Text = "select one or more players you would like to hear in the demo ..";
+            tb_ConsoleCommand.ForeColor = Color.Black;
+            tb_ConsoleCommand.Text = "Select one or more players you would like to hear in the demo...";
 
             ReadDemoFile(filePath);
         }
@@ -182,8 +183,8 @@ namespace FaceitDemoVoiceCalc
                     btn_MoveToCSFolder.Enabled = false;
                     btn_CopyToClipboard.Enabled = false;
                     DisableAll();
-                    tb_ConsoleCommand.Text =
-                        "select one or more players you would like to hear in the demo ..";
+                    tb_ConsoleCommand.ForeColor = Color.Black;
+                    tb_ConsoleCommand.Text = "Select one or more players you would like to hear in the demo...";
 
                     // Show reading
                     tb_demoFilePath.Text = file;
@@ -465,20 +466,18 @@ namespace FaceitDemoVoiceCalc
             if (_hostName.Contains("SourceTV"))
             {
                 lbl_ReadInfo.Text = "File loaded with audio stream";
-                tb_ConsoleCommand.Text = "select one or more players you would like to hear in the demo...";
-
                 btn_CopyToClipboard.Enabled = true;
                 ResetAll();
             }
             else
             {
                 lbl_ReadInfo.Text = "File loaded, audio stream may not be available!";
+                tb_ConsoleCommand.ForeColor = Color.DarkRed;
                 tb_ConsoleCommand.Text = "The loaded demo comes from competitive mode and has no audio...";
 
                 btn_CopyToClipboard.Enabled = false;
                 DisableAll();
             }
-
 
             btn_MoveToCSFolder.Enabled = true;
         }
@@ -940,9 +939,9 @@ namespace FaceitDemoVoiceCalc
         // =======================
 
         /// <summary>
-        /// Opens the 'How To Use' window showing usage instructions for the application.
+        /// Opens the 'Small Guide' window showing usage instructions for the application.
         /// </summary>
-        private void HowToUseToolStripMenuItem_Click(object sender, EventArgs e)
+        private void smallGuideToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // Show usage instructions
             OpenForm<HowTo>();
@@ -999,5 +998,21 @@ namespace FaceitDemoVoiceCalc
             _csDemoFolderPath = CS2PathConfig.GetPath();
         }
 
+        private async void extractAudiosFromDemoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            progressBar.Value = 0;
+
+            var progress = new Progress<float>(value =>
+            {
+                progressBar.Value = (int)(value * 100);
+            });
+
+            bool result = await AudioExtractor.ExtractAsync(tb_demoFilePath.Text, progress);
+
+            if (result)
+                MessageBox.Show("Extraktion abgeschlossen!");
+            else
+                MessageBox.Show("Fehler beim Extrahieren.");
+        }
     }
 }

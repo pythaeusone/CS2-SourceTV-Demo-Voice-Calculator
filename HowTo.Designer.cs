@@ -56,7 +56,7 @@
             MinimizeBox = false;
             Name = "HowTo";
             StartPosition = FormStartPosition.CenterParent;
-            Text = "How to ...";
+            Text = "Small Guide ...";
             ResumeLayout(false);
         }
 

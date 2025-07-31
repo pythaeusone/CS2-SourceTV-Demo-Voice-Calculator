@@ -1,13 +1,9 @@
-﻿using System;
-using System.Net.Http;
-using System.Text.Json;
+﻿using System.Text.Json;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace FaceitDemoVoiceCalc
 {
-    public static class VersionChecker
+    internal static class VersionChecker
     {
         // GitHub API endpoint that lists all releases for your repository
         private const string GITHUB_API_RELEASES_URL = "https://api.github.com/repos/pythaeusone/Faceit-Demo-Voice-Calculator/releases";
