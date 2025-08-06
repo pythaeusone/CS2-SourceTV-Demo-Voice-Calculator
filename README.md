@@ -72,7 +72,7 @@ Huge thanks to the following awesome people for testing and feedback:
 
 ---
 
-📅 ToDo List
+## 📅 ToDo List
 
 Here's what's next for the project:
 
