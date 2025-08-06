@@ -80,6 +80,7 @@ Here's what's next for the project:
 - Audio Voice Player ✔️
 - Updater ⏳
 - Clean up code ⏳
+- Video GUIDE
 
 ---
 
