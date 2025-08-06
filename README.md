@@ -56,6 +56,8 @@ Huge thanks to the following awesome people for testing and feedback:
 
 - [DemoFile](https://www.nuget.org/packages/DemoFile/)
 - [DemoFile.Game.Cs](https://www.nuget.org/packages/DemoFile.Game.Cs)
+- [Concentus](https://www.nuget.org/packages/Concentus)
+- [NAudio](https://www.nuget.org/packages/NAudio)
 - [WindowsAPICodePackCore](https://www.nuget.org/packages/WindowsAPICodePackCore)
 - [WindowsAPICodePackShell](https://www.nuget.org/packages/WindowsAPICodePackShell)
 
@@ -66,6 +68,19 @@ Huge thanks to the following awesome people for testing and feedback:
 - [protobuf-net.Core](https://www.nuget.org/packages/protobuf-net.Core)  
 - [Snappier](https://www.nuget.org/packages/Snappier)  
 - [System.Collections.Immutable](https://www.nuget.org/packages/System.Collections.Immutable)
+- All Transitive parts from NAudio.
+
+---
+
+## 📅 ToDo List
+
+Here's what's next for the project:
+
+- Audio Voice Extractor ✔️
+- Audio Voice Player ✔️
+- Updater ⏳
+- Clean up code ⏳
+- Video GUIDE ⏳
 
 ---
 
