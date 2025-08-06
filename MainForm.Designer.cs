@@ -39,6 +39,7 @@
             removeFromShellContextMenuToolStripMenuItem = new ToolStripMenuItem();
             extractorToolStripMenuItem = new ToolStripMenuItem();
             extractAudiosFromDemoToolStripMenuItem = new ToolStripMenuItem();
+            showAudioplayerToolStripMenuItem = new ToolStripMenuItem();
             infoToolStripMenuItem = new ToolStripMenuItem();
             checkForUpdatesToolStripMenuItem = new ToolStripMenuItem();
             toolStripSeparator2 = new ToolStripSeparator();
@@ -73,9 +74,14 @@
             lbl_PlayTime = new Label();
             progressBar = new ProgressBar();
             lbl_progressBarText = new Label();
+            groupBox_VoicePlayer = new GroupBox();
+            listBox_VoicePlayer = new ListBox();
+            dGv_VoicePlayer = new DataGridView();
             menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dGv_CT).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dGv_T).BeginInit();
+            groupBox_VoicePlayer.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dGv_VoicePlayer).BeginInit();
             SuspendLayout();
             // 
             // menuStrip1
@@ -114,6 +120,7 @@
             changeDemoFolderPathToolStripMenuItem.Name = "changeDemoFolderPathToolStripMenuItem";
             changeDemoFolderPathToolStripMenuItem.Size = new Size(257, 22);
             changeDemoFolderPathToolStripMenuItem.Text = "Change Demo folder path";
+            changeDemoFolderPathToolStripMenuItem.ToolTipText = "Changes the path to where the demo should be moved.";
             changeDemoFolderPathToolStripMenuItem.Click += changeDemoFolderPathToolStripMenuItem_Click;
             // 
             // toolStripSeparator1
@@ -126,6 +133,7 @@
             addToShellContextMenuToolStripMenuItem.Name = "addToShellContextMenuToolStripMenuItem";
             addToShellContextMenuToolStripMenuItem.Size = new Size(257, 22);
             addToShellContextMenuToolStripMenuItem.Text = "Add to Shell-Context-Menu";
+            addToShellContextMenuToolStripMenuItem.ToolTipText = "Adds the app to the Windows shell context menu.";
             addToShellContextMenuToolStripMenuItem.Click += addToShellContextMenuToolStripMenuItem_Click;
             // 
             // removeFromShellContextMenuToolStripMenuItem
@@ -133,21 +141,32 @@
             removeFromShellContextMenuToolStripMenuItem.Name = "removeFromShellContextMenuToolStripMenuItem";
             removeFromShellContextMenuToolStripMenuItem.Size = new Size(257, 22);
             removeFromShellContextMenuToolStripMenuItem.Text = "Remove from Shell-Context-Menu";
+            removeFromShellContextMenuToolStripMenuItem.ToolTipText = "Removes the app from the Windows shell context menu.";
             removeFromShellContextMenuToolStripMenuItem.Click += removeFromShellContextMenuToolStripMenuItem_Click;
             // 
             // extractorToolStripMenuItem
             // 
-            extractorToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { extractAudiosFromDemoToolStripMenuItem });
+            extractorToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { extractAudiosFromDemoToolStripMenuItem, showAudioplayerToolStripMenuItem });
+            extractorToolStripMenuItem.Enabled = false;
             extractorToolStripMenuItem.Name = "extractorToolStripMenuItem";
-            extractorToolStripMenuItem.Size = new Size(66, 20);
-            extractorToolStripMenuItem.Text = "Extractor";
+            extractorToolStripMenuItem.Size = new Size(51, 20);
+            extractorToolStripMenuItem.Text = "Audio";
             // 
             // extractAudiosFromDemoToolStripMenuItem
             // 
             extractAudiosFromDemoToolStripMenuItem.Name = "extractAudiosFromDemoToolStripMenuItem";
-            extractAudiosFromDemoToolStripMenuItem.Size = new Size(205, 22);
-            extractAudiosFromDemoToolStripMenuItem.Text = "Extract Voice from Demo";
+            extractAudiosFromDemoToolStripMenuItem.Size = new Size(204, 22);
+            extractAudiosFromDemoToolStripMenuItem.Text = "Extract voice from demo";
+            extractAudiosFromDemoToolStripMenuItem.ToolTipText = "If the demo has voice audio streams, these are extracted.";
             extractAudiosFromDemoToolStripMenuItem.Click += extractAudiosFromDemoToolStripMenuItem_Click;
+            // 
+            // showAudioplayerToolStripMenuItem
+            // 
+            showAudioplayerToolStripMenuItem.Name = "showAudioplayerToolStripMenuItem";
+            showAudioplayerToolStripMenuItem.Size = new Size(204, 22);
+            showAudioplayerToolStripMenuItem.Text = "Show the audio player";
+            showAudioplayerToolStripMenuItem.ToolTipText = "Opens a voice player with more information.";
+            showAudioplayerToolStripMenuItem.Click += showAudioplayerToolStripMenuItem_Click;
             // 
             // infoToolStripMenuItem
             // 
@@ -161,6 +180,7 @@
             checkForUpdatesToolStripMenuItem.Name = "checkForUpdatesToolStripMenuItem";
             checkForUpdatesToolStripMenuItem.Size = new Size(171, 22);
             checkForUpdatesToolStripMenuItem.Text = "Check for Updates";
+            checkForUpdatesToolStripMenuItem.ToolTipText = "Checks whether a new version is available on GitHub.";
             checkForUpdatesToolStripMenuItem.Click += checkForUpdatesToolStripMenuItem_Click;
             // 
             // toolStripSeparator2
@@ -173,6 +193,7 @@
             smallGuideToolStripMenuItem.Name = "smallGuideToolStripMenuItem";
             smallGuideToolStripMenuItem.Size = new Size(171, 22);
             smallGuideToolStripMenuItem.Text = "Small Guide";
+            smallGuideToolStripMenuItem.ToolTipText = "Opens a small guide.";
             smallGuideToolStripMenuItem.Click += smallGuideToolStripMenuItem_Click;
             // 
             // aboutToolStripMenuItem1
@@ -180,6 +201,7 @@
             aboutToolStripMenuItem1.Name = "aboutToolStripMenuItem1";
             aboutToolStripMenuItem1.Size = new Size(171, 22);
             aboutToolStripMenuItem1.Text = "About";
+            aboutToolStripMenuItem1.ToolTipText = "About the developer and contributors.";
             aboutToolStripMenuItem1.Click += aboutToolStripMenuItem1_Click;
             // 
             // lbl_demoFilePath
@@ -272,7 +294,7 @@
             // 
             lbl_byTeam.AutoSize = true;
             lbl_byTeam.Enabled = false;
-            lbl_byTeam.Location = new Point(643, 393);
+            lbl_byTeam.Location = new Point(643, 372);
             lbl_byTeam.Name = "lbl_byTeam";
             lbl_byTeam.Size = new Size(167, 15);
             lbl_byTeam.TabIndex = 8;
@@ -382,7 +404,7 @@
             // 
             tb_ConsoleCommand.BackColor = SystemColors.Window;
             tb_ConsoleCommand.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            tb_ConsoleCommand.Location = new Point(33, 299);
+            tb_ConsoleCommand.Location = new Point(33, 284);
             tb_ConsoleCommand.Name = "tb_ConsoleCommand";
             tb_ConsoleCommand.ReadOnly = true;
             tb_ConsoleCommand.Size = new Size(624, 29);
@@ -419,9 +441,10 @@
             // 
             // lbl_ConsolCommand
             // 
-            lbl_ConsolCommand.Location = new Point(33, 275);
+            lbl_ConsolCommand.Font = new Font("Segoe UI", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lbl_ConsolCommand.Location = new Point(33, 267);
             lbl_ConsolCommand.Name = "lbl_ConsolCommand";
-            lbl_ConsolCommand.Size = new Size(624, 23);
+            lbl_ConsolCommand.Size = new Size(624, 16);
             lbl_ConsolCommand.TabIndex = 23;
             lbl_ConsolCommand.Text = "Copy the command below into your CS2 console after you have loaded this demo.";
             lbl_ConsolCommand.TextAlign = ContentAlignment.BottomCenter;
@@ -429,7 +452,7 @@
             // lbl_ReadInfo
             // 
             lbl_ReadInfo.AutoSize = true;
-            lbl_ReadInfo.Location = new Point(12, 393);
+            lbl_ReadInfo.Location = new Point(12, 372);
             lbl_ReadInfo.Name = "lbl_ReadInfo";
             lbl_ReadInfo.Size = new Size(10, 15);
             lbl_ReadInfo.TabIndex = 24;
@@ -441,7 +464,7 @@
             btn_CopyToClipboard.Enabled = false;
             btn_CopyToClipboard.FlatStyle = FlatStyle.Flat;
             btn_CopyToClipboard.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            btn_CopyToClipboard.Location = new Point(663, 301);
+            btn_CopyToClipboard.Location = new Point(663, 286);
             btn_CopyToClipboard.Name = "btn_CopyToClipboard";
             btn_CopyToClipboard.Size = new Size(120, 25);
             btn_CopyToClipboard.TabIndex = 25;
@@ -481,31 +504,77 @@
             // progressBar
             // 
             progressBar.ForeColor = Color.FromArgb(255, 128, 0);
-            progressBar.Location = new Point(33, 359);
+            progressBar.Location = new Point(33, 344);
             progressBar.Name = "progressBar";
             progressBar.Size = new Size(750, 18);
             progressBar.TabIndex = 29;
             // 
             // lbl_progressBarText
             // 
-            lbl_progressBarText.Location = new Point(33, 341);
+            lbl_progressBarText.Location = new Point(33, 326);
             lbl_progressBarText.Name = "lbl_progressBarText";
             lbl_progressBarText.Size = new Size(750, 15);
             lbl_progressBarText.TabIndex = 30;
             lbl_progressBarText.TextAlign = ContentAlignment.BottomCenter;
             // 
+            // groupBox_VoicePlayer
+            // 
+            groupBox_VoicePlayer.Controls.Add(listBox_VoicePlayer);
+            groupBox_VoicePlayer.Controls.Add(dGv_VoicePlayer);
+            groupBox_VoicePlayer.Enabled = false;
+            groupBox_VoicePlayer.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            groupBox_VoicePlayer.Location = new Point(12, 384);
+            groupBox_VoicePlayer.Name = "groupBox_VoicePlayer";
+            groupBox_VoicePlayer.Size = new Size(798, 174);
+            groupBox_VoicePlayer.TabIndex = 31;
+            groupBox_VoicePlayer.TabStop = false;
+            groupBox_VoicePlayer.Text = "  Voice-Player  ";
+            groupBox_VoicePlayer.Visible = false;
+            // 
+            // listBox_VoicePlayer
+            // 
+            listBox_VoicePlayer.BorderStyle = BorderStyle.FixedSingle;
+            listBox_VoicePlayer.FormattingEnabled = true;
+            listBox_VoicePlayer.ItemHeight = 21;
+            listBox_VoicePlayer.Location = new Point(15, 28);
+            listBox_VoicePlayer.Name = "listBox_VoicePlayer";
+            listBox_VoicePlayer.ScrollAlwaysVisible = true;
+            listBox_VoicePlayer.Size = new Size(375, 128);
+            listBox_VoicePlayer.Sorted = true;
+            listBox_VoicePlayer.TabIndex = 6;
+            listBox_VoicePlayer.SelectedIndexChanged += listBox_VoicePlayer_SelectedIndexChanged;
+            // 
+            // dGv_VoicePlayer
+            // 
+            dGv_VoicePlayer.AllowUserToAddRows = false;
+            dGv_VoicePlayer.AllowUserToDeleteRows = false;
+            dGv_VoicePlayer.AllowUserToResizeColumns = false;
+            dGv_VoicePlayer.AllowUserToResizeRows = false;
+            dGv_VoicePlayer.BackgroundColor = SystemColors.Control;
+            dGv_VoicePlayer.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dGv_VoicePlayer.Location = new Point(406, 28);
+            dGv_VoicePlayer.MultiSelect = false;
+            dGv_VoicePlayer.Name = "dGv_VoicePlayer";
+            dGv_VoicePlayer.ReadOnly = true;
+            dGv_VoicePlayer.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dGv_VoicePlayer.Size = new Size(375, 128);
+            dGv_VoicePlayer.TabIndex = 5;
+            dGv_VoicePlayer.CellDoubleClick += dGv_VoicePlayer_CellDoubleClick;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(822, 417);
+            ClientSize = new Size(822, 396);
+            Controls.Add(groupBox_VoicePlayer);
+            Controls.Add(lbl_ReadInfo);
+            Controls.Add(lbl_byTeam);
             Controls.Add(lbl_progressBarText);
             Controls.Add(progressBar);
             Controls.Add(lbl_PlayTime);
             Controls.Add(lbl_MapName);
             Controls.Add(btn_MoveToCSFolder);
             Controls.Add(btn_CopyToClipboard);
-            Controls.Add(lbl_ReadInfo);
             Controls.Add(lbl_ConsolCommand);
             Controls.Add(cb_AllTeamB);
             Controls.Add(cb_AllTeamA);
@@ -520,7 +589,6 @@
             Controls.Add(cb_TeamAP3);
             Controls.Add(cb_TeamAP2);
             Controls.Add(cb_TeamAP1);
-            Controls.Add(lbl_byTeam);
             Controls.Add(lbl_VS);
             Controls.Add(lbl_TeamB);
             Controls.Add(lbl_TeamA);
@@ -539,6 +607,8 @@
             menuStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)dGv_CT).EndInit();
             ((System.ComponentModel.ISupportInitialize)dGv_T).EndInit();
+            groupBox_VoicePlayer.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)dGv_VoicePlayer).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -589,5 +659,9 @@
         private ToolStripMenuItem workInProgressToolStripMenuItem;
         private ProgressBar progressBar;
         private Label lbl_progressBarText;
+        private ToolStripMenuItem showAudioplayerToolStripMenuItem;
+        private GroupBox groupBox_VoicePlayer;
+        private DataGridView dGv_VoicePlayer;
+        private ListBox listBox_VoicePlayer;
     }
 }

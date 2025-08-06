@@ -25,8 +25,9 @@
 
   <ItemGroup>
     <PackageReference Include="Concentus" Version="2.2.2" />
-    <PackageReference Include="DemoFile" Version="0.30.2" />
-    <PackageReference Include="DemoFile.Game.Cs" Version="0.30.2" />
+    <PackageReference Include="DemoFile" Version="0.31.1" />
+    <PackageReference Include="DemoFile.Game.Cs" Version="0.31.1" />
+    <PackageReference Include="NAudio" Version="2.2.1" />
     <PackageReference Include="WindowsAPICodePackCore" Version="8.0.8" />
     <PackageReference Include="WindowsAPICodePackShell" Version="8.0.8" />
   </ItemGroup>

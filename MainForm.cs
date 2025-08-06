@@ -3,32 +3,12 @@ using DemoFile;
 using DemoFile.Game.Cs;
 using System.Data;
 using System.Resources;
+using System.Windows.Forms;
 
 namespace FaceitDemoVoiceCalc
 {
     public partial class MainForm : Form
     {
-        // ======================================
-        // Nested data class for player snapshot
-        // ======================================
-        /// <summary>
-        /// Holds basic player information captured at round start.
-        /// </summary>
-        private class PlayerSnapshot
-        {
-            public int UserId { get; set; }             // User-ID + 1 = spec_player ID
-            public string? PlayerName { get; set; }     // PlayerName = Name of the Player in this Game.
-            public int TeamNumber { get; set; }         // TeamNumber = 2 = T-Side, 3 = CT-Side
-            public string? TeamName { get; set; }       // TeamName = TeamClanName from Faceit team_xxxxx
-            public ulong? PlayerSteamID { get; set; }   // Get the SteamID64 number
-
-            public override string ToString()
-            {
-                return PlayerName ?? "Unknown Player";
-            }
-        }
-
-
         // =====================
         // Parser and snapshots
         // =====================
@@ -63,9 +43,10 @@ namespace FaceitDemoVoiceCalc
 
 
         // ---------------------
-        // CS2 Demo Folder Path
+        // Folder Path
         // ---------------------
         private string? _csDemoFolderPath = null;
+        private string? _audioFolderPath = null;
 
 
         // ------------------------------------------
@@ -87,15 +68,19 @@ namespace FaceitDemoVoiceCalc
         // ------------------------------------------
         // Other Global Strings
         // ------------------------------------------
-        string _mapName = "no Mapname!";
-        string _duration = "00:00:00";
-        string _hostName = "No Hostname";
+        private string _mapName = "no Mapname!";
+        private string _duration = "00:00:00";
+        private string _hostName = "No Hostname";
+        private bool _voicePlayerOpen = false;
+        private const int _WINDOWHEIGHT = 435;
+        private const int _VOICEPLAYERHEIGHT = 635;
+        private List<AudioEntry> _audioEntries;
 
 
         // ------------------------------------------
-        // Verson Nr. of this project
+        // Verson Numbers. of this project
         // ------------------------------------------
-        private const string _VERSIONNR = "v.0.9.9";
+        private const string _GUIVERSIONNR = "v.1.0.0";
 
 
         // =================
@@ -109,7 +94,9 @@ namespace FaceitDemoVoiceCalc
             InitializeComponent();
 
             // Costum
-            this.Text = "Faceit Demo Voice Calculator " + _VERSIONNR;
+            this.Text = "Faceit Demo Voice Calculator " + _GUIVERSIONNR;
+            groupBox_VoicePlayer.Text = "  Voice-Player  ";
+
             InitializeCheckboxGroup();
             InitializeEventHandlers();
             AddShellContextMenu.ValidateShellIntegration();
@@ -131,34 +118,21 @@ namespace FaceitDemoVoiceCalc
         }
 
 
-
-
-        // ====================================
-        // When the program is called via CLI
-        // ====================================
+        /// <summary>
+        /// Sets the demo file on application startup cli if the provided file path is valid and points to a .dem file.
+        /// </summary>
+        /// <param name="filePath">Path to the demo file.</param>
         public void SetDemoFileOnStartup(string filePath)
         {
             if (!File.Exists(filePath) || Path.GetExtension(filePath).ToLower() != ".dem") return;
 
-            tb_demoFilePath.Text = filePath;
-            lbl_ReadInfo.ForeColor = Color.Red;
-            lbl_ReadInfo.Text = "Read demo file";
-
-            // The same logic as drag & drop
-            DisableAll();
-            btn_MoveToCSFolder.Enabled = false;
-            btn_CopyToClipboard.Enabled = false;
-            tb_ConsoleCommand.ForeColor = Color.Black;
-            tb_ConsoleCommand.Text = "Select one or more players you would like to hear in the demo...";
-
-            ReadDemoFile(filePath);
+            PrepareStart(filePath);
         }
 
 
-
-        // ====================================
-        // Drag & drop for demo file selection
-        // ====================================
+        /// <summary>
+        /// Handles the DragEnter event to enable the copy effect when files are dragged over the input field.
+        /// </summary>
         private void TB_demoFilePath_DragEnter(object sender, DragEventArgs e)
         {
             // Enable copy effect if file drop
@@ -167,6 +141,9 @@ namespace FaceitDemoVoiceCalc
                 : DragDropEffects.None;
         }
 
+        /// <summary>
+        /// Handles the DragDrop event to validate and process dropped demo files.
+        /// </summary>
         private void TB_demoFilePath_DragDrop(object sender, DragEventArgs e)
         {
             // Ensure dropped data contains file paths
@@ -180,19 +157,7 @@ namespace FaceitDemoVoiceCalc
                 if (Path.GetExtension(file)
                         .Equals(".dem", StringComparison.OrdinalIgnoreCase))
                 {
-                    // Clear All
-                    btn_MoveToCSFolder.Enabled = false;
-                    btn_CopyToClipboard.Enabled = false;
-                    DisableAll();
-                    tb_ConsoleCommand.ForeColor = Color.Black;
-                    tb_ConsoleCommand.Text = "Select one or more players you would like to hear in the demo...";
-
-                    // Show reading
-                    tb_demoFilePath.Text = file;
-                    lbl_ReadInfo.ForeColor = Color.Red;
-                    lbl_ReadInfo.Text = "Read demo file";
-
-                    ReadDemoFile(file);
+                    PrepareStart(file);
                     return;
                 }
             }
@@ -204,6 +169,41 @@ namespace FaceitDemoVoiceCalc
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Warning);
         }
+
+
+        /// <summary>
+        /// Prepares the application to read and process the given demo file.
+        /// Async is for the CloseVoicePlayer function.
+        /// </summary>
+        /// <param name="demoPath">Path to the .dem file.</param>
+        private async void PrepareStart(string demoPath)
+        {
+            // Clear All                    
+            DisableAll();
+            RemoveAudioFolder();
+            _voicePlayerOpen = await CloseVoicePlayer();
+            listBox_VoicePlayer.Items.Clear();
+            dGv_VoicePlayer.Columns.Clear();
+
+            // Default
+            btn_MoveToCSFolder.Enabled = false;
+            btn_CopyToClipboard.Enabled = false;
+            extractorToolStripMenuItem.Enabled = false;
+
+            tb_ConsoleCommand.ForeColor = Color.Black;
+            tb_ConsoleCommand.Text = "Select one or more players you would like to hear in the demo...";
+
+            lbl_progressBarText.Text = "";
+            progressBar.Value = 0;
+
+            // Show reading
+            tb_demoFilePath.Text = demoPath;
+            lbl_ReadInfo.ForeColor = Color.Red;
+            lbl_ReadInfo.Text = "Read demo file";
+
+            ReadDemoFile(demoPath);
+        }
+
 
 
         /// <summary>
@@ -468,6 +468,7 @@ namespace FaceitDemoVoiceCalc
             {
                 lbl_ReadInfo.Text = "File loaded with audio stream";
                 btn_CopyToClipboard.Enabled = true;
+                extractorToolStripMenuItem.Enabled = true;
                 ResetAll();
             }
             else
@@ -477,6 +478,7 @@ namespace FaceitDemoVoiceCalc
                 tb_ConsoleCommand.Text = "The loaded demo comes from competitive mode and has no audio...";
 
                 btn_CopyToClipboard.Enabled = false;
+                extractorToolStripMenuItem.Enabled = false;
                 DisableAll();
             }
 
@@ -923,6 +925,7 @@ namespace FaceitDemoVoiceCalc
             dGv_T.CurrentCell = null;
         }
 
+
         /// <summary>
         /// Handles the MouseDown event for the T DataGridView.
         /// Clears the selection and current cell from the CT DataGridView when the T DataGridView is clicked.
@@ -932,6 +935,233 @@ namespace FaceitDemoVoiceCalc
         {
             dGv_CT.ClearSelection();
             dGv_CT.CurrentCell = null;
+        }
+
+
+        /// <summary>
+        /// Removes the 'Audio' folder located in the application's current directory, including all subfolders and files.
+        /// </summary>
+        private void RemoveAudioFolder()
+        {
+            try
+            {
+                // Construct the path to the 'Audio' folder relative to the current directory
+                string audioFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "Audio");
+
+                // Check if the folder exists before attempting to delete it
+                if (Directory.Exists(audioFolderPath))
+                {
+                    // Delete the folder and all of its contents recursively
+                    Directory.Delete(audioFolderPath, true);
+                }
+            }
+            catch (Exception ex)
+            {
+                // Display an error message if folder deletion fails
+                MessageBox.Show("Error deleting the folder: " + ex.Message);
+            }
+        }
+
+
+        /// <summary>
+        /// Animates the main form's height change with optional label repositioning.
+        /// Temporarily disables movement, resizing, and control box interaction during the animation.
+        /// </summary>
+        /// <param name="targetHeight">The target height to animate to.</param>
+        /// <param name="expand">If true, expands the form; if false, collapses it.</param>
+        private async Task AnimateFormHeightAsync(int targetHeight, bool expand)
+        {
+            int step = 10; // Smaller step for smoother animation
+            int distance = Math.Abs(this.Height - targetHeight);
+            int steps = distance / step;
+            int remainder = distance % step;
+            int direction = expand ? 1 : -1;
+
+            // Disable interactions during animation
+            this.MinimizeBox = false;
+            this.MaximizeBox = false;
+            this.Enabled = false;
+
+            // Hide Elements during animation to avoid flickering or incorrect positions
+            lbl_ReadInfo.Visible = false;
+            lbl_byTeam.Visible = false;
+            groupBox_VoicePlayer.Visible = false;
+            groupBox_VoicePlayer.Enabled = false;
+
+            for (int i = 0; i < steps; i++)
+            {
+                this.Height += step * direction;
+
+                // Variable delay for smoother easing-like effect (starts fast, ends slow)
+                int delay = (int)(4 + 8.0 * i / steps);
+                await Task.Delay(delay);
+            }
+
+            if (remainder > 0)
+            {
+                this.Height += remainder * direction;
+            }
+
+            // Re-enable interactions after animation
+            this.MinimizeBox = true;
+            this.MaximizeBox = true;
+            this.Enabled = true;
+        }
+
+
+        /// <summary>
+        /// Animates the expansion of the main form to reveal the audio player.
+        /// Updates the menu item text and tooltip accordingly.
+        /// Restores label positions after animation.
+        /// </summary>
+        /// <returns>True if the expansion was successful.</returns>
+        private async Task<bool> OpenVoicePlayer()
+        {
+            await AnimateFormHeightAsync(_VOICEPLAYERHEIGHT, expand: true);
+
+            showAudioplayerToolStripMenuItem.Text = "Close the audio player";
+            showAudioplayerToolStripMenuItem.ToolTipText = "Close the voice player.";
+
+            // Reposition and show labels
+            MoveLabels(lbl_ReadInfo, 12, 572);
+            MoveLabels(lbl_byTeam, 643, 572);
+
+            groupBox_VoicePlayer.Visible = true;
+            groupBox_VoicePlayer.Enabled = true;
+
+            return true;
+        }
+
+
+        /// <summary>
+        /// Animates the collapse of the main form to hide the audio player.
+        /// Updates the menu item text and tooltip accordingly.
+        /// Restores label positions after animation.
+        /// </summary>
+        /// <returns>False to indicate the audio player is now closed.</returns>
+        private async Task<bool> CloseVoicePlayer()
+        {
+            await AnimateFormHeightAsync(_WINDOWHEIGHT, expand: false);
+
+            showAudioplayerToolStripMenuItem.Text = "Show the audio player";
+            showAudioplayerToolStripMenuItem.ToolTipText = "Opens a voice player with more information.";
+
+            // Reposition and show labels
+            MoveLabels(lbl_ReadInfo, 12, 372);
+            MoveLabels(lbl_byTeam, 643, 372);
+
+            return false;
+        }
+
+
+        /// <summary>
+        /// Repositions a label to the specified (x, y) coordinates
+        /// and ensures both controlled labels are made visible again.
+        /// </summary>
+        /// <param name="label">The label to move.</param>
+        /// <param name="x">New X coordinate.</param>
+        /// <param name="y">New Y coordinate.</param>
+        private void MoveLabels(Label label, int x = 0, int y = 0)
+        {
+            label.Location = new Point(x, y);
+
+            // Ensure both labels are shown
+            lbl_ReadInfo.Visible = true;
+            lbl_byTeam.Visible = true;
+        }
+
+
+        /// <summary>
+        /// Loads all player folders found under the demo's Audio directory.
+        /// Updates the ListBox with player Steam IDs and their display names (if available).
+        /// </summary>
+        private void LoadPlayerFolders()
+        {
+            string? appPath = Application.StartupPath;
+            string? demoPath = tb_demoFilePath.Text;
+            string? demoName = demoPath != null ? Path.GetFileNameWithoutExtension(demoPath) : null;
+            _audioFolderPath = demoName != null ? Path.Combine(appPath, "Audio", demoName) : null;
+
+            if (!string.IsNullOrEmpty(_audioFolderPath) && Directory.Exists(_audioFolderPath))
+            {
+                var directories = Directory.GetDirectories(_audioFolderPath)
+                                            .Select(Path.GetFileName)
+                                            .Where(name => !string.IsNullOrWhiteSpace(name))
+                                            .ToArray();
+
+                var displayItems = directories
+                    .Select(dir => new ListBoxItems
+                    {
+                        SteamId = dir,
+                        DisplayName = _snapshot?.FirstOrDefault(p => p.PlayerSteamID?.ToString() == dir)?.PlayerName ?? dir
+                    })
+                    .ToList();
+
+                listBox_VoicePlayer.Items.Clear();
+
+                foreach (var item in displayItems)
+                {
+                    listBox_VoicePlayer.Items.Add(item);
+                }
+
+                listBox_VoicePlayer.Enabled = true;
+            }
+            else
+            {
+                listBox_VoicePlayer.Enabled = false;
+                MessageBox.Show("The 'Audio' folder could not be found.\nTry running ‘Extract voice from demo’!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        /// <summary>
+        /// Configures the appearance and behavior of the DataGridView displaying voice entries.
+        /// Disables sorting and ensures consistent styling.
+        /// </summary>
+        private void ConfigurePlayerDataGrid(DataGridView dgv)
+        {
+            dgv.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dgv.RowHeadersVisible = false;
+            dgv.ClearSelection();
+            dgv.EnableHeadersVisualStyles = false;
+
+            dgv.ColumnHeadersDefaultCellStyle.SelectionBackColor = dgv.ColumnHeadersDefaultCellStyle.BackColor;
+            dgv.ColumnHeadersDefaultCellStyle.SelectionForeColor = dgv.ColumnHeadersDefaultCellStyle.ForeColor;
+
+            foreach (DataGridViewColumn column in dgv.Columns)
+            {
+                column.SortMode = DataGridViewColumnSortMode.NotSortable;
+                column.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            }
+        }
+
+        /// <summary>
+        /// Loads all audio entries for the selected Steam ID.
+        /// Populates the DataGridView with formatted round, time, and duration data.
+        /// </summary>
+        public void LoadVoiceData(string steamID)
+        {
+            dGv_VoicePlayer.Columns.Clear();
+            dGv_VoicePlayer.Rows.Clear();
+
+            dGv_VoicePlayer.Columns.Add("Round", "Round");
+            dGv_VoicePlayer.Columns.Add("Time", "Time");
+            dGv_VoicePlayer.Columns.Add("Duration", "Duration");
+
+            _audioEntries = AudioReadHelper.GetAudioEntries(steamID, _audioFolderPath ?? "");
+
+            var sorted = _audioEntries.OrderBy(x => x.Round).ToList();
+            _audioEntries = sorted;
+
+            foreach (var entry in sorted)
+            {
+                dGv_VoicePlayer.Rows.Add(
+                    $"Round {entry.Round}",
+                    entry.Time.ToString(@"hh\:mm\:ss"),
+                    $"{entry.DurationSeconds:F1} s"
+                );
+            }
+
+            ConfigurePlayerDataGrid(dGv_VoicePlayer);
         }
 
 
@@ -982,7 +1212,7 @@ namespace FaceitDemoVoiceCalc
         /// </summary>
         private void checkForUpdatesToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            _ = VersionChecker.IsNewerVersionAvailable(_VERSIONNR);
+            _ = VersionChecker.IsNewerVersionAvailable(_GUIVERSIONNR);
         }
 
 
@@ -999,6 +1229,11 @@ namespace FaceitDemoVoiceCalc
             _csDemoFolderPath = CS2PathConfig.GetPath();
         }
 
+        /// <summary>
+        /// Handles the click event for the "Extract Audios From Demo" menu item.
+        /// Initiates asynchronous audio extraction from a .dem file while updating
+        /// the progress bar and status label without freezing the UI.
+        /// </summary>
         private async void extractAudiosFromDemoToolStripMenuItem_Click(object sender, EventArgs e)
         {
             progressBar.Value = 0;
@@ -1018,9 +1253,79 @@ namespace FaceitDemoVoiceCalc
             extractAudiosFromDemoToolStripMenuItem.Enabled = true;
 
             if (result)
+            {
                 lbl_progressBarText.Text = "Extraction complete!";
+                LoadPlayerFolders();
+            }
             else
                 lbl_progressBarText.Text = "Error during extraction.";
+
+        }
+
+
+        /// <summary>
+        /// Handles the click event of the "Show Audio Player" menu item.
+        /// Expands or collapses the main form based on the current state of the audio player.
+        /// </summary>
+        private async void showAudioplayerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // Disable the extractor menu item during animation
+            extractorToolStripMenuItem.Enabled = false;
+
+            if (!_voicePlayerOpen)
+            {
+                _voicePlayerOpen = await OpenVoicePlayer(); // Expand the form                                                            
+                this.Height = _VOICEPLAYERHEIGHT; // Fallback to ensure target height is correctly set
+                LoadPlayerFolders();
+            }
+            else if (_voicePlayerOpen)
+            {
+                _voicePlayerOpen = await CloseVoicePlayer(); // Collapse the form                                                             
+                this.Height = _WINDOWHEIGHT; // Fallback to ensure target height is correctly set
+            }
+
+            // Re-enable the extractor menu item
+            extractorToolStripMenuItem.Enabled = true;
+        }
+
+
+        /// <summary>
+        /// Triggered when the selected item in the ListBox changes.
+        /// Attempts to locate and load voice data from the appropriate folder based on the selected Steam ID.
+        /// </summary>
+        private void listBox_VoicePlayer_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (listBox_VoicePlayer.SelectedItem is ListBoxItems selectedItem)
+            {
+                string? demoPath = tb_demoFilePath.Text;
+                string? demoName = demoPath != null ? Path.GetFileNameWithoutExtension(demoPath) : null;
+                string folderPath = demoName != null
+                    ? Path.Combine(Application.StartupPath, "Audio", demoName, selectedItem.SteamId)
+                    : string.Empty;
+
+                if (Directory.Exists(folderPath))
+                {
+                    LoadVoiceData(selectedItem.SteamId ?? "00");
+                }
+                else
+                {
+                    MessageBox.Show($"The folder '{selectedItem.SteamId}' could not be found in '{demoName}'.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// Handles double-click events on a DataGridView cell.
+        /// Plays the audio entry associated with the clicked row.
+        /// </summary>
+        private void dGv_VoicePlayer_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0 && e.RowIndex < _audioEntries.Count)
+            {
+                var entry = _audioEntries[e.RowIndex];
+                AudioReadHelper.PlayAudio(entry);
+            }
         }
     }
 }
