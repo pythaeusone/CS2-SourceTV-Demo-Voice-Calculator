@@ -76,8 +76,10 @@ Huge thanks to the following awesome people for testing and feedback:
 
 Here's what's next for the project:
 
-- Updater
-- Clean up code
+- Audio Voice Extractor ✔️
+- Audio Voice Player ✔️
+- Updater ⏳
+- Clean up code ⏳
 
 ---
 
