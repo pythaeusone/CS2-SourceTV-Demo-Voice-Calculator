@@ -95,7 +95,7 @@ namespace FaceitDemoVoiceCalc
 
             // Costum
             this.Text = "Faceit Demo Voice Calculator " + _GUIVERSIONNR;
-            groupBox_VoicePlayer.Text = "  Voice-Player  ";
+            groupBox_VoicePlayer.Text = " Voice-Player\u00A0";
 
             InitializeCheckboxGroup();
             InitializeEventHandlers();
@@ -1105,6 +1105,7 @@ namespace FaceitDemoVoiceCalc
                 }
 
                 listBox_VoicePlayer.Enabled = true;
+                dGv_VoicePlayer.ClearSelection();
             }
             else
             {
@@ -1275,7 +1276,7 @@ namespace FaceitDemoVoiceCalc
             if (!_voicePlayerOpen)
             {
                 _voicePlayerOpen = await OpenVoicePlayer(); // Expand the form                                                            
-                this.Height = _VOICEPLAYERHEIGHT; // Fallback to ensure target height is correctly set
+                this.Height = _VOICEPLAYERHEIGHT; // Fallback to ensure target height is correctly set                
                 LoadPlayerFolders();
             }
             else if (_voicePlayerOpen)

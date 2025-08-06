@@ -528,7 +528,7 @@
             groupBox_VoicePlayer.Size = new Size(798, 174);
             groupBox_VoicePlayer.TabIndex = 31;
             groupBox_VoicePlayer.TabStop = false;
-            groupBox_VoicePlayer.Text = "  Voice-Player  ";
+            groupBox_VoicePlayer.Text = " Voice-Player ";
             groupBox_VoicePlayer.Visible = false;
             // 
             // listBox_VoicePlayer
