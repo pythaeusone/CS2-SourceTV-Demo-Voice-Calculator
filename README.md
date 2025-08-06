@@ -72,4 +72,13 @@ Huge thanks to the following awesome people for testing and feedback:
 
 ---
 
+📅 ToDo List
+
+Here's what's next for the project:
+
+- Updater
+- Clean up code
+
+---
+
 > "This software is provided under the MIT License. Commercial use is strictly prohibited."
