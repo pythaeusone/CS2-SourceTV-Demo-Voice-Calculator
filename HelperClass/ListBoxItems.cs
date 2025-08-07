@@ -1,4 +1,4 @@
-﻿namespace FaceitDemoVoiceCalc
+﻿namespace CS2SourceTVDemoVoiceCalc.HelperClass
 {
     /// <summary>
     /// Internal class for mapping display name to Steam ID in the ListBox.

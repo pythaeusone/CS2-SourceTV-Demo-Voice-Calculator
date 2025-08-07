@@ -1,7 +1,6 @@
-﻿using Microsoft.VisualBasic;
-using Microsoft.Win32;
+﻿using Microsoft.Win32;
 
-namespace FaceitDemoVoiceCalc
+namespace CS2SourceTVDemoVoiceCalc.UtilClass
 {
     internal static class AddShellContextMenu
     {

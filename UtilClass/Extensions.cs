@@ -1,7 +1,7 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 
-namespace FaceitDemoVoiceCalc
+namespace CS2SourceTVDemoVoiceCalc.UtilClass
 {
     /// <summary>
     /// Provides extension methods for various common operations.

@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace CS2VoiceSegmenter
+namespace CS2SourceTVDemoVoiceCalc.AudioExtract
 {
     /// <summary>
     /// Static class for extracting audio segments from a CS2 demo file.

@@ -1,4 +1,4 @@
-﻿namespace FaceitDemoVoiceCalc
+﻿namespace CS2SourceTVDemoVoiceCalc.GUI
 {
     partial class MainForm
     {
@@ -52,7 +52,6 @@
             lbl_TeamA = new Label();
             lbl_TeamB = new Label();
             lbl_VS = new Label();
-            lbl_byTeam = new Label();
             cb_TeamAP1 = new CheckBox();
             cb_TeamAP2 = new CheckBox();
             cb_TeamAP3 = new CheckBox();
@@ -67,21 +66,24 @@
             cb_AllTeamA = new CheckBox();
             cb_AllTeamB = new CheckBox();
             lbl_ConsolCommand = new Label();
-            lbl_ReadInfo = new Label();
             btn_CopyToClipboard = new Button();
             btn_MoveToCSFolder = new Button();
             lbl_MapName = new Label();
             lbl_PlayTime = new Label();
-            progressBar = new ProgressBar();
-            lbl_progressBarText = new Label();
             groupBox_VoicePlayer = new GroupBox();
             listBox_VoicePlayer = new ListBox();
             dGv_VoicePlayer = new DataGridView();
+            statusStrip = new StatusStrip();
+            toolStripStatusLabel_StatusText = new ToolStripStatusLabel();
+            toolStripStatusLabel_progressBarText = new ToolStripStatusLabel();
+            toolStripProgressBar = new ToolStripProgressBar();
+            toolStripStatusLabel_BY = new ToolStripStatusLabel();
             menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dGv_CT).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dGv_T).BeginInit();
             groupBox_VoicePlayer.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dGv_VoicePlayer).BeginInit();
+            statusStrip.SuspendLayout();
             SuspendLayout();
             // 
             // menuStrip1
@@ -290,16 +292,6 @@
             lbl_VS.Text = "VS";
             lbl_VS.TextAlign = ContentAlignment.MiddleCenter;
             // 
-            // lbl_byTeam
-            // 
-            lbl_byTeam.AutoSize = true;
-            lbl_byTeam.Enabled = false;
-            lbl_byTeam.Location = new Point(643, 372);
-            lbl_byTeam.Name = "lbl_byTeam";
-            lbl_byTeam.Size = new Size(167, 15);
-            lbl_byTeam.TabIndex = 8;
-            lbl_byTeam.Text = "by Pythaeus | Team Kinzo 2025";
-            // 
             // cb_TeamAP1
             // 
             cb_TeamAP1.AutoSize = true;
@@ -404,7 +396,7 @@
             // 
             tb_ConsoleCommand.BackColor = SystemColors.Window;
             tb_ConsoleCommand.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            tb_ConsoleCommand.Location = new Point(33, 284);
+            tb_ConsoleCommand.Location = new Point(33, 291);
             tb_ConsoleCommand.Name = "tb_ConsoleCommand";
             tb_ConsoleCommand.ReadOnly = true;
             tb_ConsoleCommand.Size = new Size(624, 29);
@@ -442,29 +434,19 @@
             // lbl_ConsolCommand
             // 
             lbl_ConsolCommand.Font = new Font("Segoe UI", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lbl_ConsolCommand.Location = new Point(33, 267);
+            lbl_ConsolCommand.Location = new Point(33, 274);
             lbl_ConsolCommand.Name = "lbl_ConsolCommand";
             lbl_ConsolCommand.Size = new Size(624, 16);
             lbl_ConsolCommand.TabIndex = 23;
             lbl_ConsolCommand.Text = "Copy the command below into your CS2 console after you have loaded this demo.";
             lbl_ConsolCommand.TextAlign = ContentAlignment.BottomCenter;
             // 
-            // lbl_ReadInfo
-            // 
-            lbl_ReadInfo.AutoSize = true;
-            lbl_ReadInfo.Location = new Point(12, 372);
-            lbl_ReadInfo.Name = "lbl_ReadInfo";
-            lbl_ReadInfo.Size = new Size(10, 15);
-            lbl_ReadInfo.TabIndex = 24;
-            lbl_ReadInfo.Text = " ";
-            lbl_ReadInfo.TextAlign = ContentAlignment.MiddleLeft;
-            // 
             // btn_CopyToClipboard
             // 
             btn_CopyToClipboard.Enabled = false;
             btn_CopyToClipboard.FlatStyle = FlatStyle.Flat;
             btn_CopyToClipboard.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            btn_CopyToClipboard.Location = new Point(663, 286);
+            btn_CopyToClipboard.Location = new Point(663, 293);
             btn_CopyToClipboard.Name = "btn_CopyToClipboard";
             btn_CopyToClipboard.Size = new Size(120, 25);
             btn_CopyToClipboard.TabIndex = 25;
@@ -501,29 +483,13 @@
             lbl_PlayTime.TabIndex = 28;
             lbl_PlayTime.TextAlign = ContentAlignment.MiddleCenter;
             // 
-            // progressBar
-            // 
-            progressBar.ForeColor = Color.FromArgb(255, 128, 0);
-            progressBar.Location = new Point(33, 344);
-            progressBar.Name = "progressBar";
-            progressBar.Size = new Size(750, 18);
-            progressBar.TabIndex = 29;
-            // 
-            // lbl_progressBarText
-            // 
-            lbl_progressBarText.Location = new Point(33, 326);
-            lbl_progressBarText.Name = "lbl_progressBarText";
-            lbl_progressBarText.Size = new Size(750, 15);
-            lbl_progressBarText.TabIndex = 30;
-            lbl_progressBarText.TextAlign = ContentAlignment.BottomCenter;
-            // 
             // groupBox_VoicePlayer
             // 
             groupBox_VoicePlayer.Controls.Add(listBox_VoicePlayer);
             groupBox_VoicePlayer.Controls.Add(dGv_VoicePlayer);
             groupBox_VoicePlayer.Enabled = false;
             groupBox_VoicePlayer.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            groupBox_VoicePlayer.Location = new Point(12, 384);
+            groupBox_VoicePlayer.Location = new Point(12, 340);
             groupBox_VoicePlayer.Name = "groupBox_VoicePlayer";
             groupBox_VoicePlayer.Size = new Size(798, 174);
             groupBox_VoicePlayer.TabIndex = 31;
@@ -561,16 +527,58 @@
             dGv_VoicePlayer.TabIndex = 5;
             dGv_VoicePlayer.CellDoubleClick += dGv_VoicePlayer_CellDoubleClick;
             // 
+            // statusStrip
+            // 
+            statusStrip.Items.AddRange(new ToolStripItem[] { toolStripStatusLabel_StatusText, toolStripStatusLabel_progressBarText, toolStripProgressBar, toolStripStatusLabel_BY });
+            statusStrip.Location = new Point(0, 339);
+            statusStrip.Name = "statusStrip";
+            statusStrip.Size = new Size(822, 22);
+            statusStrip.SizingGrip = false;
+            statusStrip.TabIndex = 32;
+            // 
+            // toolStripStatusLabel_StatusText
+            // 
+            toolStripStatusLabel_StatusText.AutoSize = false;
+            toolStripStatusLabel_StatusText.BorderSides = ToolStripStatusLabelBorderSides.Right;
+            toolStripStatusLabel_StatusText.BorderStyle = Border3DStyle.Etched;
+            toolStripStatusLabel_StatusText.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            toolStripStatusLabel_StatusText.Name = "toolStripStatusLabel_StatusText";
+            toolStripStatusLabel_StatusText.Size = new Size(200, 17);
+            toolStripStatusLabel_StatusText.Text = "Wait";
+            toolStripStatusLabel_StatusText.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // toolStripStatusLabel_progressBarText
+            // 
+            toolStripStatusLabel_progressBarText.AutoSize = false;
+            toolStripStatusLabel_progressBarText.Name = "toolStripStatusLabel_progressBarText";
+            toolStripStatusLabel_progressBarText.Size = new Size(200, 17);
+            // 
+            // toolStripProgressBar
+            // 
+            toolStripProgressBar.AutoSize = false;
+            toolStripProgressBar.ForeColor = Color.FromArgb(255, 128, 0);
+            toolStripProgressBar.Name = "toolStripProgressBar";
+            toolStripProgressBar.Size = new Size(200, 16);
+            toolStripProgressBar.Step = 1;
+            toolStripProgressBar.Style = ProgressBarStyle.Continuous;
+            // 
+            // toolStripStatusLabel_BY
+            // 
+            toolStripStatusLabel_BY.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            toolStripStatusLabel_BY.Enabled = false;
+            toolStripStatusLabel_BY.Name = "toolStripStatusLabel_BY";
+            toolStripStatusLabel_BY.Size = new Size(205, 17);
+            toolStripStatusLabel_BY.Spring = true;
+            toolStripStatusLabel_BY.Text = "by Pythaeus | Team Kinzo 2025";
+            toolStripStatusLabel_BY.TextAlign = ContentAlignment.MiddleRight;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(822, 396);
+            ClientSize = new Size(822, 361);
+            Controls.Add(statusStrip);
             Controls.Add(groupBox_VoicePlayer);
-            Controls.Add(lbl_ReadInfo);
-            Controls.Add(lbl_byTeam);
-            Controls.Add(lbl_progressBarText);
-            Controls.Add(progressBar);
             Controls.Add(lbl_PlayTime);
             Controls.Add(lbl_MapName);
             Controls.Add(btn_MoveToCSFolder);
@@ -609,6 +617,8 @@
             ((System.ComponentModel.ISupportInitialize)dGv_T).EndInit();
             groupBox_VoicePlayer.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dGv_VoicePlayer).EndInit();
+            statusStrip.ResumeLayout(false);
+            statusStrip.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -623,7 +633,6 @@
         private Label lbl_TeamA;
         private Label lbl_TeamB;
         private Label lbl_VS;
-        private Label lbl_byTeam;
         private CheckBox cb_TeamAP1;
         private CheckBox cb_TeamAP2;
         private CheckBox cb_TeamAP3;
@@ -638,7 +647,6 @@
         private CheckBox cb_AllTeamA;
         private CheckBox cb_AllTeamB;
         private Label lbl_ConsolCommand;
-        private Label lbl_ReadInfo;
         private Button btn_CopyToClipboard;
         private Button btn_MoveToCSFolder;
         private ToolStripMenuItem settingsToolStripMenuItem;
@@ -657,11 +665,14 @@
         private ToolStripMenuItem extractAudiosFromDemoToolStripMenuItem;
         private ToolStripMenuItem fileToolStripMenuItem;
         private ToolStripMenuItem workInProgressToolStripMenuItem;
-        private ProgressBar progressBar;
-        private Label lbl_progressBarText;
         private ToolStripMenuItem showAudioplayerToolStripMenuItem;
         private GroupBox groupBox_VoicePlayer;
         private DataGridView dGv_VoicePlayer;
         private ListBox listBox_VoicePlayer;
+        private StatusStrip statusStrip;
+        private ToolStripStatusLabel toolStripStatusLabel_StatusText;
+        private ToolStripProgressBar toolStripProgressBar;
+        private ToolStripStatusLabel toolStripStatusLabel_BY;
+        private ToolStripStatusLabel toolStripStatusLabel_progressBarText;
     }
 }

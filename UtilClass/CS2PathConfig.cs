@@ -1,11 +1,8 @@
-﻿using System;
-using System.IO;
-using System.Text.Json;
+﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.WindowsAPICodePack.Dialogs;
-using System.Windows.Forms;
 
-namespace FaceitDemoVoiceCalc
+namespace CS2SourceTVDemoVoiceCalc.UtilClass
 {
     /// <summary>
     /// Provides storage and retrieval of a single CS2 demo folder path

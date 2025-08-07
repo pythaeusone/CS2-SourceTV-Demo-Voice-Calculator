@@ -1,4 +1,4 @@
-﻿namespace FaceitDemoVoiceCalc
+﻿namespace CS2SourceTVDemoVoiceCalc.GUI
 {
     partial class About
     {

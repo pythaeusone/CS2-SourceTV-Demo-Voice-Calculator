@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
 using System.Text.RegularExpressions;
 
-namespace FaceitDemoVoiceCalc
+namespace CS2SourceTVDemoVoiceCalc.UtilClass
 {
     internal static class VersionChecker
     {

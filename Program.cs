@@ -1,4 +1,6 @@
-namespace FaceitDemoVoiceCalc
+using CS2SourceTVDemoVoiceCalc.GUI;
+
+namespace CS2SourceTVDemoVoiceCalc
 {
     internal static class Program
     {

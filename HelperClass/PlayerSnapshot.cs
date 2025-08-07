@@ -1,7 +1,7 @@
 ﻿/// <summary>
 /// Holds basic player information captured at round start.
 /// </summary>
-namespace FaceitDemoVoiceCalc
+namespace CS2SourceTVDemoVoiceCalc.HelperClass
 {
     public class PlayerSnapshot
     {
