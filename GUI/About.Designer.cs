@@ -39,7 +39,7 @@
             richTextBoxAbout.Name = "richTextBoxAbout";
             richTextBoxAbout.ReadOnly = true;
             richTextBoxAbout.ShortcutsEnabled = false;
-            richTextBoxAbout.Size = new Size(653, 444);
+            richTextBoxAbout.Size = new Size(653, 320);
             richTextBoxAbout.TabIndex = 0;
             richTextBoxAbout.Text = resources.GetString("richTextBoxAbout.Text");
             // 
@@ -47,7 +47,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(677, 468);
+            ClientSize = new Size(677, 316);
             Controls.Add(richTextBoxAbout);
             FormBorderStyle = FormBorderStyle.FixedSingle;
             Icon = (Icon)resources.GetObject("$this.Icon");

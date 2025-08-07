@@ -567,9 +567,9 @@
             toolStripStatusLabel_BY.DisplayStyle = ToolStripItemDisplayStyle.Text;
             toolStripStatusLabel_BY.Enabled = false;
             toolStripStatusLabel_BY.Name = "toolStripStatusLabel_BY";
-            toolStripStatusLabel_BY.Size = new Size(205, 17);
+            toolStripStatusLabel_BY.Size = new Size(174, 17);
             toolStripStatusLabel_BY.Spring = true;
-            toolStripStatusLabel_BY.Text = "by Pythaeus | Team Kinzo 2025";
+            toolStripStatusLabel_BY.Text = "by Pythaeus | Team Kerovski 2025";
             toolStripStatusLabel_BY.TextAlign = ContentAlignment.MiddleRight;
             // 
             // MainForm

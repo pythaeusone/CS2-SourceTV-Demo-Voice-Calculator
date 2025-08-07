@@ -119,8 +119,8 @@
   </resheader>
   <data name="richTextBoxAbout.Text" xml:space="preserve">
     <value>Hello dear Counter-Strike friends, my name is Musti, also known as Pythaeus.
-I created this software to make it easier to listen to players in Faceit demos.
-I was inspired by the YouTuber @KEROVSKI_ and his tool to build something even better. ;)
+I created this software to make it easier to listen to players in Faceit, ESEA ... demos.
+I was inspired by the YouTuber @KEROVSKI_.
 
 For reading the demo files, I used the DemoFile library, which requires several additional dependencies that I’ll link below.
 
@@ -128,23 +128,13 @@ I’d like to thank the following people for testing: _starbaek_05, WaZaRo, KERO
 
 Here are all the links:
 
-Github project: https://github.com/pythaeusone/Faceit-Demo-Voice-Calculator
+Github project: https://github.com/pythaeusone/CS2-SourceTV-Demo-Voice-Calculator
 
 Community links:
-	ChiefKinzo Discord: https://discord.gg/bhKhRrD6
+	ChiefKinzo Discord: https://discord.gg/efFgHNHxS6
 	ChiefKinzo YT: https://www.youtube.com/@Chiefkinzo
-	@KEROVSKI_ ToolVideo: https://www.youtube.com/watch?v=7vsrbD3xBwM
-
-Used Lib:
-	DemoFile: https://www.nuget.org/packages/DemoFile/
-	DemoFile.Game.Cs: https://www.nuget.org/packages/DemoFile.Game.Cs
-
-Transitive Packages for DemoFile lib:
-	Google-Protobuf: https://www.nuget.org/packages/Google.Protobuf
-	protobuf-net: https://www.nuget.org/packages/protobuf-net
-	protobuf-net.Core: https://www.nuget.org/packages/protobuf-net.Core
-	Snappier: https://www.nuget.org/packages/Snappier
-	System-Collections-Immutable: https://www.nuget.org/packages/System.Collections.Immutable</value>
+	Kerovski Discord: https://discord.gg/n26tH9565K
+	@KEROVSKI_ ToolVideo: https://www.youtube.com/watch?v=7vsrbD3xBwM</value>
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
