@@ -1,14 +1,15 @@
-<img width="822" height="444" alt="grafik" src="https://github.com/user-attachments/assets/98a3cb3f-0690-49d8-9d8f-dbd5bd4e78bf" />
+<img width="823" height="393" alt="grafik" src="https://github.com/user-attachments/assets/1a454da6-a50e-4f75-b1ce-e6cd8dec6bf2" />
 
 
 
 
-# 🎧 Faceit Demo Voice Audio Bitfield Calculator
+
+# 🎧 CS2 SourceTV Demo Voice Audio Bitfield Calculator
 
 Hello dear Counter-Strike friends,  
 my name is Musti, also known as **Pythaeus**.
 
-I created this software to make it easier to listen to players in Faceit demos.  
+I created this software to make it easier to listen to players in SourceTV(Faceit,ESEA ...) demos.  
 I was inspired by the YouTuber **[@KEROVSKI](https://www.youtube.com/@KEROVSKI_)** and his tool — so I decided to build something even better. 😉
 
 For reading demo files, I used the **[DemoFile](https://www.nuget.org/packages/DemoFile/)** library, which requires several additional dependencies (linked below).
@@ -40,7 +41,7 @@ Huge thanks to the following awesome people for testing and feedback:
 
 ## 🔗 Project and Community Links
 
-- **GitHub project**: [https://github.com/pythaeusone/Faceit-Demo-Voice-Calculator](https://github.com/pythaeusone/Faceit-Demo-Voice-Calculator)
+- **GitHub project**: [https://github.com/pythaeusone/CS2-SourceTV-Demo-Voice-Calculator](https://github.com/pythaeusone/CS2-SourceTV-Demo-Voice-Calculator)
 
 ### 🎮 Community
 
@@ -79,7 +80,7 @@ Here's what's next for the project:
 - Audio Voice Extractor ✔️
 - Audio Voice Player ✔️
 - Updater ⏳
-- Clean up code ⏳
+- Clean up code ✔️
 - Video GUIDE ⏳
 
 ---
