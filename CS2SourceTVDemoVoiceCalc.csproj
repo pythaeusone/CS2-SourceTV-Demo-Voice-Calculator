@@ -3,11 +3,16 @@
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
 		<TargetFramework>net8.0-windows</TargetFramework>
+		<StartupObject>CS2SourceTVDemoVoiceCalc.Program</StartupObject>
 		<Nullable>enable</Nullable>
 		<UseWindowsForms>true</UseWindowsForms>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<ApplicationIcon>res\ico.ico</ApplicationIcon>
 		<PlatformTarget>x64</PlatformTarget>
+		<PackageProjectUrl></PackageProjectUrl>
+		<RepositoryUrl>https://github.com/pythaeusone/CS2-SourceTV-Demo-Voice-Calculator</RepositoryUrl>
+		<GenerateAssemblyInfo>False</GenerateAssemblyInfo>  
+    <GenerateTargetFrameworkAttribute>False</GenerateTargetFrameworkAttribute>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -29,9 +34,10 @@
 
 	<ItemGroup>
 		<PackageReference Include="Concentus" Version="2.2.2" />
-		<PackageReference Include="DemoFile" Version="0.31.1" />
-		<PackageReference Include="DemoFile.Game.Cs" Version="0.31.1" />
+		<PackageReference Include="DemoFile" Version="0.31.2" />
+		<PackageReference Include="DemoFile.Game.Cs" Version="0.31.2" />
 		<PackageReference Include="NAudio" Version="2.2.1" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 		<PackageReference Include="WindowsAPICodePackCore" Version="8.0.8" />
 		<PackageReference Include="WindowsAPICodePackShell" Version="8.0.8" />
 	</ItemGroup>

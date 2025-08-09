@@ -4,6 +4,7 @@ using CS2SourceTVDemoVoiceCalc.UtilClass;
 using DemoFile;
 using DemoFile.Game.Cs;
 using System.Data;
+using System.Windows.Automation.Provider;
 
 namespace CS2SourceTVDemoVoiceCalc.GUI
 {
@@ -46,17 +47,18 @@ namespace CS2SourceTVDemoVoiceCalc.GUI
         private static string _csStatsProfileLink = "https://csstats.gg/player/";
         private static string _leetifyProfileLink = "https://leetify.com/app/profile/";
 
-        // Other strings and state
+        // Other Globals
         private string _mapName = "no Mapname!";
         private string _duration = "00:00:00";
         private string _hostName = "No Hostname";
         private bool _voicePlayerOpen = false;
-        private const int _WINDOWHEIGHT = 400;
-        private const int _VOICEPLAYERHEIGHT = 585;
+        private int _windowHeight = 400;
+        private int _voicePlayerHeight = 585;
         private List<AudioEntry> _audioEntries;
+        private float _fontScaleFactor = 1f;
 
         // GUI version
-        private const string _GUIVERSIONNR = "v.1.0.0";
+        private const string _GUIVERSIONNR = GlobalVersionInfo.GUI_VERSION;
 
         // ==== Constructor ====
 
@@ -66,11 +68,121 @@ namespace CS2SourceTVDemoVoiceCalc.GUI
         public MainForm()
         {
             InitializeComponent();
-            this.Text = "CS2 SourceTV Demo Voice Calculator " + _GUIVERSIONNR;
+            this.Text = "CS2 SourceTV Demo Voice Calculator v." + _GUIVERSIONNR;
             groupBox_VoicePlayer.Text = " Voice-Player\u00A0";
             InitializeCheckboxGroup();
             InitializeEventHandlers();
             AddShellContextMenu.ValidateShellIntegration();
+
+            ApplyGuiScaling(); // <-- new method for responsive UI
+        }
+
+        /// <summary>
+        /// Applies GUI scaling based on the current screen resolution.
+        /// Only scales if the resolution is higher than the base resolution (1920x1080).
+        /// </summary>
+        private void ApplyGuiScaling()
+        {
+            // simulate 2560x1440
+            //float baseWidth = 1440f;
+            //float baseHeight = 810f;
+            // or for 4K:
+            //float baseWidth = 960f;
+            //float baseHeight = 540f;
+
+
+            // Define the base resolution for which the GUI was originally designed
+            float baseWidth = 1920f;
+            float baseHeight = 1080f;
+
+            // Get the current screen resolution
+            float screenWidth = Screen.PrimaryScreen.Bounds.Width;
+            float screenHeight = Screen.PrimaryScreen.Bounds.Height;
+
+            // Factor for font scaling based on resolution
+            if (screenHeight >= 1440f && screenHeight < 2160f)
+                _fontScaleFactor = 0.5f;
+            else if (screenHeight >= 2160f)
+                _fontScaleFactor = 0.25f;
+            else
+                _fontScaleFactor = 1f;
+
+
+            // Skip scaling if screen resolution is less than or equal to base
+            if (screenWidth <= baseWidth || screenHeight <= baseHeight)
+                return;
+
+            // Calculate scaling factors for width and height
+            float scaleX = screenWidth / baseWidth;
+            float scaleY = screenHeight / baseHeight;
+
+            // Use the smaller factor to maintain aspect ratio (proportional scaling)
+            float scale = Math.Min(scaleX, scaleY);
+
+            // Scale all controls recursively
+            ScaleControls(this, scale);
+
+            // Scale form width and height
+            this.Width = (int)(this.Width * scale);
+
+            // Update stored form height values for animations or layout
+            _windowHeight = (int)(this.Height * scale);
+            _voicePlayerHeight = (int)(_voicePlayerHeight * scale);
+            this.Height = _windowHeight;
+        }
+
+        /// <summary>
+        /// Recursively scales all child controls in a form, including font sizes and special cases like DataGridView and ListBox.
+        /// </summary>
+        /// <param name="parent">The parent control containing children to scale.</param>
+        /// <param name="scale">The scaling factor based on screen resolution.</param>
+        private void ScaleControls(Control parent, float scale)
+        {
+            foreach (Control control in parent.Controls)
+            {
+                // Scale position and size
+                control.Left = (int)(control.Left * scale);
+                control.Top = (int)(control.Top * scale);
+                control.Width = (int)(control.Width * scale);
+                control.Height = (int)(control.Height * scale);
+
+                // Default font scaling
+                control.Font = new Font(control.Font.FontFamily, control.Font.Size * scale, control.Font.Style);
+
+                // Handle DataGridView separately
+                if (control is DataGridView dgv)
+                {
+                    // Scale row height
+                    dgv.RowTemplate.Height = (int)(dgv.RowTemplate.Height * scale);
+
+                    // Apply smaller font specifically for dGv_VoicePlayer
+                    if (control.Name == "dGv_VoicePlayer")
+                    {
+                        float fontScale = scale * _fontScaleFactor;
+                        dgv.Font = new Font(dgv.Font.FontFamily, dgv.Font.Size * fontScale, dgv.Font.Style);
+                    }
+                }
+                // Handle ListBox separately
+                else if (control is ListBox lb)
+                {
+                    // Scale item height normally
+                    lb.ItemHeight = (int)(lb.ItemHeight * scale);
+
+                    // Adjust overall ListBox height to always show 5 visible items
+                    int borderPadding = lb.Height - (lb.ItemHeight * 5);
+                    lb.Height = (lb.ItemHeight * 5) + borderPadding;
+
+                    // Scale font smaller than the global scale
+                    float fontScale = scale * _fontScaleFactor;
+                    lb.Font = new Font(lb.Font.FontFamily, lb.Font.Size * fontScale, lb.Font.Style);
+                }
+
+                // Recursively scale nested child controls
+                if (control.Controls.Count > 0)
+                {
+                    ScaleControls(control, scale);
+                }
+            }
         }
 
         // ==== Demo Handling ====
@@ -693,7 +805,6 @@ namespace CS2SourceTVDemoVoiceCalc.GUI
             int direction = expand ? 1 : -1;
 
             this.MinimizeBox = false;
-            this.MaximizeBox = false;
             this.Enabled = false;
 
             groupBox_VoicePlayer.Visible = false;
@@ -711,7 +822,6 @@ namespace CS2SourceTVDemoVoiceCalc.GUI
             }
 
             this.MinimizeBox = true;
-            this.MaximizeBox = true;
             this.Enabled = true;
         }
 
@@ -720,7 +830,7 @@ namespace CS2SourceTVDemoVoiceCalc.GUI
         /// </summary>
         private async Task<bool> OpenVoicePlayer()
         {
-            await AnimateFormHeightAsync(_VOICEPLAYERHEIGHT, expand: true);
+            await AnimateFormHeightAsync(_voicePlayerHeight, expand: true);
             showAudioplayerToolStripMenuItem.Text = "Close the audio player";
             showAudioplayerToolStripMenuItem.ToolTipText = "Close the voice player.";
             groupBox_VoicePlayer.Visible = true;
@@ -733,7 +843,7 @@ namespace CS2SourceTVDemoVoiceCalc.GUI
         /// </summary>
         private async Task<bool> CloseVoicePlayer()
         {
-            await AnimateFormHeightAsync(_WINDOWHEIGHT, expand: false);
+            await AnimateFormHeightAsync(_windowHeight, expand: false);
             showAudioplayerToolStripMenuItem.Text = "Show the audio player";
             showAudioplayerToolStripMenuItem.ToolTipText = "Opens a voice player with more information.";
             return false;
@@ -828,11 +938,6 @@ namespace CS2SourceTVDemoVoiceCalc.GUI
         // ==== Event Handlers for Menus and UI ====
 
         /// <summary>
-        /// Opens the HowTo form.
-        /// </summary>
-        private void smallGuideToolStripMenuItem_Click(object sender, EventArgs e) => OpenForm<HowTo>();
-
-        /// <summary>
         /// Adds the shell context menu integration.
         /// </summary>
         private void addToShellContextMenuToolStripMenuItem_Click(object sender, EventArgs e) => AddShellContextMenu.AddShellIntegration();
@@ -896,13 +1001,13 @@ namespace CS2SourceTVDemoVoiceCalc.GUI
             if (!_voicePlayerOpen)
             {
                 _voicePlayerOpen = await OpenVoicePlayer();
-                this.Height = _VOICEPLAYERHEIGHT;
+                this.Height = _voicePlayerHeight;
                 LoadPlayerFolders();
             }
             else if (_voicePlayerOpen)
             {
                 _voicePlayerOpen = await CloseVoicePlayer();
-                this.Height = _WINDOWHEIGHT;
+                this.Height = _windowHeight;
             }
             extractorToolStripMenuItem.Enabled = true;
         }

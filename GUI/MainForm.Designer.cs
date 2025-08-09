@@ -43,7 +43,6 @@
             infoToolStripMenuItem = new ToolStripMenuItem();
             checkForUpdatesToolStripMenuItem = new ToolStripMenuItem();
             toolStripSeparator2 = new ToolStripSeparator();
-            smallGuideToolStripMenuItem = new ToolStripMenuItem();
             aboutToolStripMenuItem1 = new ToolStripMenuItem();
             lbl_demoFilePath = new Label();
             tb_demoFilePath = new TextBox();
@@ -172,7 +171,7 @@
             // 
             // infoToolStripMenuItem
             // 
-            infoToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { checkForUpdatesToolStripMenuItem, toolStripSeparator2, smallGuideToolStripMenuItem, aboutToolStripMenuItem1 });
+            infoToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { checkForUpdatesToolStripMenuItem, toolStripSeparator2, aboutToolStripMenuItem1 });
             infoToolStripMenuItem.Name = "infoToolStripMenuItem";
             infoToolStripMenuItem.Size = new Size(40, 20);
             infoToolStripMenuItem.Text = "Info";
@@ -180,7 +179,7 @@
             // checkForUpdatesToolStripMenuItem
             // 
             checkForUpdatesToolStripMenuItem.Name = "checkForUpdatesToolStripMenuItem";
-            checkForUpdatesToolStripMenuItem.Size = new Size(171, 22);
+            checkForUpdatesToolStripMenuItem.Size = new Size(180, 22);
             checkForUpdatesToolStripMenuItem.Text = "Check for Updates";
             checkForUpdatesToolStripMenuItem.ToolTipText = "Checks whether a new version is available on GitHub.";
             checkForUpdatesToolStripMenuItem.Click += checkForUpdatesToolStripMenuItem_Click;
@@ -188,20 +187,12 @@
             // toolStripSeparator2
             // 
             toolStripSeparator2.Name = "toolStripSeparator2";
-            toolStripSeparator2.Size = new Size(168, 6);
-            // 
-            // smallGuideToolStripMenuItem
-            // 
-            smallGuideToolStripMenuItem.Name = "smallGuideToolStripMenuItem";
-            smallGuideToolStripMenuItem.Size = new Size(171, 22);
-            smallGuideToolStripMenuItem.Text = "Small Guide";
-            smallGuideToolStripMenuItem.ToolTipText = "Opens a small guide.";
-            smallGuideToolStripMenuItem.Click += smallGuideToolStripMenuItem_Click;
+            toolStripSeparator2.Size = new Size(177, 6);
             // 
             // aboutToolStripMenuItem1
             // 
             aboutToolStripMenuItem1.Name = "aboutToolStripMenuItem1";
-            aboutToolStripMenuItem1.Size = new Size(171, 22);
+            aboutToolStripMenuItem1.Size = new Size(180, 22);
             aboutToolStripMenuItem1.Text = "About";
             aboutToolStripMenuItem1.ToolTipText = "About the developer and contributors.";
             aboutToolStripMenuItem1.Click += aboutToolStripMenuItem1_Click;
@@ -529,9 +520,11 @@
             // 
             // statusStrip
             // 
+            statusStrip.AutoSize = false;
             statusStrip.Items.AddRange(new ToolStripItem[] { toolStripStatusLabel_StatusText, toolStripStatusLabel_progressBarText, toolStripProgressBar, toolStripStatusLabel_BY });
             statusStrip.Location = new Point(0, 339);
             statusStrip.Name = "statusStrip";
+            statusStrip.RightToLeft = RightToLeft.No;
             statusStrip.Size = new Size(822, 22);
             statusStrip.SizingGrip = false;
             statusStrip.TabIndex = 32;
@@ -543,7 +536,8 @@
             toolStripStatusLabel_StatusText.BorderStyle = Border3DStyle.Etched;
             toolStripStatusLabel_StatusText.DisplayStyle = ToolStripItemDisplayStyle.Text;
             toolStripStatusLabel_StatusText.Name = "toolStripStatusLabel_StatusText";
-            toolStripStatusLabel_StatusText.Size = new Size(200, 17);
+            toolStripStatusLabel_StatusText.Size = new Size(201, 17);
+            toolStripStatusLabel_StatusText.Spring = true;
             toolStripStatusLabel_StatusText.Text = "Wait";
             toolStripStatusLabel_StatusText.TextAlign = ContentAlignment.MiddleLeft;
             // 
@@ -551,11 +545,11 @@
             // 
             toolStripStatusLabel_progressBarText.AutoSize = false;
             toolStripStatusLabel_progressBarText.Name = "toolStripStatusLabel_progressBarText";
-            toolStripStatusLabel_progressBarText.Size = new Size(200, 17);
+            toolStripStatusLabel_progressBarText.Size = new Size(201, 17);
+            toolStripStatusLabel_progressBarText.Spring = true;
             // 
             // toolStripProgressBar
             // 
-            toolStripProgressBar.AutoSize = false;
             toolStripProgressBar.ForeColor = Color.FromArgb(255, 128, 0);
             toolStripProgressBar.Name = "toolStripProgressBar";
             toolStripProgressBar.Size = new Size(200, 16);
@@ -564,10 +558,11 @@
             // 
             // toolStripStatusLabel_BY
             // 
+            toolStripStatusLabel_BY.AutoSize = false;
             toolStripStatusLabel_BY.DisplayStyle = ToolStripItemDisplayStyle.Text;
             toolStripStatusLabel_BY.Enabled = false;
             toolStripStatusLabel_BY.Name = "toolStripStatusLabel_BY";
-            toolStripStatusLabel_BY.Size = new Size(174, 17);
+            toolStripStatusLabel_BY.Size = new Size(201, 17);
             toolStripStatusLabel_BY.Spring = true;
             toolStripStatusLabel_BY.Text = "by Pythaeus | Team Kerovski 2025";
             toolStripStatusLabel_BY.TextAlign = ContentAlignment.MiddleRight;
@@ -660,7 +655,6 @@
         private ToolStripSeparator toolStripSeparator2;
         private Label lbl_MapName;
         private Label lbl_PlayTime;
-        private ToolStripMenuItem smallGuideToolStripMenuItem;
         private ToolStripMenuItem extractorToolStripMenuItem;
         private ToolStripMenuItem extractAudiosFromDemoToolStripMenuItem;
         private ToolStripMenuItem fileToolStripMenuItem;

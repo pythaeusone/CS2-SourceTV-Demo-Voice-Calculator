@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Diagnostics;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 
 namespace CS2SourceTVDemoVoiceCalc.UtilClass
@@ -45,31 +46,48 @@ namespace CS2SourceTVDemoVoiceCalc.UtilClass
                     }
                 }
 
+                var versionTag = "v." + versionNr; // v. counts as version Nr. xD
+
                 // If a newer version than the current one was found
-                if (latestTag != null && CompareVersions(latestTag, versionNr) > 0)
+                if (latestTag != null && CompareVersions(latestTag, versionTag) > 0)
                 {
                     var result = MessageBox.Show(
-                        $"New version available: {latestTag}\n\nDo you want to open the release page?",
+                        $"New version available: {latestTag}\n\nWould you like to start the updater?",
                         "Update Available",
                         MessageBoxButtons.YesNo,
                         MessageBoxIcon.Information);
 
                     if (result == DialogResult.Yes)
                     {
-                        string url = RELEASE_PAGE_BASE_URL + latestTag;
+                        string appName = "Updater.exe";
+                        string runPath = Path.Combine("Updater_Old", appName);
+
+                        // Rename Updater Directory to Updater_Old
+                        if (!RenameDirectory("Updater", "Updater_Old"))
+                        {
+                            MessageBox.Show("Error loading the updater");
+                            return false;
+                        }
+
+                        MessageBox.Show("The CS2 SourceTV Demo Voice Calculator is now closing for the update process.");
+
                         try
                         {
-                            // Open the release URL in the default web browser
-                            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+                            ProcessStartInfo startInfo = new ProcessStartInfo
                             {
-                                FileName = url,
+                                FileName = runPath,
+                                Arguments = latestTag,
                                 UseShellExecute = true
-                            });
+                            };
+
+                            Process.Start(startInfo);
                         }
-                        catch (Exception openEx)
+                        catch (Exception ex)
                         {
-                            MessageBox.Show($"Could not open the release page: {openEx.Message}");
+                            MessageBox.Show($"[ERROR] Failed to start Updater: {ex.Message}");
                         }
+
+                        Environment.Exit(0);
                     }
 
                     return true;
@@ -91,6 +109,54 @@ namespace CS2SourceTVDemoVoiceCalc.UtilClass
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// Renames a directory if source exists and destination doesn't
+        /// </summary>
+        /// <param name="source">Source directory path</param>
+        /// <param name="newName">New directory name (not full path)</param>
+        /// <returns>True if successful, false otherwise</returns>
+        private static bool RenameDirectory(string source, string newName)
+        {
+            try
+            {
+                // Validate source exists
+                if (!Directory.Exists(source))
+                {
+                    MessageBox.Show($"Source directory not found: {source}",
+                                    "Rename Error",
+                                    MessageBoxButtons.OK,
+                                    MessageBoxIcon.Error);
+                    return false;
+                }
+
+                // Create destination path
+                string parent = Directory.GetParent(source)?.FullName;
+                string destination = Path.Combine(parent, newName);
+
+                // Validate destination doesn't exist
+                if (Directory.Exists(destination))
+                {
+                    MessageBox.Show($"Target directory already exists: {destination}",
+                                    "Rename Error",
+                                    MessageBoxButtons.OK,
+                                    MessageBoxIcon.Error);
+                    return false;
+                }
+
+                // Execute rename
+                Directory.Move(source, destination);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error renaming directory:\n{ex.Message}",
+                                "Rename Error",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Error);
+                return false;
+            }
         }
 
         /// <summary>
