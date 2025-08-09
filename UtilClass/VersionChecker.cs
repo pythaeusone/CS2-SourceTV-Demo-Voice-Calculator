@@ -18,7 +18,7 @@ namespace CS2SourceTVDemoVoiceCalc.UtilClass
         /// </summary>
         /// <param name="versionNr">The current version of the application (e.g., "v.0.9.4b").</param>
         /// <returns>True if a newer version is available, otherwise false.</returns>
-        public static async Task<bool> IsNewerVersionAvailable(string versionNr)
+        public static async Task<bool> IsNewerVersionAvailable(string versionNr, bool fromAutoCheck = false)
         {
             using HttpClient client = new HttpClient();
             client.DefaultRequestHeaders.Add("User-Agent", "VersionCheckerApp"); // Required by GitHub API
@@ -94,12 +94,16 @@ namespace CS2SourceTVDemoVoiceCalc.UtilClass
                 }
                 else
                 {
-                    // Inform the user that their version is up to date
-                    MessageBox.Show(
-                        "You are using the latest version.",
-                        "No Updates",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Information);
+                    if (!fromAutoCheck)
+                    {
+                        // Inform the user that their version is up to date
+                        MessageBox.Show(
+                            "You are using the latest version.",
+                            "No Updates",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Information);
+                    }
+
                 }
             }
             catch (Exception ex)

@@ -56,6 +56,7 @@ namespace CS2SourceTVDemoVoiceCalc.GUI
         private int _voicePlayerHeight = 585;
         private List<AudioEntry> _audioEntries;
         private float _fontScaleFactor = 1f;
+        private const string _CHECKUPDATEKEY = "CheckUpdate";
 
         // GUI version
         private const string _GUIVERSIONNR = GlobalVersionInfo.GUI_VERSION;
@@ -75,6 +76,26 @@ namespace CS2SourceTVDemoVoiceCalc.GUI
             AddShellContextMenu.ValidateShellIntegration();
 
             ApplyGuiScaling(); // <-- new method for responsive UI
+        }
+
+        /// <summary>
+        /// Handles the form's Load event.
+        /// Loads the 'CheckUpdate' setting from the JSON config and updates the menu item's check state accordingly.
+        /// </summary>
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+            // Check if the key exists in the JSON config; if not, default to false
+            bool checkUpdate = JsonClass.KeyExists(_CHECKUPDATEKEY)
+                ? JsonClass.ReadJson<bool>(_CHECKUPDATEKEY)
+                : false;
+
+            // Set the menu item's Checked property based on the stored value
+            checkForUpdateOnStartupToolStripMenuItem.Checked = checkUpdate;
+
+            if (checkUpdate)
+            {
+                VersionChecker.IsNewerVersionAvailable(_GUIVERSIONNR, true);
+            }
         }
 
         /// <summary>
@@ -710,11 +731,11 @@ namespace CS2SourceTVDemoVoiceCalc.GUI
 
             if (string.IsNullOrWhiteSpace(_csDemoFolderPath) || !Directory.Exists(_csDemoFolderPath))
             {
-                _csDemoFolderPath = CS2PathConfig.GetPath();
+                _csDemoFolderPath = CS2PathPicker.GetPath();
                 if (!Directory.Exists(_csDemoFolderPath))
                 {
-                    CS2PathConfig.EnsurePathConfigured();
-                    _csDemoFolderPath = CS2PathConfig.GetPath();
+                    CS2PathPicker.EnsurePathConfigured();
+                    _csDemoFolderPath = CS2PathPicker.GetPath();
                 }
             }
 
@@ -962,8 +983,21 @@ namespace CS2SourceTVDemoVoiceCalc.GUI
         /// </summary>
         private void changeDemoFolderPathToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            CS2PathConfig.EnsurePathConfigured();
-            _csDemoFolderPath = CS2PathConfig.GetPath();
+            CS2PathPicker.EnsurePathConfigured();
+            _csDemoFolderPath = CS2PathPicker.GetPath();
+        }
+
+        /// <summary>
+        /// Handles the click event of the 'Check for Update on startup' menu item.
+        /// Toggles the check state and saves the updated setting to the JSON config.
+        /// </summary>
+        private void checkForUpdateOnStartupToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // Toggle the Checked state of the menu item
+            checkForUpdateOnStartupToolStripMenuItem.Checked = !checkForUpdateOnStartupToolStripMenuItem.Checked;
+
+            // Save the updated state to the JSON config
+            JsonClass.WriteJson(_CHECKUPDATEKEY, checkForUpdateOnStartupToolStripMenuItem.Checked);
         }
 
         /// <summary>

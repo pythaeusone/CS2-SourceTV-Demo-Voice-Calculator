@@ -37,6 +37,8 @@
             toolStripSeparator1 = new ToolStripSeparator();
             addToShellContextMenuToolStripMenuItem = new ToolStripMenuItem();
             removeFromShellContextMenuToolStripMenuItem = new ToolStripMenuItem();
+            toolStripSeparator3 = new ToolStripSeparator();
+            checkForUpdateOnStartupToolStripMenuItem = new ToolStripMenuItem();
             extractorToolStripMenuItem = new ToolStripMenuItem();
             extractAudiosFromDemoToolStripMenuItem = new ToolStripMenuItem();
             showAudioplayerToolStripMenuItem = new ToolStripMenuItem();
@@ -111,7 +113,7 @@
             // 
             // settingsToolStripMenuItem
             // 
-            settingsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { changeDemoFolderPathToolStripMenuItem, toolStripSeparator1, addToShellContextMenuToolStripMenuItem, removeFromShellContextMenuToolStripMenuItem });
+            settingsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { addToShellContextMenuToolStripMenuItem, removeFromShellContextMenuToolStripMenuItem, toolStripSeparator3, changeDemoFolderPathToolStripMenuItem, toolStripSeparator1, checkForUpdateOnStartupToolStripMenuItem });
             settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
             settingsToolStripMenuItem.Size = new Size(61, 20);
             settingsToolStripMenuItem.Text = "Settings";
@@ -144,6 +146,18 @@
             removeFromShellContextMenuToolStripMenuItem.Text = "Remove from Shell-Context-Menu";
             removeFromShellContextMenuToolStripMenuItem.ToolTipText = "Removes the app from the Windows shell context menu.";
             removeFromShellContextMenuToolStripMenuItem.Click += removeFromShellContextMenuToolStripMenuItem_Click;
+            // 
+            // toolStripSeparator3
+            // 
+            toolStripSeparator3.Name = "toolStripSeparator3";
+            toolStripSeparator3.Size = new Size(254, 6);
+            // 
+            // checkForUpdateOnStartupToolStripMenuItem
+            // 
+            checkForUpdateOnStartupToolStripMenuItem.Name = "checkForUpdateOnStartupToolStripMenuItem";
+            checkForUpdateOnStartupToolStripMenuItem.Size = new Size(257, 22);
+            checkForUpdateOnStartupToolStripMenuItem.Text = "Check for Update on startup";
+            checkForUpdateOnStartupToolStripMenuItem.Click += checkForUpdateOnStartupToolStripMenuItem_Click;
             // 
             // extractorToolStripMenuItem
             // 
@@ -179,7 +193,7 @@
             // checkForUpdatesToolStripMenuItem
             // 
             checkForUpdatesToolStripMenuItem.Name = "checkForUpdatesToolStripMenuItem";
-            checkForUpdatesToolStripMenuItem.Size = new Size(180, 22);
+            checkForUpdatesToolStripMenuItem.Size = new Size(171, 22);
             checkForUpdatesToolStripMenuItem.Text = "Check for Updates";
             checkForUpdatesToolStripMenuItem.ToolTipText = "Checks whether a new version is available on GitHub.";
             checkForUpdatesToolStripMenuItem.Click += checkForUpdatesToolStripMenuItem_Click;
@@ -187,12 +201,12 @@
             // toolStripSeparator2
             // 
             toolStripSeparator2.Name = "toolStripSeparator2";
-            toolStripSeparator2.Size = new Size(177, 6);
+            toolStripSeparator2.Size = new Size(168, 6);
             // 
             // aboutToolStripMenuItem1
             // 
             aboutToolStripMenuItem1.Name = "aboutToolStripMenuItem1";
-            aboutToolStripMenuItem1.Size = new Size(180, 22);
+            aboutToolStripMenuItem1.Size = new Size(171, 22);
             aboutToolStripMenuItem1.Text = "About";
             aboutToolStripMenuItem1.ToolTipText = "About the developer and contributors.";
             aboutToolStripMenuItem1.Click += aboutToolStripMenuItem1_Click;
@@ -606,6 +620,7 @@
             MaximizeBox = false;
             Name = "MainForm";
             StartPosition = FormStartPosition.CenterScreen;
+            Load += MainForm_Load;
             menuStrip1.ResumeLayout(false);
             menuStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)dGv_CT).EndInit();
@@ -668,5 +683,7 @@
         private ToolStripProgressBar toolStripProgressBar;
         private ToolStripStatusLabel toolStripStatusLabel_BY;
         private ToolStripStatusLabel toolStripStatusLabel_progressBarText;
+        private ToolStripMenuItem checkForUpdateOnStartupToolStripMenuItem;
+        private ToolStripSeparator toolStripSeparator3;
     }
 }
