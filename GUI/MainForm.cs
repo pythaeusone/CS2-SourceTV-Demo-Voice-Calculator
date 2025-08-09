@@ -4,7 +4,9 @@ using CS2SourceTVDemoVoiceCalc.UtilClass;
 using DemoFile;
 using DemoFile.Game.Cs;
 using System.Data;
+using System.DirectoryServices.ActiveDirectory;
 using System.Windows.Automation.Provider;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace CS2SourceTVDemoVoiceCalc.GUI
 {
@@ -57,6 +59,7 @@ namespace CS2SourceTVDemoVoiceCalc.GUI
         private List<AudioEntry> _audioEntries;
         private float _fontScaleFactor = 1f;
         private const string _CHECKUPDATEKEY = "CheckUpdate";
+        private string _selectedPlayerVoicePlayer = "NoPlayerName";
 
         // GUI version
         private const string _GUIVERSIONNR = GlobalVersionInfo.GUI_VERSION;
@@ -338,108 +341,6 @@ namespace CS2SourceTVDemoVoiceCalc.GUI
         }
 
         /// <summary>
-        /// Configures the context menu for a DataGridView with player actions.
-        /// </summary>
-        private void ConfigureContextMenu(DataGridView dgv, List<PlayerSnapshot> playerList)
-        {
-            // Context menu setup for player actions (copy SteamID, open profiles, etc.)
-            var playerHeader = new ToolStripMenuItem("Player")
-            {
-                Enabled = false,
-                Font = new Font(SystemFonts.DefaultFont, FontStyle.Bold),
-                Image = Properties.Resources.iconPlayer
-            };
-
-            var copySteamId = new ToolStripMenuItem("Copy SteamID64")
-            {
-                Image = Properties.Resources.iconSteam
-            };
-
-            var profileDefinitions = new (string Label, string UrlPrefix, Image Icon)[]
-            {
-                ("Open Steam Profile", _steamProfileLink, Properties.Resources.iconSteam),
-                ("Open cswatch.in Profile", _cswatchProfileLink, Properties.Resources.iconCsWatch),
-                ("Open leetify.com Profile", _leetifyProfileLink, Properties.Resources.iconLeetify),
-                ("Open csstats.gg Profile", _csStatsProfileLink, Properties.Resources.iconCsStats)
-            };
-
-            var profileItems = profileDefinitions.Select(def => new ToolStripMenuItem(def.Label)
-            {
-                Image = def.Icon
-            }).ToList();
-
-            ContextMenuStrip cms = new ContextMenuStrip();
-            cms.Items.Add(playerHeader);
-            cms.Items.Add(new ToolStripSeparator());
-            cms.Items.Add(copySteamId);
-            cms.Items.Add(new ToolStripSeparator());
-            cms.Items.AddRange(profileItems.ToArray());
-
-            dgv.ContextMenuStrip = cms;
-
-            copySteamId.Click += (s, e) =>
-            {
-                if (copySteamId.Tag is PlayerSnapshot p && p.PlayerSteamID.HasValue)
-                {
-                    Clipboard.SetText(p.PlayerSteamID.ToString() ?? "Error reading SteamID");
-                    MessageBox.Show($"SteamID64 for {p.PlayerName} copied to clipboard.", "Info");
-                }
-            };
-
-            foreach (var (menuItem, def) in profileItems.Zip(profileDefinitions))
-            {
-                menuItem.Click += (s, e) =>
-                {
-                    if (menuItem.Tag is PlayerSnapshot p && p.PlayerSteamID.HasValue)
-                    {
-                        string url = def.UrlPrefix + p.PlayerSteamID;
-                        System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
-                        {
-                            FileName = url,
-                            UseShellExecute = true
-                        });
-                    }
-                };
-            }
-
-            dgv.MouseDown += (s, e) =>
-            {
-                if (e.Button == MouseButtons.Right)
-                {
-                    var hit = dgv.HitTest(e.X, e.Y);
-                    if (hit.Type == DataGridViewHitTestType.Cell && hit.RowIndex >= 0)
-                    {
-                        dgv.ClearSelection();
-                        dgv.Rows[hit.RowIndex].Selected = true;
-                        dgv.CurrentCell = dgv.Rows[hit.RowIndex].Cells[hit.ColumnIndex];
-
-                        string playerName = dgv.Rows[hit.RowIndex].Cells[1].Value?.ToString() ?? "";
-                        var player = playerList.FirstOrDefault(p => p.PlayerName == playerName);
-
-                        if (player != null)
-                        {
-                            playerHeader.Text = player.PlayerName;
-                            copySteamId.Text = $"Copy SteamID64";
-                            copySteamId.Tag = player;
-                            profileItems.ForEach(i => i.Tag = player);
-                        }
-                        else
-                        {
-                            playerHeader.Text = "Unknown Player";
-                            copySteamId.Text = "Player not found";
-                            copySteamId.Tag = null;
-                            profileItems.ForEach(i =>
-                            {
-                                i.Text = "-";
-                                i.Tag = null;
-                            });
-                        }
-                    }
-                }
-            };
-        }
-
-        /// <summary>
         /// Loads player data into the CT and T DataGrids.
         /// </summary>
         private void LoadCTTDataGrid()
@@ -463,8 +364,9 @@ namespace CS2SourceTVDemoVoiceCalc.GUI
 
             ConfigureDataGrid(dGv_CT);
             ConfigureDataGrid(dGv_T);
-            ConfigureContextMenu(dGv_CT, ctPlayers);
-            ConfigureContextMenu(dGv_T, tPlayers);
+
+            DGVContextMenu.ConfigureContextMenuMainGrid(dGv_CT, ctPlayers, _steamProfileLink, _cswatchProfileLink, _leetifyProfileLink, _csStatsProfileLink);
+            DGVContextMenu.ConfigureContextMenuMainGrid(dGv_T, tPlayers, _steamProfileLink, _cswatchProfileLink, _leetifyProfileLink, _csStatsProfileLink);
 
             toolStripStatusLabel_StatusText.ForeColor = Color.DarkGreen;
 
@@ -954,6 +856,7 @@ namespace CS2SourceTVDemoVoiceCalc.GUI
                 );
             }
             ConfigurePlayerDataGrid(dGv_VoicePlayer);
+            DGVContextMenu.ConfigureContextMenuAudioFileCopy(dGv_VoicePlayer, _audioEntries, _selectedPlayerVoicePlayer);
         }
 
         // ==== Event Handlers for Menus and UI ====
@@ -1058,6 +961,8 @@ namespace CS2SourceTVDemoVoiceCalc.GUI
                 string folderPath = demoName != null
                     ? Path.Combine(Application.StartupPath, "Audio", demoName, selectedItem.SteamId)
                     : string.Empty;
+
+                _selectedPlayerVoicePlayer = listBox_VoicePlayer.SelectedItem.ToString();
 
                 if (Directory.Exists(folderPath))
                 {

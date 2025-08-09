@@ -63,6 +63,16 @@ namespace CS2SourceTVDemoVoiceCalc.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap iconCopy {
+            get {
+                object obj = ResourceManager.GetObject("iconCopy", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap iconCsStats {
             get {
                 object obj = ResourceManager.GetObject("iconCsStats", resourceCulture);
