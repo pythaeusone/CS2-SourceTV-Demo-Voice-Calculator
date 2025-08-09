@@ -4,7 +4,7 @@
 
 
 
-# 🎧 CS2 SourceTV Demo Voice Audio Bitfield Calculator
+# 🎧 CS2 SourceTV Demo Voice Audio Bitfield Calculator incl. Updater
 
 Hello dear Counter-Strike friends,  
 my name is Musti, also known as **Pythaeus**.
@@ -81,7 +81,7 @@ Here's what's next for the project:
 - Audio Voice Extractor ✔️
 - Audio Voice Player ✔️
 - Updater ⏳
-- Scale function ⏳
+- Scale function ✔️
 - Clean up code ✔️
 - Video GUIDE ⏳
 
