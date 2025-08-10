@@ -5,10 +5,10 @@ namespace CS2SourceTVDemoVoiceCalc.UtilClass
     internal static class AddShellContextMenu
     {
         private static readonly string[] EXTENSIONS = new[] { ".dem" };
-        private static readonly string EXE_PATH = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "FaceitDemoVoiceCalc.exe"));
+        private static readonly string EXE_PATH = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "CS2SourceTVDemoVoiceCalc.exe"));
         private const string MENU_NAME = "Open with Faceit Demo Voice Calculator";
 
-        public static void AddShellIntegration()
+        public static void AddShellIntegration(bool fromCheck = false)
         {
             foreach (var ext in EXTENSIONS)
             {
@@ -27,11 +27,14 @@ namespace CS2SourceTVDemoVoiceCalc.UtilClass
                     {
                         commandKey?.SetValue(string.Empty, $"\"{EXE_PATH}\" \"%1\"");
                     }
-                    MessageBox.Show($"Shell integration added for {ext}",
-                            "Info for Shell-Context-Menu",
-                            MessageBoxButtons.OK,
-                            MessageBoxIcon.Information
-                            );
+                    if (!fromCheck)
+                    {
+                        MessageBox.Show($"Shell integration added for {ext}",
+                                "Info for Shell-Context-Menu",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Information
+                                );
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -86,7 +89,7 @@ namespace CS2SourceTVDemoVoiceCalc.UtilClass
                             MessageBoxButtons.OK,
                             MessageBoxIcon.Information
                             );
-                            AddShellIntegration();
+                            AddShellIntegration(true);
                         }
                     }
                 }

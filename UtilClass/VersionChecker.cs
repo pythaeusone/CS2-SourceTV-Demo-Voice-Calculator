@@ -77,13 +77,20 @@ namespace CS2SourceTVDemoVoiceCalc.UtilClass
                             {
                                 FileName = runPath,
                                 Arguments = latestTag,
-                                UseShellExecute = true
+                                UseShellExecute = true,
+                                Verb = "open" // Ensure it's treated as if the user double-clicked it in Explorer
                             };
 
                             Process.Start(startInfo);
                         }
                         catch (Exception ex)
                         {
+                            // Rename Updater Directory to Updater_Old
+                            if (!RenameDirectory("Updater_Old", "Updater"))
+                            {
+                                MessageBox.Show("Error rename temp Updater folder!");
+                                return false;
+                            }
                             MessageBox.Show($"[ERROR] Failed to start Updater: {ex.Message}");
                         }
 

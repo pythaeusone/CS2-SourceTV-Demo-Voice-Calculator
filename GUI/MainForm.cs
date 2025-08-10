@@ -114,7 +114,6 @@ namespace CS2SourceTVDemoVoiceCalc.GUI
             //float baseWidth = 960f;
             //float baseHeight = 540f;
 
-
             // Define the base resolution for which the GUI was originally designed
             float baseWidth = 1920f;
             float baseHeight = 1080f;
