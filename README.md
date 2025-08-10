@@ -83,6 +83,7 @@ Here's what's next for the project:
 - Updater ✔️
 - Scale function ✔️
 - Clean up code ✔️
+- Find the match lobby using the demo ⏳
 - Video GUIDE ⏳
 
 ---
