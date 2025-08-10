@@ -856,7 +856,7 @@ namespace CS2SourceTVDemoVoiceCalc.GUI
                 );
             }
             ConfigurePlayerDataGrid(dGv_VoicePlayer);
-            DGVContextMenu.ConfigureContextMenuAudioFileCopy(dGv_VoicePlayer, _audioEntries, _selectedPlayerVoicePlayer);
+            DGVContextMenu.ConfigureContextMenuAudioFileCopy(dGv_VoicePlayer, _audioEntries, _selectedPlayerVoicePlayer, tb_demoFilePath.Text);
         }
 
         // ==== Event Handlers for Menus and UI ====

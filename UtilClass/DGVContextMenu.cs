@@ -133,7 +133,8 @@ namespace CS2SourceTVDemoVoiceCalc.UtilClass
         public static void ConfigureContextMenuAudioFileCopy(
             DataGridView dgv,
             List<AudioEntry> audioEntries,
-            string selectedPlayerVoicePlayer)
+            string selectedPlayerVoicePlayer,
+            string demoFileName)
         {
             // Create the context menu item for copying files
             var copyFileItem = new ToolStripMenuItem("Copy Voice-File")
@@ -153,8 +154,14 @@ namespace CS2SourceTVDemoVoiceCalc.UtilClass
                 {
                     try
                     {
+
+                        // Get the processed file name without prefix before "_-_"
+                        string getTrueName = GetTrueName(demoFileName);
+
+                        // Create the destination folder path
+                        string destinationFolder = Path.Combine("Saved-Voice-Files", getTrueName);
+
                         // Ensure the destination folder exists
-                        string destinationFolder = "Saved-Voice-Files";
                         Directory.CreateDirectory(destinationFolder);
 
                         // Build the new file name using player name, round, and time
@@ -200,6 +207,25 @@ namespace CS2SourceTVDemoVoiceCalc.UtilClass
                     }
                 }
             };
+        }
+
+        /// <summary>
+        /// Extracts the file name without extension from the given path.
+        /// If the file name contains "_-_", removes everything before and including it.
+        /// Otherwise, returns the original file name without extension.
+        /// </summary>
+        /// <param name="filePath">The full file path to process.</param>
+        /// <returns>The processed file name.</returns>
+        static string GetTrueName(string filePath)
+        {
+            // Extract file name without extension
+            string name = Path.GetFileNameWithoutExtension(filePath);
+
+            // Find the position of the separator "_-_"
+            int index = name.IndexOf("_-_");
+
+            // If found, return the part after the separator; otherwise, return the original name
+            return index >= 0 ? name[(index + 3)..] : name;
         }
     }
 }

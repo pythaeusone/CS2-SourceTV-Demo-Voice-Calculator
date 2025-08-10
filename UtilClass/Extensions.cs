@@ -260,8 +260,11 @@ namespace CS2SourceTVDemoVoiceCalc.UtilClass
                 if (string.IsNullOrWhiteSpace(userInput))
                     return null;
 
+                // Write the new name at the beginning and keep the original ones at the End.
+                string newFileNameCombo = userInput + "_-_" + defaultName;
+
                 // Ensure the filename ends with .dem
-                string newFileName = Path.ChangeExtension(userInput, ".dem");
+                string newFileName = Path.ChangeExtension(newFileNameCombo, ".dem");
 
                 // Compose the full destination path
                 string destinationPath = Path.Combine(destinationDirectory, newFileName);
