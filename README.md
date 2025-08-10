@@ -80,7 +80,7 @@ Here's what's next for the project:
 
 - Audio Voice Extractor ✔️
 - Audio Voice Player ✔️
-- Updater ⏳
+- Updater ✔️
 - Scale function ✔️
 - Clean up code ✔️
 - Video GUIDE ⏳
