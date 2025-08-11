@@ -80,9 +80,10 @@ Here's what's next for the project:
 
 - Audio Voice Extractor ✔️
 - Audio Voice Player ✔️
-- Updater ⏳
+- Updater ✔️
 - Scale function ✔️
 - Clean up code ✔️
+- Find the match lobby using the demo ⏳
 - Video GUIDE ⏳
 
 ---
