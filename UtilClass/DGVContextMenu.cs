@@ -158,8 +158,9 @@ namespace CS2SourceTVDemoVoiceCalc.UtilClass
                         // Get the processed file name without prefix before "_-_"
                         string getTrueName = GetTrueName(demoFileName);
 
+                        string savedVoiceRootPath = PathPicker.GetPath("Select the path where the copied voice files should be saved.", "SavedVoiceFilesPath");
                         // Create the destination folder path
-                        string destinationFolder = Path.Combine("Saved-Voice-Files", getTrueName);
+                        string destinationFolder = Path.Combine(savedVoiceRootPath, "Saved-Voice-Files", getTrueName);
 
                         // Ensure the destination folder exists
                         Directory.CreateDirectory(destinationFolder);

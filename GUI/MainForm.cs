@@ -4,9 +4,6 @@ using CS2SourceTVDemoVoiceCalc.UtilClass;
 using DemoFile;
 using DemoFile.Game.Cs;
 using System.Data;
-using System.DirectoryServices.ActiveDirectory;
-using System.Windows.Automation.Provider;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace CS2SourceTVDemoVoiceCalc.GUI
 {
@@ -632,11 +629,14 @@ namespace CS2SourceTVDemoVoiceCalc.GUI
 
             if (string.IsNullOrWhiteSpace(_csDemoFolderPath) || !Directory.Exists(_csDemoFolderPath))
             {
-                _csDemoFolderPath = CS2PathPicker.GetPath();
+                var title = "Select the CS2 Demo folder";
+                var pathKey = "CS2DemoPath";
+
+                _csDemoFolderPath = PathPicker.GetPath(title, pathKey);
                 if (!Directory.Exists(_csDemoFolderPath))
                 {
-                    CS2PathPicker.EnsurePathConfigured();
-                    _csDemoFolderPath = CS2PathPicker.GetPath();
+                    PathPicker.EnsurePathConfigured(title, pathKey);
+                    _csDemoFolderPath = PathPicker.GetPath(title, pathKey);
                 }
             }
 
@@ -687,7 +687,8 @@ namespace CS2SourceTVDemoVoiceCalc.GUI
         {
             try
             {
-                string audioFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "Audio");
+                string audioFolderPath = LocalAppDataFolder.EnsureSubDirectoryExists("Audio");
+
                 if (Directory.Exists(audioFolderPath))
                 {
                     Directory.Delete(audioFolderPath, true);
@@ -781,7 +782,9 @@ namespace CS2SourceTVDemoVoiceCalc.GUI
             string? appPath = Application.StartupPath;
             string? demoPath = tb_demoFilePath.Text;
             string? demoName = demoPath != null ? Path.GetFileNameWithoutExtension(demoPath) : null;
-            _audioFolderPath = demoName != null ? Path.Combine(appPath, "Audio", demoName) : null;
+            string audioFolder = LocalAppDataFolder.EnsureSubDirectoryExists("Audio");
+
+            _audioFolderPath = demoName != null ? Path.Combine(appPath, audioFolder, demoName) : null;
 
             if (!string.IsNullOrEmpty(_audioFolderPath) && Directory.Exists(_audioFolderPath))
             {
@@ -885,8 +888,10 @@ namespace CS2SourceTVDemoVoiceCalc.GUI
         /// </summary>
         private void changeDemoFolderPathToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            CS2PathPicker.EnsurePathConfigured();
-            _csDemoFolderPath = CS2PathPicker.GetPath();
+            var title = "Select the CS2 Demo folder";
+            var pathKey = "CS2DemoPath";
+            PathPicker.EnsurePathConfigured(title, pathKey);
+            _csDemoFolderPath = PathPicker.GetPath(title, pathKey);
         }
 
         /// <summary>
@@ -957,8 +962,9 @@ namespace CS2SourceTVDemoVoiceCalc.GUI
             {
                 string? demoPath = tb_demoFilePath.Text;
                 string? demoName = demoPath != null ? Path.GetFileNameWithoutExtension(demoPath) : null;
+                string audioFolder = LocalAppDataFolder.EnsureSubDirectoryExists("Audio");
                 string folderPath = demoName != null
-                    ? Path.Combine(Application.StartupPath, "Audio", demoName, selectedItem.SteamId)
+                    ? Path.Combine(audioFolder, demoName, selectedItem.SteamId)
                     : string.Empty;
 
                 _selectedPlayerVoicePlayer = listBox_VoicePlayer.SelectedItem.ToString();

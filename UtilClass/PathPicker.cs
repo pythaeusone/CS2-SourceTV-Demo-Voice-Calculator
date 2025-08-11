@@ -5,34 +5,32 @@ namespace CS2SourceTVDemoVoiceCalc.UtilClass
     /// <summary>
     /// Handles selection and storage of the CS2 demo folder path using the JsonClass utility.
     /// </summary>
-    internal static class CS2PathPicker
+    internal static class PathPicker
     {
-        private const string PathKey = "CS2DemoPath";
-
         /// <summary>
         /// Checks whether a non-empty path is already stored in the JSON config.
         /// </summary>
-        public static bool HasPath()
+        public static bool HasPath(string pathKey)
         {
-            if (!JsonClass.KeyExists(PathKey))
+            if (!JsonClass.KeyExists(pathKey))
                 return false;
 
-            var storedPath = JsonClass.ReadJson<string>(PathKey);
+            var storedPath = JsonClass.ReadJson<string>(pathKey);
             return !string.IsNullOrWhiteSpace(storedPath);
         }
 
         /// <summary>
-        /// Prompts the user with a folder-picker dialog to select the CS2 demo folder.
+        /// Prompts the user with a folder-picker dialog to select the folder.
         /// Saves the chosen path to config.
         /// </summary>
-        public static string EnsurePathConfigured()
+        public static string EnsurePathConfigured(string title, string pathKey)
         {
             while (true)
             {
                 var dialog = new CommonOpenFileDialog
                 {
                     IsFolderPicker = true,
-                    Title = "Select the CS2 Demo folder",
+                    Title = title,
                     InitialDirectory = AppDomain.CurrentDomain.BaseDirectory,
                     EnsurePathExists = true,
                     Multiselect = false
@@ -53,7 +51,7 @@ namespace CS2SourceTVDemoVoiceCalc.UtilClass
                         continue;
                     }
 
-                    JsonClass.WriteJson(PathKey, selectedPath);
+                    JsonClass.WriteJson(pathKey, selectedPath);
                     return selectedPath;
                 }
 
@@ -62,17 +60,17 @@ namespace CS2SourceTVDemoVoiceCalc.UtilClass
         }
 
         /// <summary>
-        /// Retrieves the stored CS2 demo folder path. If no path is stored,
+        /// Retrieves the stored folder path. If no path is stored,
         /// prompts the user to select one.
         /// </summary>
-        public static string GetPath()
+        public static string GetPath(string title, string pathKey)
         {
-            if (HasPath())
+            if (HasPath(pathKey))
             {
-                return JsonClass.ReadJson<string>(PathKey);
+                return JsonClass.ReadJson<string>(pathKey);
             }
 
-            return EnsurePathConfigured();
+            return EnsurePathConfigured(title, pathKey);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Concentus;
+using CS2SourceTVDemoVoiceCalc.UtilClass;
 using DemoFile;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
@@ -60,8 +61,10 @@ namespace CS2SourceTVDemoVoiceCalc.AudioExtract
                 const int sampleRate = 48000;
                 const int numChannels = 1;
 
+                string audioFolder = LocalAppDataFolder.EnsureSubDirectoryExists("Audio");
+
                 string demoName = Path.GetFileNameWithoutExtension(demoPath);
-                string baseOutputDir = Path.Combine(AppContext.BaseDirectory, "Audio", demoName);
+                string baseOutputDir = Path.Combine(AppContext.BaseDirectory, audioFolder, demoName);
 
                 int totalPlayers = voiceDataPerSteamId.Count;
                 int playerIndex = 0;

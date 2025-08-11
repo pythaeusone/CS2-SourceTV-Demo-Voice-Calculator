@@ -9,9 +9,26 @@ namespace CS2SourceTVDemoVoiceCalc.UtilClass
     public static class JsonClass
     {
         /// <summary>
-        /// The file path where the JSON configuration is stored.
+        /// The full file path to the JSON configuration file, located in the user's 
+        /// local application data folder under "CS2SourceTVDemoVoiceCalculator-Data".
         /// </summary>
-        private static readonly string FilePath = "Config.json";
+        private static readonly string FilePath = Path.Combine(
+            LocalAppDataFolder.RootFolderPath,
+            "Config.json"
+        );
+
+        /// <summary>
+        /// Ensures that the directory for the specified <c>FilePath</c> exists. 
+        /// If it does not exist, the directory is created.
+        /// </summary>
+        private static void EnsureDirectoryExists()
+        {
+            var directory = Path.GetDirectoryName(FilePath);
+            if (!Directory.Exists(directory))
+            {
+                Directory.CreateDirectory(directory);
+            }
+        }
 
         /// <summary>
         /// Reads the entire JSON file and returns it as a dictionary.
@@ -19,6 +36,8 @@ namespace CS2SourceTVDemoVoiceCalc.UtilClass
         /// </summary>
         private static Dictionary<string, object> ReadAll()
         {
+            EnsureDirectoryExists();
+
             if (!File.Exists(FilePath))
                 return new Dictionary<string, object>();
 
@@ -31,6 +50,8 @@ namespace CS2SourceTVDemoVoiceCalc.UtilClass
         /// </summary>
         private static void WriteAll(Dictionary<string, object> data)
         {
+            EnsureDirectoryExists();
+
             var options = new JsonSerializerOptions { WriteIndented = true };
             string json = JsonSerializer.Serialize(data, options);
             File.WriteAllText(FilePath, json);
