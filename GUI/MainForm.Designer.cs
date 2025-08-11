@@ -33,11 +33,12 @@
             fileToolStripMenuItem = new ToolStripMenuItem();
             workInProgressToolStripMenuItem = new ToolStripMenuItem();
             settingsToolStripMenuItem = new ToolStripMenuItem();
-            changeDemoFolderPathToolStripMenuItem = new ToolStripMenuItem();
-            toolStripSeparator1 = new ToolStripSeparator();
             addToShellContextMenuToolStripMenuItem = new ToolStripMenuItem();
             removeFromShellContextMenuToolStripMenuItem = new ToolStripMenuItem();
             toolStripSeparator3 = new ToolStripSeparator();
+            changeDemoFolderPathToolStripMenuItem = new ToolStripMenuItem();
+            changeThePathOfTheSavedVoiceFilesToolStripMenuItem = new ToolStripMenuItem();
+            toolStripSeparator1 = new ToolStripSeparator();
             checkForUpdateOnStartupToolStripMenuItem = new ToolStripMenuItem();
             extractorToolStripMenuItem = new ToolStripMenuItem();
             extractAudiosFromDemoToolStripMenuItem = new ToolStripMenuItem();
@@ -113,28 +114,15 @@
             // 
             // settingsToolStripMenuItem
             // 
-            settingsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { addToShellContextMenuToolStripMenuItem, removeFromShellContextMenuToolStripMenuItem, toolStripSeparator3, changeDemoFolderPathToolStripMenuItem, toolStripSeparator1, checkForUpdateOnStartupToolStripMenuItem });
+            settingsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { addToShellContextMenuToolStripMenuItem, removeFromShellContextMenuToolStripMenuItem, toolStripSeparator3, changeDemoFolderPathToolStripMenuItem, changeThePathOfTheSavedVoiceFilesToolStripMenuItem, toolStripSeparator1, checkForUpdateOnStartupToolStripMenuItem });
             settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
             settingsToolStripMenuItem.Size = new Size(61, 20);
             settingsToolStripMenuItem.Text = "Settings";
             // 
-            // changeDemoFolderPathToolStripMenuItem
-            // 
-            changeDemoFolderPathToolStripMenuItem.Name = "changeDemoFolderPathToolStripMenuItem";
-            changeDemoFolderPathToolStripMenuItem.Size = new Size(257, 22);
-            changeDemoFolderPathToolStripMenuItem.Text = "Change Demo folder path";
-            changeDemoFolderPathToolStripMenuItem.ToolTipText = "Changes the path to where the demo should be moved.";
-            changeDemoFolderPathToolStripMenuItem.Click += changeDemoFolderPathToolStripMenuItem_Click;
-            // 
-            // toolStripSeparator1
-            // 
-            toolStripSeparator1.Name = "toolStripSeparator1";
-            toolStripSeparator1.Size = new Size(254, 6);
-            // 
             // addToShellContextMenuToolStripMenuItem
             // 
             addToShellContextMenuToolStripMenuItem.Name = "addToShellContextMenuToolStripMenuItem";
-            addToShellContextMenuToolStripMenuItem.Size = new Size(257, 22);
+            addToShellContextMenuToolStripMenuItem.Size = new Size(284, 22);
             addToShellContextMenuToolStripMenuItem.Text = "Add to Shell-Context-Menu";
             addToShellContextMenuToolStripMenuItem.ToolTipText = "Adds the app to the Windows shell context menu.";
             addToShellContextMenuToolStripMenuItem.Click += addToShellContextMenuToolStripMenuItem_Click;
@@ -142,7 +130,7 @@
             // removeFromShellContextMenuToolStripMenuItem
             // 
             removeFromShellContextMenuToolStripMenuItem.Name = "removeFromShellContextMenuToolStripMenuItem";
-            removeFromShellContextMenuToolStripMenuItem.Size = new Size(257, 22);
+            removeFromShellContextMenuToolStripMenuItem.Size = new Size(284, 22);
             removeFromShellContextMenuToolStripMenuItem.Text = "Remove from Shell-Context-Menu";
             removeFromShellContextMenuToolStripMenuItem.ToolTipText = "Removes the app from the Windows shell context menu.";
             removeFromShellContextMenuToolStripMenuItem.Click += removeFromShellContextMenuToolStripMenuItem_Click;
@@ -150,12 +138,32 @@
             // toolStripSeparator3
             // 
             toolStripSeparator3.Name = "toolStripSeparator3";
-            toolStripSeparator3.Size = new Size(254, 6);
+            toolStripSeparator3.Size = new Size(281, 6);
+            // 
+            // changeDemoFolderPathToolStripMenuItem
+            // 
+            changeDemoFolderPathToolStripMenuItem.Name = "changeDemoFolderPathToolStripMenuItem";
+            changeDemoFolderPathToolStripMenuItem.Size = new Size(284, 22);
+            changeDemoFolderPathToolStripMenuItem.Text = "Change Demo folder path";
+            changeDemoFolderPathToolStripMenuItem.ToolTipText = "Changes the path to where the demo should be moved.";
+            changeDemoFolderPathToolStripMenuItem.Click += changeDemoFolderPathToolStripMenuItem_Click;
+            // 
+            // changeThePathOfTheSavedVoiceFilesToolStripMenuItem
+            // 
+            changeThePathOfTheSavedVoiceFilesToolStripMenuItem.Name = "changeThePathOfTheSavedVoiceFilesToolStripMenuItem";
+            changeThePathOfTheSavedVoiceFilesToolStripMenuItem.Size = new Size(284, 22);
+            changeThePathOfTheSavedVoiceFilesToolStripMenuItem.Text = "Change the path of the saved voice files";
+            changeThePathOfTheSavedVoiceFilesToolStripMenuItem.Click += changeThePathOfTheSavedVoiceFilesToolStripMenuItem_Click;
+            // 
+            // toolStripSeparator1
+            // 
+            toolStripSeparator1.Name = "toolStripSeparator1";
+            toolStripSeparator1.Size = new Size(281, 6);
             // 
             // checkForUpdateOnStartupToolStripMenuItem
             // 
             checkForUpdateOnStartupToolStripMenuItem.Name = "checkForUpdateOnStartupToolStripMenuItem";
-            checkForUpdateOnStartupToolStripMenuItem.Size = new Size(257, 22);
+            checkForUpdateOnStartupToolStripMenuItem.Size = new Size(284, 22);
             checkForUpdateOnStartupToolStripMenuItem.Text = "Check for Update on startup";
             checkForUpdateOnStartupToolStripMenuItem.Click += checkForUpdateOnStartupToolStripMenuItem_Click;
             // 
@@ -192,8 +200,9 @@
             // 
             // checkForUpdatesToolStripMenuItem
             // 
+            checkForUpdatesToolStripMenuItem.Enabled = false;
             checkForUpdatesToolStripMenuItem.Name = "checkForUpdatesToolStripMenuItem";
-            checkForUpdatesToolStripMenuItem.Size = new Size(171, 22);
+            checkForUpdatesToolStripMenuItem.Size = new Size(180, 22);
             checkForUpdatesToolStripMenuItem.Text = "Check for Updates";
             checkForUpdatesToolStripMenuItem.ToolTipText = "Checks whether a new version is available on GitHub.";
             checkForUpdatesToolStripMenuItem.Click += checkForUpdatesToolStripMenuItem_Click;
@@ -201,12 +210,12 @@
             // toolStripSeparator2
             // 
             toolStripSeparator2.Name = "toolStripSeparator2";
-            toolStripSeparator2.Size = new Size(168, 6);
+            toolStripSeparator2.Size = new Size(177, 6);
             // 
             // aboutToolStripMenuItem1
             // 
             aboutToolStripMenuItem1.Name = "aboutToolStripMenuItem1";
-            aboutToolStripMenuItem1.Size = new Size(171, 22);
+            aboutToolStripMenuItem1.Size = new Size(180, 22);
             aboutToolStripMenuItem1.Text = "About";
             aboutToolStripMenuItem1.ToolTipText = "About the developer and contributors.";
             aboutToolStripMenuItem1.Click += aboutToolStripMenuItem1_Click;
@@ -685,5 +694,6 @@
         private ToolStripStatusLabel toolStripStatusLabel_progressBarText;
         private ToolStripMenuItem checkForUpdateOnStartupToolStripMenuItem;
         private ToolStripSeparator toolStripSeparator3;
+        private ToolStripMenuItem changeThePathOfTheSavedVoiceFilesToolStripMenuItem;
     }
 }

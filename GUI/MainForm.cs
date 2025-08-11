@@ -884,6 +884,16 @@ namespace CS2SourceTVDemoVoiceCalc.GUI
         private void checkForUpdatesToolStripMenuItem_Click(object sender, EventArgs e) => _ = VersionChecker.IsNewerVersionAvailable(_GUIVERSIONNR);
 
         /// <summary>
+        /// Changes the Saved Voice folder path.
+        /// </summary>
+        private void changeThePathOfTheSavedVoiceFilesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var title = "Select the path where the copied voice files should be saved.";
+            var pathKey = "SavedVoiceFilesPath";
+            PathPicker.EnsurePathConfigured(title, pathKey);
+        }
+
+        /// <summary>
         /// Changes the demo folder path.
         /// </summary>
         private void changeDemoFolderPathToolStripMenuItem_Click(object sender, EventArgs e)
