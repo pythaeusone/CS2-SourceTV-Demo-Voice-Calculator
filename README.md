@@ -1,3 +1,10 @@
+> [!IMPORTANT]
+> The project has been redesigned.
+> 
+> You can find the new project here - [Small-Demo-Manager](https://github.com/pythaeusone/Small-Demo-Manager)
+
+---
+
 <img width="823" height="393" alt="grafik" src="https://github.com/user-attachments/assets/1a454da6-a50e-4f75-b1ce-e6cd8dec6bf2" />
 
 
