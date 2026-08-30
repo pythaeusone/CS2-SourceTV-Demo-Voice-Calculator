@@ -42,7 +42,6 @@ Huge thanks to the following awesome people for testing and feedback:
 - **WaZaRo**
 - **KEROVSKI**
 - **Throw from cswatch.in Discord**
-- and everyone else from the **ChiefKinzo Discord**!
 
 ---
 
@@ -52,8 +51,6 @@ Huge thanks to the following awesome people for testing and feedback:
 
 ### 🎮 Community
 
-- **ChiefKinzo Discord**: [https://discord.gg/efFgHNHxS6](https://discord.gg/efFgHNHxS6)  
-- **ChiefKinzo YouTube**: [https://www.youtube.com/@Chiefkinzo](https://www.youtube.com/@Chiefkinzo)
 - **Kerovski Discord**: [https://discord.gg/n26tH9565K](https://discord.gg/n26tH9565K)
 - **@KEROVSKI's Tool Video**: [https://www.youtube.com/watch?v=7vsrbD3xBwM](https://www.youtube.com/watch?v=7vsrbD3xBwM)
 
